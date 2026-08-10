@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Internal client/project context — never commit. See CLAUDE.md.
+/brief/
+/research/
+/notes/
+/deliverables/
