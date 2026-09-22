@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { fontVariables } from "@/lib/fonts";
 import { site } from "@/content";
 import "./globals.css";
@@ -40,20 +41,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // hydrates, which React would otherwise flag as a server/client mismatch.
       suppressHydrationWarning
     >
-      <head>
+      <body className="flex min-h-full flex-col">
         {/*
           Marks the document as JS-capable before first paint, which is what
           arms the `.js [data-animate]` hide rule in globals.css. Without JS the
           class never lands, nothing is hidden, and the site degrades to plain
           unanimated content instead of a blank page.
         */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js')`,
-          }}
-        />
-      </head>
-      <body className="flex min-h-full flex-col">{children}</body>
+        <Script id="js-capable" strategy="beforeInteractive">
+          {`document.documentElement.classList.add('js')`}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }
