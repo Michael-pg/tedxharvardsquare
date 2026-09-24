@@ -8,6 +8,10 @@
       "type": "http",
       "url": "https://mcp.vercel.com"
     },
+    "sanity": {
+      "type": "http",
+      "url": "https://mcp.sanity.io"
+    },
     "motion": {
       "type": "http",
       "url": "https://mcp.motion.dev"

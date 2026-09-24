@@ -2,18 +2,22 @@ import { Hero } from "@/components/sections/hero";
 import { Nav } from "@/components/site/nav";
 import { Reveal } from "@/components/motion/reveal";
 import { heroImages } from "@/content/hero-images";
-import { getCurrentEdition, getTopics, missionStatement, site } from "@/content";
+import { getCurrentEdition, getSiteSettings, getTopics } from "@/content";
 
 export default async function Home() {
-  const [edition, topics] = await Promise.all([getCurrentEdition(), getTopics()]);
+  const [site, edition, topics] = await Promise.all([
+    getSiteSettings(),
+    getCurrentEdition(),
+    getTopics(),
+  ]);
 
   return (
     <>
-      <Nav />
+      <Nav contactEmail={site.contactEmail} />
       <main>
         <Hero
           tagline={site.tagline}
-          missionStatement={missionStatement}
+          missionStatement={site.missionStatement}
           images={heroImages}
           editionLabel={
             edition ? `Edition ${edition.number} · ${edition.theme}` : undefined

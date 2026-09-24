@@ -1,4 +1,4 @@
-import type { Edition, Venue } from "./types";
+import type { Edition, Venue } from "../../src/content/types";
 
 /** TODO: confirm the venue with organizers — the current site does not state it. */
 const tbdVenue: Venue = {

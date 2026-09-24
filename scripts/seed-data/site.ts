@@ -1,4 +1,4 @@
-import type { SiteConfig } from "./types";
+import type { SiteConfig } from "../../src/content/types";
 
 /**
  * Copy seeded from the live site (tedxharvardsquare.org) as of Aug 2026.

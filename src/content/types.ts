@@ -114,3 +114,8 @@ export type SiteConfig = {
   newsletterUrl?: string;
   contactEmail: string;
 };
+
+/** Everything the site-wide chrome needs, as stored in the Studio. */
+export type SiteSettings = SiteConfig & {
+  missionStatement: string;
+};

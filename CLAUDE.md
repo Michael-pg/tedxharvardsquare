@@ -18,7 +18,7 @@ Deploys to Vercel.
 | Animation  | GSAP 3.15 + `@gsap/react` (`useGSAP`)         |
 | 3D         | three.js + React Three Fiber + drei           |
 | Icons      | lucide-react                                  |
-| Content    | Typed local files, CMS-ready seam             |
+| Content    | Sanity (project `k0dqlqmb`), Studio at /studio |
 | Hosting    | Vercel                                        |
 
 Next.js was chosen over the usual Vite default because this is a public
@@ -38,10 +38,15 @@ runtime.
 is ~600kb that cannot run on the server and must not block first paint — do not
 route around this by passing R3F children in from a statically-imported module.
 
-**Components read content from `@/content`, never from the raw data files.**
-Every accessor there is `async` even though it currently resolves synchronously,
-so migrating to Sanity is an implementation change inside that one module rather
-than a rewrite of every page.
+**Components read content from `@/content`, never from Sanity directly.**
+Each accessor there is a GROQ query whose projection returns the exact type in
+`src/content/types.ts` — references as slugs, images as `{ src, alt, width,
+height }` — so components never see Sanity's storage shape. The module is
+`server-only`; client components get content values as props.
+
+**Schema changes touch three places:** the type in `src/content/types.ts`, the
+schema in `src/sanity/schemaTypes/`, and the projection in `src/content/index.ts`.
+Keep them in step.
 
 **No arbitrary Tailwind values.** `text-[17px]` and `bg-[#333]` are bugs. If the
 ramp in `globals.css` is missing something, add it to the ramp.
@@ -69,12 +74,18 @@ choice — TEDx brand guidelines specify Helvetica Neue.
 
 ## Content status
 
-Seeded from the live site as of Aug 2026: site copy, the mission statement, the
-15 topics, and Edition 4 ("Against Entropy", Feb 2027). Speakers, talks,
-community events, team, and partners are typed but empty — awaiting real content
-from the organizers. Do not fill them with plausible-looking fakes; placeholder
-people survive to production. Items needing organizer confirmation are marked
-`TODO` in `src/content/`.
+Sanity is the source of truth; edit content at `/studio`. It was seeded from the
+live site as of Aug 2026 (site copy, mission statement, the 15 topics, Edition 4
+"Against Entropy", Feb 2027) by `scripts/seed-sanity.ts`, whose input files in
+`scripts/seed-data/` are a historical snapshot — do not re-run it, it overwrites
+Studio edits. Speakers, talks, community events, team, and partners are empty,
+awaiting real content from the organizers. Do not fill them with
+plausible-looking fakes; placeholder people survive to production. The `TODO`s
+in `scripts/seed-data/` list what still needs organizer confirmation (venue,
+exact date, theme statement, social handles, newsletter, contact email).
+
+Published content revalidates every 60 seconds, so Studio edits go live
+without a redeploy.
 
 ## Agent tooling installed here
 
@@ -100,6 +111,10 @@ Next 16 docs. Start `npm run dev` before relying on its runtime tools.
 **Vercel MCP** — `vercel` in `.mcp.json`, hosted at `mcp.vercel.com`.
 Deployments, build logs, and project settings. Requires a one-time OAuth
 sign-in per machine.
+
+**Sanity MCP** — `sanity` in `.mcp.json`, hosted at `mcp.sanity.io`. Query and
+edit content, inspect schemas, and manage the dataset for project `k0dqlqmb`.
+Requires a one-time OAuth sign-in per machine.
 
 **Design skills** — `impeccable` plus the `taste-skill` set
 (`design-taste-frontend`, `high-end-visual-design`, `minimalist-ui`,
