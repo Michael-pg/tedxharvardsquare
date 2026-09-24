@@ -11,18 +11,19 @@ import { apiVersion, dataset, projectId, studioBasePath } from "./src/sanity/env
 import { schemaTypes, singletonTypes } from "./src/sanity/schemaTypes";
 
 /**
- * The sidebar mirrors how the org thinks about its work: the flagship and the
- * year-round programming sit side by side, rather than community events being
- * one more item in a flat list of document types.
+ * The sidebar mirrors how the org thinks about its work: the Flagship and
+ * House — the year-round programming — sit side by side, rather than House
+ * events being one more item in a flat list of document types.
  */
+const singleton = (S: Parameters<StructureResolver>[0], id: string, title: string) =>
+  S.listItem().title(title).id(id).child(S.document().schemaType(id).documentId(id));
+
 const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
-      S.listItem()
-        .title("Site settings")
-        .id("siteSettings")
-        .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+      singleton(S, "siteSettings", "Site settings"),
+      singleton(S, "homePage", "Home page"),
       S.divider(),
       S.listItem()
         .title("Flagship")
@@ -35,8 +36,9 @@ const structure: StructureResolver = (S) =>
               S.documentTypeListItem("talk").title("Talks"),
             ]),
         ),
-      S.documentTypeListItem("communityEvent").title("Year-round programming"),
+      S.documentTypeListItem("houseEvent").title("House"),
       S.divider(),
+      S.documentTypeListItem("faq").title("FAQ"),
       S.documentTypeListItem("topic").title("Topics"),
       S.documentTypeListItem("teamMember").title("Team"),
       S.documentTypeListItem("partner").title("Partners"),

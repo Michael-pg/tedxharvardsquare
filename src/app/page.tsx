@@ -1,15 +1,19 @@
 import { Hero } from "@/components/sections/hero";
 import { Nav } from "@/components/site/nav";
 import { Reveal } from "@/components/motion/reveal";
-import { heroImages } from "@/content/hero-images";
-import { getCurrentEdition, getSiteSettings, getTopics } from "@/content";
+import { heroImages as placeholderHeroImages } from "@/content/hero-images";
+import { getCurrentEdition, getHomePage, getSiteSettings, getTopics } from "@/content";
 
 export default async function Home() {
-  const [site, edition, topics] = await Promise.all([
+  const [site, home, edition, topics] = await Promise.all([
     getSiteSettings(),
+    getHomePage(),
     getCurrentEdition(),
     getTopics(),
   ]);
+
+  // The placeholders keep the choreography intact until the Studio has photos.
+  const heroImages = home.heroImages.length > 0 ? home.heroImages : placeholderHeroImages;
 
   return (
     <>
@@ -20,7 +24,9 @@ export default async function Home() {
           missionStatement={site.missionStatement}
           images={heroImages}
           editionLabel={
-            edition ? `Edition ${edition.number} · ${edition.theme}` : undefined
+            edition
+              ? [`Edition ${edition.number}`, edition.theme].filter(Boolean).join(" · ")
+              : undefined
           }
         />
 

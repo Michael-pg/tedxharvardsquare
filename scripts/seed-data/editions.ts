@@ -4,7 +4,7 @@ import type { Edition, Venue } from "../../src/content/types";
 const tbdVenue: Venue = {
   name: "Venue TBA",
   addressLine: "",
-  city: "Cambridge",
+  city: "Boston",
   state: "MA",
 };
 
@@ -12,6 +12,7 @@ export const editions: Edition[] = [
   {
     slug: "edition-4-against-entropy",
     number: 4,
+    year: 2027,
     theme: "Against Entropy",
     themeStatement:
       "Everything tends toward disorder. Ideas are how we push back.", // TODO: replace with the organizers' real theme statement.

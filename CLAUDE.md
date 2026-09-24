@@ -4,8 +4,9 @@
 
 Rebuild of tedxharvardsquare.org — a three.js + GSAP animated site for a
 Cambridge, MA community organization. The org runs a flagship annual conference
-**and** year-round programming; the site must give the year-round work real
-weight, not treat it as a footnote to the main event.
+(**Flagship**) **and** year-round programming (**House** — the org's own name;
+never "Community"); the site must give the year-round work real weight, not
+treat it as a footnote to the main event.
 
 Deploys to Vercel.
 
@@ -74,15 +75,22 @@ choice — TEDx brand guidelines specify Helvetica Neue.
 
 ## Content status
 
-Sanity is the source of truth; edit content at `/studio`. It was seeded from the
-live site as of Aug 2026 (site copy, mission statement, the 15 topics, Edition 4
-"Against Entropy", Feb 2027) by `scripts/seed-sanity.ts`, whose input files in
-`scripts/seed-data/` are a historical snapshot — do not re-run it, it overwrites
-Studio edits. Speakers, talks, community events, team, and partners are empty,
-awaiting real content from the organizers. Do not fill them with
-plausible-looking fakes; placeholder people survive to production. The `TODO`s
-in `scripts/seed-data/` list what still needs organizer confirmation (venue,
-exact date, theme statement, social handles, newsletter, contact email).
+Sanity is the source of truth; edit content at `/studio`. It was filled by two
+one-time scripts. Neither should be re-run — both overwrite Studio edits.
+
+- `scripts/seed-sanity.ts` (Aug 2026 copy of the live site): site settings,
+  mission statement, the 15 topics, Edition 4 "Against Entropy" (Boston, 2027).
+- `scripts/import-webflow.ts` (Webflow CMS snapshot, 2026-09-24, kept in the
+  gitignored `research/webflow-export/`): Editions 2 (2025) and 3 (Feb 21 2026,
+  Arrow Street Arts), 24 speakers incl. 2 performers, 21 talks, 13 FAQs, 3 live
+  sponsors, home-page photography, and the live contact/newsletter/social links.
+  Alt text was written for every image; speaker portraits use "Portrait of
+  {name}".
+
+House events, team, and past-edition themes are still empty, awaiting real
+content from the organizers. Do not fill them with plausible-looking fakes;
+placeholder people survive to production. Still unconfirmed: Edition 4's venue
+and exact date, Edition 2's date and theme, and job titles for the 2025 speakers.
 
 Published content revalidates every 60 seconds, so Studio edits go live
 without a redeploy.

@@ -15,12 +15,15 @@ import "server-only";
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import type {
-  CommunityEvent,
   Edition,
+  Faq,
+  HomePage,
+  HouseEvent,
   Partner,
   SiteSettings,
   Slug,
   Speaker,
+  SpeakerWithTalk,
   Talk,
   TeamMember,
   Topic,
@@ -47,23 +50,32 @@ async function fetchContent<T>(
 
 // —— Shared projections ————————————————————————————————————————————————
 
+/** GROQ drops null keys, so `alt` is coalesced to keep the `Image` contract. */
 const image = (field: string) => `${field}{
   "src": asset->url,
-  alt,
+  "alt": coalesce(alt, ""),
   "width": asset->metadata.dimensions.width,
   "height": asset->metadata.dimensions.height
 }`;
 
+const imageList = (field: string) => `"${field}": coalesce(${field}[]{
+  "src": asset->url,
+  "alt": coalesce(alt, ""),
+  "width": asset->metadata.dimensions.width,
+  "height": asset->metadata.dimensions.height
+}, [])`;
+
 const editionFields = `
-  "slug": slug.current, number, theme, themeStatement, date, venue, status,
+  "slug": slug.current, number, year, theme, themeStatement, date, venue, status,
   ticketUrl, "poster": ${image("poster")}
 `;
 
 const speakerFields = `
-  "slug": slug.current, name, title, organization, bio,
+  "slug": slug.current, name, kind, track, title, organization, bio, credit,
   "headshot": ${image("headshot")},
   "editionSlug": edition->slug.current,
-  links[]{ label, href }
+  "links": coalesce(links[]{ label, href }, []),
+  order
 `;
 
 const talkFields = `
@@ -74,9 +86,10 @@ const talkFields = `
   "topicSlugs": coalesce(topics[]->slug.current, [])
 `;
 
-const communityEventFields = `
-  "slug": slug.current, title, description, kind, date, venue,
-  registrationUrl, status
+const houseEventFields = `
+  "slug": slug.current, title, tagline, format, date, venue, registrationUrl,
+  status, "coverImage": ${image("coverImage")}, ${imageList("gallery")},
+  attendeeCount, keyQuote
 `;
 
 // —— Site ——————————————————————————————————————————————————————————————
@@ -97,6 +110,15 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   // than render a page with no name or metadata.
   if (!settings) throw new Error("Sanity: siteSettings document is missing.");
   return settings;
+}
+
+export async function getHomePage(): Promise<HomePage> {
+  const home = await fetchContent<HomePage | null>(
+    `*[_id == "homePage"][0]{ ${imageList("heroImages")} }`,
+    {},
+    ["homePage"],
+  );
+  return home ?? { heroImages: [] };
 }
 
 // —— Editions ——————————————————————————————————————————————————————————
@@ -122,7 +144,7 @@ export async function getEdition(slug: Slug): Promise<Edition | undefined> {
 export async function getCurrentEdition(): Promise<Edition | undefined> {
   const edition = await fetchContent<Edition | null>(
     `coalesce(
-      *[_type == "edition" && status != "past"] | order(date asc)[0],
+      *[_type == "edition" && status != "past"] | order(number asc)[0],
       *[_type == "edition"] | order(number desc)[0]
     ){ ${editionFields} }`,
     {},
@@ -136,7 +158,7 @@ export async function getCurrentEdition(): Promise<Edition | undefined> {
 export async function getSpeakers(editionSlug?: Slug): Promise<Speaker[]> {
   return fetchContent(
     `*[_type == "speaker" && (!defined($editionSlug) || edition->slug.current == $editionSlug)]
-      | order(name asc){ ${speakerFields} }`,
+      | order(order asc, name asc){ ${speakerFields} }`,
     { editionSlug: editionSlug ?? null },
     ["speaker"],
   );
@@ -149,6 +171,25 @@ export async function getSpeaker(slug: Slug): Promise<Speaker | undefined> {
     ["speaker"],
   );
   return speaker ?? undefined;
+}
+
+/**
+ * The speaker archive: every Flagship speaker (not performers) with their talk
+ * and edition year, newest edition first, then in lineup order.
+ */
+export async function getSpeakerArchive(): Promise<SpeakerWithTalk[]> {
+  return fetchContent(
+    `*[_type == "speaker" && track == "flagship" && kind == "speaker"]
+      | order(edition->year desc, order asc, name asc){
+        ${speakerFields},
+        "editionYear": edition->year,
+        "talk": *[_type == "talk" && references(^._id)][0]{
+          "slug": slug.current, title, premise, videoUrl
+        }
+      }`,
+    {},
+    ["speaker", "talk", "edition"],
+  );
 }
 
 export async function getTalks(editionSlug?: Slug): Promise<Talk[]> {
@@ -169,31 +210,39 @@ export async function getTalk(slug: Slug): Promise<Talk | undefined> {
   return talk ?? undefined;
 }
 
-// —— Year-round programming ————————————————————————————————————————————
+// —— House (year-round programming) ————————————————————————————————————
 
-export async function getCommunityEvents(
-  status?: CommunityEvent["status"],
-): Promise<CommunityEvent[]> {
+export async function getHouseEvents(
+  status?: HouseEvent["status"],
+): Promise<HouseEvent[]> {
   return fetchContent(
-    `*[_type == "communityEvent" && (!defined($status) || status == $status)]
-      | order(date asc){ ${communityEventFields} }`,
+    `*[_type == "houseEvent" && (!defined($status) || status == $status)]
+      | order(date desc){ ${houseEventFields} }`,
     { status: status ?? null },
-    ["communityEvent"],
+    ["houseEvent"],
   );
 }
 
-export async function getCommunityEvent(
-  slug: Slug,
-): Promise<CommunityEvent | undefined> {
-  const event = await fetchContent<CommunityEvent | null>(
-    `*[_type == "communityEvent" && slug.current == $slug][0]{ ${communityEventFields} }`,
+export async function getHouseEvent(slug: Slug): Promise<HouseEvent | undefined> {
+  const event = await fetchContent<HouseEvent | null>(
+    `*[_type == "houseEvent" && slug.current == $slug][0]{ ${houseEventFields} }`,
     { slug },
-    ["communityEvent"],
+    ["houseEvent"],
   );
   return event ?? undefined;
 }
 
 // —— Supporting content ————————————————————————————————————————————————
+
+export async function getFaqs(): Promise<Faq[]> {
+  return fetchContent(
+    `*[_type == "faq"] | order(order asc, question asc){
+      "slug": slug.current, question, answer
+    }`,
+    {},
+    ["faq"],
+  );
+}
 
 export async function getTopics(): Promise<Topic[]> {
   return fetchContent(
@@ -216,7 +265,8 @@ export async function getTeam(): Promise<TeamMember[]> {
 export async function getPartners(): Promise<Partner[]> {
   return fetchContent(
     `*[_type == "partner"] | order(name asc){
-      "slug": slug.current, name, tier, "logo": ${image("logo")}, url
+      "slug": slug.current, name, tier, "logo": ${image("logo")},
+      "logoOnDark": ${image("logoOnDark")}, url
     }`,
     {},
     ["partner"],
