@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -100,11 +101,19 @@ export function Nav({ contactEmail }: { contactEmail: string }) {
             "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_8px_40px_-12px_rgba(0,0,0,0.8)]",
           )}
         >
-          <Link
-            href="/"
-            className="mr-3 text-label font-semibold tracking-[0.14em] text-foreground uppercase"
-          >
-            TEDx<span className="text-brand">HarvardSquare</span>
+          {/*
+            Official lockup, white variant for the dark site. PNG stands in
+            until an SVG exists; 2072px source keeps it sharp on 3x screens.
+          */}
+          <Link href="/" className="mr-3 shrink-0" aria-label="TEDxHarvardSquare home">
+            <Image
+              src="/brand/tedx-harvard-square-white.png"
+              alt="TEDxHarvardSquare"
+              width={2072}
+              height={701}
+              priority
+              className="h-7 w-auto"
+            />
           </Link>
 
           <ul className="hidden items-center gap-1 md:flex">
