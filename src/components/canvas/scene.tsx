@@ -1,5 +1,6 @@
 "use client";
 
+import "@/lib/three-console";
 import { Canvas, type CanvasProps } from "@react-three/fiber";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import type { ReactNode } from "react";
