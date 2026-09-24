@@ -92,6 +92,15 @@ animation libraries would mean two competing tickers and roughly 30kb of
 duplicated capability. If Motion should actually ship, that is a decision to
 make explicitly rather than by accident.
 
+**Next.js DevTools MCP** — `next-devtools` in `.mcp.json` (Vercel's
+`next-devtools-mcp`). Connects to the running dev server's built-in
+`/_next/mcp` endpoint for live errors, routes, and build state, and serves the
+Next 16 docs. Start `npm run dev` before relying on its runtime tools.
+
+**Vercel MCP** — `vercel` in `.mcp.json`, hosted at `mcp.vercel.com`.
+Deployments, build logs, and project settings. Requires a one-time OAuth
+sign-in per machine.
+
 **Design skills** — `impeccable` plus the `taste-skill` set
 (`design-taste-frontend`, `high-end-visual-design`, `minimalist-ui`,
 `redesign-existing-projects`, and others) in `.claude/skills/`. These are
