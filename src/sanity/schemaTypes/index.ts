@@ -1,6 +1,8 @@
 import {
-  communityEvent,
   edition,
+  faq,
+  homePage,
+  houseEvent,
   partner,
   siteSettings,
   speaker,
@@ -12,10 +14,12 @@ import { accessibleImage, link, venue } from "./objects";
 
 export const schemaTypes = [
   siteSettings,
+  homePage,
   edition,
   speaker,
   talk,
-  communityEvent,
+  houseEvent,
+  faq,
   topic,
   teamMember,
   partner,
@@ -25,4 +29,4 @@ export const schemaTypes = [
 ];
 
 /** Document types that exist exactly once and are edited in place. */
-export const singletonTypes = new Set(["siteSettings"]);
+export const singletonTypes = new Set(["siteSettings", "homePage"]);

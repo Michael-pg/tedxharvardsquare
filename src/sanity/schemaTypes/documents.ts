@@ -1,7 +1,9 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import {
   CalendarDays,
+  CircleHelp,
   Handshake,
+  House,
   Megaphone,
   Mic,
   Settings,
@@ -14,6 +16,10 @@ import {
  * Document types. Each mirrors a type in `src/content/types.ts`. Where the
  * local model stores a `...Slug` string to point at another record, Sanity
  * stores a reference, and the GROQ projection flattens it back to the slug.
+ *
+ * Fields are optional wherever the historical record is incomplete — early
+ * editions and migrated Webflow entries. Required-ness is reserved for things
+ * the site genuinely cannot render without.
  */
 
 const slugField = (source = "title") =>
@@ -23,6 +29,14 @@ const slugField = (source = "title") =>
     options: { source, maxLength: 96 },
     validation: (r) => r.required(),
   });
+
+/** Manual sort position, for lists whose order is editorial rather than alphabetical. */
+const orderField = defineField({
+  name: "order",
+  type: "number",
+  description: "Position in the list. Lower numbers appear first.",
+  validation: (r) => r.integer(),
+});
 
 export const siteSettings = defineType({
   name: "siteSettings",
@@ -65,6 +79,33 @@ export const siteSettings = defineType({
   preview: { prepare: () => ({ title: "Site settings" }) },
 });
 
+export const homePage = defineType({
+  name: "homePage",
+  title: "Home page",
+  type: "document",
+  icon: House,
+  fields: [
+    defineField({
+      name: "heroImages",
+      title: "Hero images",
+      type: "array",
+      of: [defineArrayMember({ type: "accessibleImage" })],
+      description:
+        "The photographs that fly through the hero on scroll, in order. The animation is timed for exactly six, and landscape photos frame best.",
+      validation: (r) => r.max(6),
+    }),
+    defineField({
+      name: "photoLibrary",
+      title: "Photo library",
+      type: "array",
+      of: [defineArrayMember({ type: "accessibleImage" })],
+      description:
+        "Other home-page photography, kept here for upcoming sections. Not shown on the site yet.",
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Home page" }) },
+});
+
 export const edition = defineType({
   name: "edition",
   title: "Edition",
@@ -78,10 +119,15 @@ export const edition = defineType({
       validation: (r) => r.required().integer().positive(),
     }),
     defineField({
+      name: "year",
+      type: "number",
+      description: "The calendar year it took place. Speakers are grouped by this.",
+      validation: (r) => r.required().integer().min(2020).max(2100),
+    }),
+    defineField({
       name: "theme",
       type: "string",
       description: 'The year-defining theme, e.g. "Against Entropy".',
-      validation: (r) => r.required(),
     }),
     slugField("theme"),
     defineField({
@@ -90,10 +136,13 @@ export const edition = defineType({
       type: "text",
       rows: 3,
       description: "One-paragraph framing of what the theme asks of the audience.",
-      validation: (r) => r.required(),
     }),
-    defineField({ name: "date", type: "date", validation: (r) => r.required() }),
-    defineField({ name: "venue", type: "venue", validation: (r) => r.required() }),
+    defineField({
+      name: "date",
+      type: "date",
+      description: "Leave empty if only the month or year is on record.",
+    }),
+    defineField({ name: "venue", type: "venue" }),
     defineField({
       name: "status",
       type: "string",
@@ -115,10 +164,10 @@ export const edition = defineType({
     { title: "Newest first", name: "numberDesc", by: [{ field: "number", direction: "desc" }] },
   ],
   preview: {
-    select: { number: "number", theme: "theme", date: "date", media: "poster" },
-    prepare: ({ number, theme, date, media }) => ({
-      title: `Edition ${number ?? "?"} · ${theme ?? "Untitled"}`,
-      subtitle: date,
+    select: { number: "number", theme: "theme", year: "year", media: "poster" },
+    prepare: ({ number, theme, year, media }) => ({
+      title: `Edition ${number ?? "?"}${theme ? ` · ${theme}` : ""}`,
+      subtitle: year ? String(year) : undefined,
       media,
     }),
   },
@@ -133,23 +182,75 @@ export const speaker = defineType({
     defineField({ name: "name", type: "string", validation: (r) => r.required() }),
     slugField("name"),
     defineField({
-      name: "title",
+      name: "kind",
       type: "string",
-      description: 'Professional title, e.g. "Neuroscientist".',
+      options: {
+        list: [
+          { title: "Speaker", value: "speaker" },
+          { title: "Performer", value: "performer" },
+        ],
+        layout: "radio",
+        direction: "horizontal",
+      },
+      initialValue: "speaker",
       validation: (r) => r.required(),
     }),
-    defineField({ name: "organization", type: "string" }),
-    defineField({ name: "bio", type: "text", rows: 6, validation: (r) => r.required() }),
-    defineField({ name: "headshot", type: "accessibleImage" }),
+    defineField({
+      name: "track",
+      type: "string",
+      description: "Which programme they appeared in.",
+      options: {
+        list: [
+          { title: "Flagship", value: "flagship" },
+          { title: "House", value: "house" },
+        ],
+        layout: "radio",
+        direction: "horizontal",
+      },
+      initialValue: "flagship",
+      validation: (r) => r.required(),
+    }),
     defineField({
       name: "edition",
       type: "reference",
       to: [{ type: "edition" }],
-      validation: (r) => r.required(),
+      description: "Required for Flagship speakers.",
+      validation: (r) =>
+        r.custom((value, context) =>
+          !value && (context.document as { track?: string } | undefined)?.track === "flagship"
+            ? "Flagship speakers need an edition."
+            : true,
+        ),
     }),
+    defineField({
+      name: "title",
+      type: "string",
+      description: 'Professional title, e.g. "Neuroscientist".',
+    }),
+    defineField({ name: "organization", type: "string" }),
+    defineField({ name: "bio", type: "text", rows: 6 }),
+    defineField({
+      name: "credit",
+      type: "string",
+      description: 'Performers only — e.g. "Accompanied by Julian Oliver".',
+      hidden: ({ document }) => document?.kind !== "performer",
+    }),
+    defineField({ name: "headshot", type: "accessibleImage" }),
     defineField({ name: "links", type: "array", of: [defineArrayMember({ type: "link" })] }),
+    orderField,
   ],
-  preview: { select: { title: "name", subtitle: "title", media: "headshot" } },
+  orderings: [
+    { title: "Lineup order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },
+    { title: "Name", name: "nameAsc", by: [{ field: "name", direction: "asc" }] },
+  ],
+  preview: {
+    select: { title: "name", subtitle: "title", year: "edition.year", media: "headshot" },
+    prepare: ({ title, subtitle, year, media }) => ({
+      title,
+      subtitle: [year, subtitle].filter(Boolean).join(" · "),
+      media,
+    }),
+  },
 });
 
 export const talk = defineType({
@@ -165,7 +266,6 @@ export const talk = defineType({
       type: "text",
       rows: 2,
       description: "The one-sentence idea worth spreading.",
-      validation: (r) => r.required(),
     }),
     defineField({
       name: "speaker",
@@ -173,12 +273,7 @@ export const talk = defineType({
       to: [{ type: "speaker" }],
       validation: (r) => r.required(),
     }),
-    defineField({
-      name: "edition",
-      type: "reference",
-      to: [{ type: "edition" }],
-      validation: (r) => r.required(),
-    }),
+    defineField({ name: "edition", type: "reference", to: [{ type: "edition" }] }),
     defineField({
       name: "videoUrl",
       title: "Video URL",
@@ -213,33 +308,44 @@ export const topic = defineType({
   preview: { select: { title: "label" } },
 });
 
-export const communityEvent = defineType({
-  name: "communityEvent",
-  title: "Community event",
+export const houseEvent = defineType({
+  name: "houseEvent",
+  title: "House event",
   type: "document",
   icon: CalendarDays,
-  description: "Year-round programming — salons, workshops, meetups, screenings.",
+  description: "Year-round programming — mixers, dinners, AMAs, salons, workshops.",
   fields: [
     defineField({ name: "title", type: "string", validation: (r) => r.required() }),
     slugField(),
-    defineField({ name: "description", type: "text", rows: 4, validation: (r) => r.required() }),
     defineField({
-      name: "kind",
+      name: "tagline",
+      type: "string",
+      description: "One line, shown on cards.",
+    }),
+    defineField({
+      name: "format",
       type: "string",
       options: {
         list: [
+          { title: "Mixer", value: "mixer" },
+          { title: "Founder Dinner", value: "founder-dinner" },
+          { title: "AMA", value: "ama" },
           { title: "Salon", value: "salon" },
+          { title: "Hackathon", value: "hackathon" },
           { title: "Workshop", value: "workshop" },
-          { title: "Meetup", value: "meetup" },
-          { title: "Screening", value: "screening" },
-          { title: "Volunteer", value: "volunteer" },
+          { title: "Other", value: "other" },
         ],
       },
       validation: (r) => r.required(),
     }),
     defineField({ name: "date", type: "datetime", validation: (r) => r.required() }),
-    defineField({ name: "venue", type: "venue", validation: (r) => r.required() }),
-    defineField({ name: "registrationUrl", title: "Registration URL", type: "url" }),
+    defineField({ name: "venue", type: "venue" }),
+    defineField({
+      name: "registrationUrl",
+      title: "RSVP link",
+      type: "url",
+      description: "Luma or other ticketing URL.",
+    }),
     defineField({
       name: "status",
       type: "string",
@@ -253,9 +359,43 @@ export const communityEvent = defineType({
       initialValue: "upcoming",
       validation: (r) => r.required(),
     }),
+    defineField({ name: "coverImage", title: "Cover image", type: "accessibleImage" }),
+    defineField({
+      name: "gallery",
+      type: "array",
+      of: [defineArrayMember({ type: "accessibleImage" })],
+    }),
+    defineField({
+      name: "attendeeCount",
+      title: "Attendee count",
+      type: "number",
+      validation: (r) => r.integer().min(0),
+    }),
+    defineField({
+      name: "keyQuote",
+      title: "Key quote",
+      type: "text",
+      rows: 2,
+      description: "A standout line from the event, for the recap card.",
+    }),
   ],
-  orderings: [{ title: "Date", name: "dateAsc", by: [{ field: "date", direction: "asc" }] }],
-  preview: { select: { title: "title", subtitle: "date" } },
+  orderings: [{ title: "Date", name: "dateDesc", by: [{ field: "date", direction: "desc" }] }],
+  preview: { select: { title: "title", subtitle: "date", media: "coverImage" } },
+});
+
+export const faq = defineType({
+  name: "faq",
+  title: "FAQ",
+  type: "document",
+  icon: CircleHelp,
+  fields: [
+    defineField({ name: "question", type: "string", validation: (r) => r.required() }),
+    slugField("question"),
+    defineField({ name: "answer", type: "text", rows: 6, validation: (r) => r.required() }),
+    orderField,
+  ],
+  orderings: [{ title: "Page order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] }],
+  preview: { select: { title: "question", subtitle: "answer" } },
 });
 
 export const teamMember = defineType({
@@ -298,9 +438,14 @@ export const partner = defineType({
           { title: "In-kind", value: "in-kind" },
         ],
       },
-      validation: (r) => r.required(),
     }),
     defineField({ name: "logo", type: "accessibleImage" }),
+    defineField({
+      name: "logoOnDark",
+      title: "Logo (for dark backgrounds)",
+      type: "accessibleImage",
+      description: "A white or single-colour version. The site is dark, so this is the one shown.",
+    }),
     defineField({ name: "url", title: "Website", type: "url" }),
   ],
   preview: { select: { title: "name", subtitle: "tier", media: "logo" } },
