@@ -91,8 +91,12 @@ without a redeploy.
 
 **GSAP skills** — the official GreenSock suite (`gsap-core`, `gsap-timeline`,
 `gsap-scrolltrigger`, `gsap-plugins`, `gsap-react`, `gsap-performance`,
-`gsap-utils`, `gsap-frameworks`), installed as a user-scope plugin from
-`greensock/gsap-skills`. Consult them before writing non-trivial GSAP.
+`gsap-utils`, `gsap-frameworks`) from `greensock/gsap-skills`. They are
+user-scope, not vendored in this repo, so each machine installs them once:
+`npx skills add https://github.com/greensock/gsap-skills -g -a claude-code`
+(lands in `~/.claude/skills/`), or `/plugin marketplace add
+greensock/gsap-skills` from an interactive `claude` session. Consult them
+before writing non-trivial GSAP.
 
 **Motion AI Kit** — the `motion` skill plus a `motion-reviewer` agent in
 `.claude/agents/`, and two hosted MCP servers in `.mcp.json`. `motion` is
