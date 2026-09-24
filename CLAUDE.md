@@ -8,7 +8,9 @@ Cambridge, MA community organization. The org runs a flagship annual conference
 never "Community"); the site must give the year-round work real weight, not
 treat it as a footnote to the main event.
 
-Deploys to Vercel.
+Deploys to Vercel. **The live domain stays on Webflow until the owner says
+otherwise** — build on the Vercel site only. Start each session with
+`docs/PROGRESS.md` (state, decisions, open questions, next up).
 
 ## Stack
 
@@ -63,15 +65,14 @@ animate toward `visibility: hidden` and never appear.
 
 ## Design direction
 
-Follows the global principles in `~/Development/CLAUDE.md` — intentional
-minimalism, typography carrying the hierarchy, no generic card grids. The 3D
-work supplies the visual energy, so the surrounding UI stays restrained: TEDx
-red is the only chromatic value in the system.
+**Read `DESIGN.md` before any UI work** — colour, type, spacing, imagery,
+motion, and the ship checklist. In short: intentional minimalism, typography
+carrying the hierarchy, no generic card grids; the 3D work supplies the energy
+and TEDx red is the only chromatic value. **Figtree** is the site typeface;
+Helvetica Neue is reserved for the logo. Small red text fails contrast — see
+`DESIGN.md` §3.
 
-**The 3D concept is not yet chosen.** `scenes/probe/` is a placeholder that
-proves the pipeline renders; it is not a design decision. The type stack (Inter
-in `src/lib/fonts.ts`) is likewise a placeholder standing in for the real
-choice — TEDx brand guidelines specify Helvetica Neue.
+The home hero's 3D scene is `scenes/pixel-blob/`.
 
 ## Content status
 
