@@ -4,7 +4,7 @@ import type { Edition, Venue } from "../../src/content/types";
 const tbdVenue: Venue = {
   name: "Venue TBA",
   addressLine: "",
-  city: "Cambridge",
+  city: "Boston",
   state: "MA",
 };
 

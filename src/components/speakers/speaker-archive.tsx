@@ -57,9 +57,19 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
     [all],
   );
 
+  /** Clears the open speaker and its hash. Safe to call more than once. */
+  const handleClosed = useCallback(() => {
+    setOpenSlug(null);
+    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  }, []);
+
+  // The dialog's `close` event is queued as a task, which browsers throttle in
+  // background tabs — so explicit closes clean up directly rather than waiting.
+  // Escape still arrives through `onClose`.
   const closeSpeaker = useCallback(() => {
     dialog.current?.close();
-  }, []);
+    handleClosed();
+  }, [handleClosed]);
 
   // Deep links: /speakers#jeff-harmon opens straight into that speaker.
   useEffect(() => {
@@ -167,10 +177,9 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
 
       <dialog
         ref={dialog}
-        onClose={() => {
-          setOpenSlug(null);
-          history.replaceState(null, "", location.pathname + location.search);
-        }}
+        onClose={handleClosed}
+        // Escape fires `cancel` synchronously, ahead of the queued `close`.
+        onCancel={handleClosed}
         // Clicking the backdrop (the dialog element itself, outside the panel) closes it.
         onClick={(event) => {
           if (event.target === dialog.current) closeSpeaker();

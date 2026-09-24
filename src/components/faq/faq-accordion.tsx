@@ -25,16 +25,25 @@ export function FaqAccordion({ items }: { items: Faq[] }) {
 function FaqItem({ item }: { item: Faq }) {
   const [open, setOpen] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
+  const mounted = useRef(false);
   const reducedMotion = useReducedMotion();
   const panelId = `faq-${item.slug}`;
 
   useGSAP(
     () => {
+      // The panel already starts at h-0 from CSS. Tweening on mount would leave
+      // a pending "close" tween that fights the first real open.
+      if (!mounted.current) {
+        mounted.current = true;
+        return;
+      }
       if (!panel.current) return;
       gsap.to(panel.current, {
         height: open ? "auto" : 0,
         duration: reducedMotion ? 0 : timing.duration.base,
         ease: timing.ease.inOut,
+        // A quick re-click must replace the running tween, not race it.
+        overwrite: true,
       });
     },
     { dependencies: [open, reducedMotion] },
