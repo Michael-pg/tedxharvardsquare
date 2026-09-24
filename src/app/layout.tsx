@@ -1,31 +1,34 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { fontVariables } from "@/lib/fonts";
-import { site } from "@/content";
+import { getSiteSettings } from "@/content";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name} — ${site.tagline}`,
-    template: `%s — ${site.name}`,
-  },
-  description: site.description,
-  openGraph: {
-    type: "website",
-    locale: site.locale,
-    url: site.url,
-    siteName: site.name,
-    title: `${site.name} — ${site.tagline}`,
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteSettings();
+  return {
+    metadataBase: new URL(site.url),
+    title: {
+      default: `${site.name} — ${site.tagline}`,
+      template: `%s — ${site.name}`,
+    },
     description: site.description,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${site.name} — ${site.tagline}`,
-    description: site.description,
-  },
-  robots: { index: true, follow: true },
-};
+    openGraph: {
+      type: "website",
+      locale: site.locale,
+      url: site.url,
+      siteName: site.name,
+      title: `${site.name} — ${site.tagline}`,
+      description: site.description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${site.name} — ${site.tagline}`,
+      description: site.description,
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#08080a",

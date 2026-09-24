@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { primaryNav, secondaryNav } from "@/content/navigation";
-import { site } from "@/content";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,7 +15,7 @@ import { cn } from "@/lib/utils";
  * blob should read through it. The overlay it opens is deliberately opaque,
  * because menu legibility beats the effect once the menu is actually open.
  */
-export function Nav() {
+export function Nav({ contactEmail }: { contactEmail: string }) {
   const [open, setOpen] = useState(false);
   const overlay = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLElement>(null);
@@ -167,7 +166,7 @@ export function Nav() {
           data-menu-item
           className="mx-auto mt-10 w-full max-w-3xl text-small text-muted"
         >
-          {site.contactEmail}
+          {contactEmail}
         </p>
       </div>
     </>

@@ -1,4 +1,4 @@
-import type { Topic } from "./types";
+import type { Topic } from "../../src/content/types";
 
 /** Seeded from the topics marquee on the current site. */
 export const topics: Topic[] = [
