@@ -63,7 +63,7 @@ user-wide in `~/.claude/skills/`.
 
 ## Open questions (need the owner/organizers)
 
-- Logo: supply **SVG** (white + black). PNGs from Webflow are in `research/`.
+- Logo: no SVG exists; the Webflow PNGs (`public/brand/`) stand in. Swap for SVG if one is ever made.
 - TEDx rules vs. the Partner **"Presenting"** tier.
 - Edition 4 venue and exact date; Edition 2 date and theme; Edition 3 theme.
 - Job titles for the ten 2025 speakers (blank in Webflow too).
@@ -81,22 +81,20 @@ user-wide in `~/.claude/skills/`.
    Fix per `DESIGN.md` §3 (red mark beside foreground text). **Do first.**
 2. Speaker bios render only inside the dialog — not indexable. Per-speaker
    pages (`/speakers/[slug]`) fix this.
-3. The nav wordmark is typeset text, not the real logo.
 
 ---
 
 ## Next up (suggested order)
 
 1. Fix the red-text contrast issue (small, visible to every visitor).
-2. Real logo in the nav (needs SVG).
-3. Footer: newsletter (Substack), contact, Instagram/LinkedIn — data already in Sanity.
-4. **Flagship page** — build it as the reference-quality "golden page";
+2. Footer: newsletter (Substack), contact, Instagram/LinkedIn — data already in Sanity.
+3. **Flagship page** — build it as the reference-quality "golden page";
    everything after reuses its parts.
-5. House page, Sponsor page (sponsor pitch: audience, packages, past partners).
-6. Per-speaker pages + JSON-LD (Event, Person) + per-page OG images.
-7. CI: GitHub Actions running lint, typecheck, build on every PR.
-8. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
-9. Before any domain switch: Webflow redirect map, check Webflow custom code (analytics), then DNS — **only when the owner says so**.
+4. House page, Sponsor page (sponsor pitch: audience, packages, past partners).
+5. Per-speaker pages + JSON-LD (Event, Person) + per-page OG images.
+6. CI: GitHub Actions running lint, typecheck, build on every PR.
+7. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+8. Before any domain switch: Webflow redirect map, check Webflow custom code (analytics), then DNS — **only when the owner says so**.
 
 ---
 
@@ -109,7 +107,7 @@ Sanity. PRs: #1 Next 16.3.6 security update · #2 MCP connections · #3 fix
 production 404 (framework preset) · #4 Sanity CMS + embedded Studio · #5
 silence R3F `THREE.Clock` warning · #6 GSAP skills install docs · #7 Webflow
 migration (Speakers archive, FAQ, House, home photography). Deleted duplicate
-Vercel project. Imported Webflow CMS into Sanity. Wrote `DESIGN.md` and this log.
+Vercel project. Imported Webflow CMS into Sanity. Wrote `DESIGN.md` and this log. Nav now uses the official lockup (PNG stand-in).
 
 **Token notes:** the costliest things were screenshots, reading whole web
 pages, and very large tool results (the Webflow guide). One task per chat;
