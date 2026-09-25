@@ -19,6 +19,7 @@ import type {
   Faq,
   HomePage,
   HouseEvent,
+  MenuImages,
   Partner,
   SiteSettings,
   Slug,
@@ -119,6 +120,45 @@ export async function getHomePage(): Promise<HomePage> {
     ["homePage"],
   );
   return home ?? { heroImages: [] };
+}
+
+const menuImagesQuery = defineQuery(`*[_id == "siteSettings"][0].menuImages{
+  "general": ${image("general")},
+  "flagship": ${image("flagship")},
+  "house": ${image("house")},
+  "speakers": ${image("speakers")},
+  "sponsor": ${image("sponsor")}
+}`);
+
+/**
+ * Menu photography. Slots left empty in the Studio borrow from the home-page
+ * hero photos so the menu is never imageless; the indexes pick the frame that
+ * best suits each destination in the current hero set (violinists, the raised
+ * hands, the audience, a speaker in profile, the panel by the red letters).
+ */
+export async function getMenuImages(): Promise<MenuImages> {
+  const [chosen, home] = await Promise.all([
+    fetchContent<Record<keyof MenuImages, MenuImages["general"] | null> | null>(
+      menuImagesQuery,
+      {},
+      ["siteSettings"],
+    ),
+    getHomePage(),
+  ]);
+  const hero = home.heroImages;
+  const fallback: MenuImages = {
+    general: hero[3] ?? hero[0],
+    flagship: hero[0],
+    house: hero[5],
+    speakers: hero[1],
+    sponsor: hero[2],
+  };
+  const images: MenuImages = {};
+  for (const key of Object.keys(fallback) as (keyof MenuImages)[]) {
+    const value = chosen?.[key]?.src ? chosen[key] : fallback[key];
+    if (value) images[key] = value;
+  }
+  return images;
 }
 
 // —— Editions ——————————————————————————————————————————————————————————

@@ -167,6 +167,15 @@ export type SiteConfig = {
   contactEmail: string;
 };
 
+/** Menu destinations that carry their own photograph on hover. */
+export type MenuImageKey = "flagship" | "house" | "speakers" | "sponsor";
+
+/**
+ * Photography for the full-screen menu: `general` shows on open, a page's own
+ * image while its link is hovered. Absent keys fall back to `general`.
+ */
+export type MenuImages = { general?: Image } & Partial<Record<MenuImageKey, Image>>;
+
 /** Everything the site-wide chrome needs, as stored in the Studio. */
 export type SiteSettings = SiteConfig & {
   missionStatement: string;

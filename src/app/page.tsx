@@ -1,5 +1,5 @@
 import { Hero } from "@/components/sections/hero";
-import { Nav } from "@/components/site/nav";
+import { SiteNav } from "@/components/site/site-nav";
 import { Reveal } from "@/components/motion/reveal";
 import { heroImages as placeholderHeroImages } from "@/content/hero-images";
 import { getCurrentEdition, getHomePage, getSiteSettings, getTopics } from "@/content";
@@ -17,7 +17,7 @@ export default async function Home() {
 
   return (
     <>
-      <Nav contactEmail={site.contactEmail} />
+      <SiteNav />
       <main>
         <Hero
           tagline={site.tagline}

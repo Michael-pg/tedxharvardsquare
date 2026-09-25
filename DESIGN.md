@@ -158,7 +158,7 @@ for the logo only.
 
 | Component | Where | Notes |
 | --- | --- | --- |
-| `Nav` | `components/site/nav.tsx` | Floating glass bar; four primary items. |
+| `Nav` | `components/site/nav.tsx` (render via `SiteNav`) | Lockup left, glass pill right (Flagship · Speakers · About + menu). Lockup and pill turn dark over sections tagged `data-nav-theme="light"`. Full-screen menu wipes down: photo left (per-link on hover, set in Studio → Site settings → Menu images), large key pages, small secondary pages. |
 | `GlassButton` | `components/ui/glass-button.tsx` | Only over the WebGL layer. |
 | `Reveal` / `SplitReveal` | `components/motion/` | Default entrances. |
 | `SpeakerArchive` | `components/speakers/` | Year tabs, portrait cards, detail dialog with YouTube embed, `#slug` deep links. |

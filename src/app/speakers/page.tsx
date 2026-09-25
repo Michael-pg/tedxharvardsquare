@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Nav } from "@/components/site/nav";
+import { SiteNav } from "@/components/site/site-nav";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { SpeakerArchive } from "@/components/speakers/speaker-archive";
-import { getSiteSettings, getSpeakerArchive, type SpeakerWithTalk } from "@/content";
+import { getSpeakerArchive, type SpeakerWithTalk } from "@/content";
 
 export const metadata: Metadata = {
   title: "Speakers",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SpeakersPage() {
-  const [site, speakers] = await Promise.all([getSiteSettings(), getSpeakerArchive()]);
+  const speakers = await getSpeakerArchive();
 
   // Group by edition year, newest first. The query already orders by year then
   // lineup position, so insertion order is display order.
@@ -25,7 +25,7 @@ export default async function SpeakersPage() {
 
   return (
     <>
-      <Nav contactEmail={site.contactEmail} />
+      <SiteNav />
       <main className="px-6 pt-40 pb-32 md:px-12 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
           <Reveal as="p" className="mb-6 text-label text-brand uppercase">
