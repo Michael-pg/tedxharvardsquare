@@ -142,6 +142,6 @@ New Studio field **Early-access list link** (Contact & social); set to the
 `/terms` pages (static, in code) — have someone with legal knowledge review
 before the domain switch. Also `/code-of-conduct` and `/accessibility`
 (footer column "Policies"). Accessibility page promises a reply within five
-business days — organizers should confirm they can meet that. Volunteer and
+business days (owner confirmed). Volunteer and
 Apply to speak stay out of the footer for now. Follow-up: move policy copy into
 Sanity if organizers need to edit it.
