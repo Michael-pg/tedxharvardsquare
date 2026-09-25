@@ -35,7 +35,7 @@ export default async function Home() {
           the hero are deliberately unstyled beyond the type ramp until their
           content and treatment are decided.
         */}
-        <section className="relative z-10 border-t border-rule bg-background px-6 py-24 md:px-12 md:py-40">
+        <section className="relative z-10 border-t border-rule bg-background px-6 py-24 md:py-40">
           <Reveal as="h2" className="mb-12 text-label text-muted uppercase">
             What we program against
           </Reveal>
@@ -52,7 +52,7 @@ export default async function Home() {
           </Reveal>
         </section>
 
-        <footer className="relative z-10 border-t border-rule bg-background px-6 py-12 md:px-12">
+        <footer className="relative z-10 border-t border-rule bg-background px-6 py-12">
           <p className="text-small text-muted">Scaffolding build · {site.name}</p>
         </footer>
       </main>

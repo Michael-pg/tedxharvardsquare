@@ -253,7 +253,7 @@ export function Nav({
       <header
         ref={bar}
         data-animate
-        className="pointer-events-none fixed inset-x-0 top-5 z-50 flex items-center justify-between px-6 md:top-6 md:px-12"
+        className="pointer-events-none fixed inset-x-0 top-5 z-50 flex items-center justify-between px-6 md:top-6"
       >
         {/*
           Official lockup — white on dark, black on light. PNGs stand in until
@@ -294,6 +294,9 @@ export function Nav({
           className={cn(
             "pointer-events-auto flex items-center gap-1 rounded-full border p-1.5",
             "transition-[background-color,border-color,box-shadow] duration-300",
+            // Below md the pill holds only the toggle, so the toggle carries the
+            // glass itself — a pill around a lone button reads as a double ring.
+            "max-md:border-transparent max-md:bg-transparent max-md:p-0 max-md:shadow-none max-md:backdrop-blur-none",
             // With the menu open the glass dissolves, leaving only the close button.
             open
               ? "border-transparent bg-transparent"
@@ -337,10 +340,10 @@ export function Nav({
             aria-controls="site-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             className={cn(
-              "grid size-10 place-items-center rounded-full border transition-colors duration-200",
+              "grid size-10 place-items-center rounded-full border backdrop-blur-xl transition-colors duration-200",
               onLight
-                ? "border-black/10 bg-black/5 text-ink-950 hover:bg-black/10"
-                : "border-white/12 bg-white/8 text-foreground hover:bg-white/16",
+                ? "border-black/10 bg-black/5 text-ink-950 hover:bg-black/10 max-md:border-transparent"
+                : "border-white/12 bg-white/8 text-foreground hover:bg-white/16 max-md:border-transparent",
             )}
           >
             {open ? <X size={16} strokeWidth={2} /> : <Menu size={16} strokeWidth={2} />}
@@ -358,10 +361,11 @@ export function Nav({
         tabIndex={-1}
         className="invisible fixed inset-0 z-40 bg-ink-950 outline-none"
       >
-        <div className="grid h-full grid-cols-1 gap-12 px-6 pt-32 pb-12 md:grid-cols-2 md:px-12 md:pt-36 md:pb-16 lg:gap-24">
+        <div className="flex h-full flex-col gap-10 px-6 pt-28 pb-10 md:grid md:grid-cols-2 md:gap-12 md:pt-36 md:pb-16 lg:gap-24">
+          {/* A short band on phones, the full left column from md up. */}
           <div
             ref={media}
-            className="relative hidden overflow-hidden bg-ink-900 md:block"
+            className="relative aspect-video shrink-0 overflow-hidden bg-ink-900 md:aspect-auto"
           >
             {imageKeys.map((key) => {
               const image = menuImages[key]!;
@@ -376,7 +380,7 @@ export function Nav({
                     src={image.src}
                     alt={key === "general" ? image.alt : ""}
                     fill
-                    sizes="50vw"
+                    sizes="(min-width: 768px) 50vw, 100vw"
                     className="object-cover"
                   />
                 </div>
@@ -384,7 +388,7 @@ export function Nav({
             })}
           </div>
 
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col md:justify-center">
             <ul onMouseLeave={() => setActive(null)}>
               {menuPrimary.map((item) => (
                 <li key={item.href}>

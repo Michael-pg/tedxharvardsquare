@@ -109,7 +109,7 @@ for the logo only.
 
 ## 5. Layout & spacing
 
-- **Gutters:** `px-6 md:px-12` on every page.
+- **Gutters:** `px-6` (24px) on every page, at every width. The header uses the same gutter so the lockup lines up with page content.
 - **Inner page header:** `pt-40 md:pt-56`, eyebrow → `h1` → lead, then
   `mb-20 md:mb-28` before content.
 - **Sections:** `py-24 md:py-40`, separated by `border-t border-rule`.

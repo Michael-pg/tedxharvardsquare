@@ -17,7 +17,7 @@ export default async function FaqPage() {
   return (
     <>
       <SiteNav />
-      <main className="px-6 pt-40 pb-32 md:px-12 md:pt-56">
+      <main className="px-6 pt-40 pb-32 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
           <Reveal as="p" className="mb-6 text-label text-brand uppercase">
             Flagship
