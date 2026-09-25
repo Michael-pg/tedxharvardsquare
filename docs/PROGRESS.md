@@ -121,3 +121,13 @@ menu with a wipe-down entrance and per-link hover photos. Dropped Past
 Editions, Volunteer, Apply to Speak. Menu photos are a new optional Studio
 field (Site settings → Menu images); until filled they borrow the home hero
 photos.
+
+### 2026-09-25 — Studio labels for marketing editors
+
+Every field editors touch now says where it shows on the site. Site settings
+is split into tabs (Home page, Menu, Contact & social, Search & sharing);
+`tagline` is labelled "Home page headline". Labels only — no field names or
+data changed. CORS already allows `https://tedxharvardsquare.vercel.app` with
+credentials, so invited editors can sign in at `/studio`. Invite them at
+sanity.io/manage → Members with the Editor role. Follow-up: Presentation tool
+(click-to-edit on the live page) needs draft mode + stega in `@/content`.
