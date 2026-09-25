@@ -6,11 +6,12 @@ export type MenuItem = NavItem & { image: MenuImageKey };
 /**
  * The three destinations that earn a place in the glass bar. Everything else
  * lives behind the menu — the bar is a wayfinding device, not a sitemap.
+ * Flagship and House sit side by side: the two programmes get equal billing.
  */
 export const barNav: NavItem[] = [
   { label: "Flagship", href: "/flagship" },
+  { label: "House", href: "/house" },
   { label: "Speakers", href: "/speakers" },
-  { label: "About", href: "/about" },
 ];
 
 /**

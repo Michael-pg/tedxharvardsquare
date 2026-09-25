@@ -24,7 +24,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 | --- | --- |
 | Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
-| Nav | Bar: Flagship · Speakers · About + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
+| Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
 
 ### Infrastructure
 
