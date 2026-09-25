@@ -72,7 +72,7 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * A soft halftone mass rises from the lower right — the footer glow's
  * material, with its gradient made only of dot size and plenty of black
  * around it. Its core is order: red, on the grid. Its edge keeps coming loose:
- * dots slip off the grid, go grey and drift outward. That is the Edition 04
+ * dots slip off the grid, go grey and drift outward. That is the Edition 3
  * theme, told without a word. The pointer pulls strays back into line, and as
  * the reader scrolls the mass grows and widens toward the footer's own glow,
  * then fades out above it so the two never meet at a hard edge.

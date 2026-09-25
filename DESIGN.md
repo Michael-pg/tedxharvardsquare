@@ -27,7 +27,7 @@ When this file and the code disagree, fix one of them in the same PR.
 ## 2. Brand
 
 **Name:** `TEDxHarvardSquare` — one word, in running text. The programmes are
-**Flagship** (the annual conference, numbered as **Edition 4** etc.) and
+**Flagship** (the annual conference, numbered as **Edition 3** etc.) and
 **House** (year-round events). Never "Community".
 
 **Logo:** the TEDx wordmark lockup, set in **Helvetica Neue** — the only place
@@ -183,7 +183,7 @@ Shared patterns:
   "world-class"), no exclamation marks.
 - Eyebrows are nouns or short phrases ("The archive", "Flagship"), not
   sentences.
-- Numbers as figures: "Edition 4", "300+ founders".
+- Numbers as figures: "Edition 3", "300+ founders".
 
 ---
 

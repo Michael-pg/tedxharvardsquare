@@ -63,21 +63,26 @@ export function SpeakerIndex({ speakers }: { speakers: SpeakerWithTalk[] }) {
 
   return (
     <div ref={root}>
-      <ul data-dot-clear className="text-display font-medium text-ink-500">
+      <ul data-dot-clear className="text-title font-medium text-ink-500 md:text-display">
         {speakers.map((speaker, i) => (
           <li key={speaker.slug} className="inline">
+            {/* JSX drops whitespace between elements; without these spaces
+                the whole list is one unbreakable line. */}
             <Link
               href={`/speakers#${speaker.slug}`}
               onPointerEnter={(event) => event.pointerType === "mouse" && setActive(speaker)}
               onPointerLeave={() => setActive(null)}
-              className="whitespace-nowrap text-ink-300 transition-colors duration-fast hover:text-foreground focus-visible:text-foreground"
+              className="text-ink-300 md:whitespace-nowrap transition-colors duration-fast hover:text-foreground focus-visible:text-foreground"
             >
               {speaker.name}
             </Link>
             {i < speakers.length - 1 && (
-              <span aria-hidden="true" className="px-3">
-                /
-              </span>
+              <>
+                {" "}
+                <span aria-hidden="true" className="px-1">
+                  /
+                </span>{" "}
+              </>
             )}
           </li>
         ))}

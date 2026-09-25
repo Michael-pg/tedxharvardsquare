@@ -25,7 +25,7 @@ export type Link = { label: string; href: string };
 /** A yearly flagship conference. */
 export type Edition = {
   slug: Slug;
-  /** Sequential number as the org counts them — "Edition 4". */
+  /** Sequential number as the org counts them — "Edition 3". */
   number: number;
   /** Calendar year the edition took place. Always known, unlike the exact date. */
   year: number;

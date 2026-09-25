@@ -80,18 +80,21 @@ Sanity is the source of truth; edit content at `/studio`. It was filled by two
 one-time scripts. Neither should be re-run — both overwrite Studio edits.
 
 - `scripts/seed-sanity.ts` (Aug 2026 copy of the live site): site settings,
-  mission statement, the 15 topics, Edition 4 "Against Entropy" (Boston, 2027).
+  mission statement, the 15 topics, and "Against Entropy" (Boston, 2027).
 - `scripts/import-webflow.ts` (Webflow CMS snapshot, 2026-09-24, kept in the
-  gitignored `research/webflow-export/`): Editions 2 (2025) and 3 (Feb 21 2026,
-  Arrow Street Arts), 24 speakers incl. 2 performers, 21 talks, 13 FAQs, 3 live
+  gitignored `research/webflow-export/`): the 2025 edition and the Feb 21 2026
+  edition (Arrow Street Arts), 24 speakers incl. 2 performers, 21 talks, 13 FAQs, 3 live
   sponsors, home-page photography, and the live contact/newsletter/social links.
   Alt text was written for every image; speaker portraits use "Portrait of
   {name}".
 
 House events, team, and past-edition themes are still empty, awaiting real
 content from the organizers. Do not fill them with plausible-looking fakes;
-placeholder people survive to production. Still unconfirmed: Edition 4's venue
-and exact date, Edition 2's date and theme, and job titles for the 2025 speakers.
+placeholder people survive to production. **Edition numbering (owner, 2026-09-25):**
+Edition 1 = April 2025, Edition 2 = Feb 21 2026 (Arrow Street Arts), Edition 3 =
+"Against Entropy" (Boston, 2027). The import stored them as 2/3/4; the `number`
+fields in Studio must be corrected. Still unconfirmed: Edition 3's venue
+and exact date, Edition 1's date and theme, and job titles for the 2025 speakers.
 
 Published content revalidates every 60 seconds, so Studio edits go live
 without a redeploy.
