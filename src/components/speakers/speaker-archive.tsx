@@ -198,7 +198,9 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
             <button
               type="button"
               onClick={closeSpeaker}
-              className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full border border-rule text-muted transition-colors hover:border-foreground hover:text-foreground"
+              // Raised and backed so it stays visible where the portrait sits
+              // underneath it (the single-column layout on phones).
+              className="absolute top-4 right-4 z-10 inline-flex size-10 items-center justify-center rounded-full border border-rule bg-ink-900/80 text-ink-200 backdrop-blur-md transition-colors hover:border-foreground hover:text-foreground"
               aria-label="Close"
             >
               <X aria-hidden className="size-4" />
