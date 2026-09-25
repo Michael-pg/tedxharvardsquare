@@ -145,3 +145,11 @@ before the domain switch. Also `/code-of-conduct` and `/accessibility`
 business days (owner confirmed). Volunteer and
 Apply to speak stay out of the footer for now. Follow-up: move policy copy into
 Sanity if organizers need to edit it.
+
+### 2026-09-25 — home 2 brainstorm
+
+Owner wants the footer's red halftone dots to become the site-wide language
+("SaaS/code vibe for an ideas conference"), with a left-aligned hero, tried out
+on a separate `/home2`. Plan and open questions in `docs/HOME2-PLAN.md`. No
+code yet; first step is extracting the footer's dot renderer into a shared
+engine.
