@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { getSiteSettings } from "@/content";
-import { footerNav, legalNav, type NavItem } from "@/content/navigation";
+import { footerNav, policyNav, type NavItem } from "@/content/navigation";
 import { FooterGlow } from "./footer-glow";
 import { BackToTop, CambridgeTime } from "./footer-meta";
 
@@ -75,7 +75,7 @@ export async function SiteFooter() {
       links: [...footerNav[1].links, { label: "Contact", href: `mailto:${site.contactEmail}` }],
     },
     { title: "Follow", links: follow },
-    { title: "Legal", links: legalNav },
+    { title: "Policies", links: policyNav },
   ];
 
   return (

@@ -74,8 +74,9 @@ export default async function TermsPage() {
             as we can.
           </li>
           <li>
-            We expect everyone at our events to treat each other with respect. We may
-            ask anyone who doesn&apos;t to leave, without a refund.
+            Everyone at our events agrees to our{" "}
+            <Link href="/code-of-conduct">Code of Conduct</Link>. We may ask anyone who
+            breaks it to leave, without a refund.
           </li>
           <li>
             Events are photographed and recorded. See the Privacy Policy for how that

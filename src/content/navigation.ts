@@ -32,8 +32,10 @@ export const menuSecondary: NavItem[] = [
   { label: "FAQ", href: "/faq" },
 ];
 
-/** The footer's legal links. Both pages are static routes under `src/app`. */
-export const legalNav: NavItem[] = [
+/** The footer's policy links. All are static routes under `src/app`. */
+export const policyNav: NavItem[] = [
+  { label: "Code of conduct", href: "/code-of-conduct" },
+  { label: "Accessibility", href: "/accessibility" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ];

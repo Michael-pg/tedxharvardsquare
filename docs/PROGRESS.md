@@ -22,7 +22,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 
 | Area | State |
 | --- | --- |
-| Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/privacy`, `/terms`, `/studio` |
+| Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
 | Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
 
@@ -140,5 +140,8 @@ New Studio field **Early-access list link** (Contact & social); set to the
 2026 Mailchimp list. Trimmed white lockup added as
 `public/brand/tedx-harvard-square-white-trim.png`. Generic `/privacy` and
 `/terms` pages (static, in code) — have someone with legal knowledge review
-before the domain switch. Follow-ups: code of conduct and accessibility
-statement pages; move legal copy into Sanity if organizers need to edit it.
+before the domain switch. Also `/code-of-conduct` and `/accessibility`
+(footer column "Policies"). Accessibility page promises a reply within five
+business days — organizers should confirm they can meet that. Volunteer and
+Apply to speak stay out of the footer for now. Follow-up: move policy copy into
+Sanity if organizers need to edit it.
