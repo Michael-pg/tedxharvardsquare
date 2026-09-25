@@ -218,3 +218,7 @@ a row in the When/Where table, the speaker count headline says "past
 speakers", and the partners row opens with a plain line of text. Still to
 match: eyebrows on `/speakers`, `/faq`, the footer ("Stay in the room") and the
 footer's rounded button.
+
+Owner didn't like speaker portraits on home (read as the next lineup). Replaced
+with "Watch past talks": four recorded talks as rows (title, speaker, year,
+small B&W thumbnail), videos first, linking out to the video or `/speakers`.

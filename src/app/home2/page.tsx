@@ -7,7 +7,7 @@ import { FitHeadline } from "@/components/home2/fit-headline";
 import { Motto } from "@/components/home2/motto";
 import { PartnerLogos } from "@/components/home2/partner-logos";
 import { PhotoStrip } from "@/components/home2/photo-strip";
-import { PixelPhoto } from "@/components/home2/pixel-photo";
+import { PastTalks } from "@/components/home2/past-talks";
 import { SquareLink } from "@/components/home2/square-link";
 import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
 
@@ -36,8 +36,8 @@ function motto(missionStatement: string) {
   return { lines, coda: rest.join(" ") || undefined };
 }
 
-/** How many portraits the past-speakers section shows. */
-const PORTRAITS = 8;
+/** How many recorded talks the home page points to. */
+const FEATURED_TALKS = 4;
 
 export default async function Home2() {
   const [site, home, edition, archive, partners] = await Promise.all([
@@ -56,7 +56,11 @@ export default async function Home2() {
         .join(" · ")
     : undefined;
   const { lines, coda } = motto(site.missionStatement);
-  const portraits = archive.filter((speaker) => speaker.headshot).slice(0, PORTRAITS);
+  // Talks with a published video first, so most rows play something.
+  const featuredTalks = archive
+    .filter((speaker) => speaker.talk?.title)
+    .sort((a, b) => Number(Boolean(b.talk?.videoUrl)) - Number(Boolean(a.talk?.videoUrl)))
+    .slice(0, FEATURED_TALKS);
   const talkCount = archive.filter((speaker) => speaker.talk).length;
   const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
   const logoPartners = partners.filter((partner) => partner.logoOnDark ?? partner.logo);
@@ -146,37 +150,27 @@ export default async function Home2() {
           </section>
         )}
 
-        {/* Past speakers: a contact sheet of recent faces and a way into the archive. */}
-        {archive.length > 0 && (
+        {/* Past talks: an archive to watch, dated, so it never reads as the next lineup. */}
+        {featuredTalks.length > 0 && (
           <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
-            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-10 md:col-span-5">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
               <Reveal as="h2" className="text-display font-medium text-balance">
-                {`${archive.length} past speakers. ${talkCount} talks. ${editionCount} ${editionCount === 1 ? "stage" : "stages"}.`}
+                Watch past talks
               </Reveal>
-              <Reveal>
+              <Reveal as="p" className="text-lead text-muted">
+                {`${talkCount} talks from ${editionCount} ${editionCount === 1 ? "edition" : "editions"} so far.`}
+              </Reveal>
+              <Reveal className="mt-4">
                 <SquareLink href="/speakers" variant="secondary">
-                  Watch the talks
+                  All speakers and talks
                 </SquareLink>
               </Reveal>
             </div>
-            {portraits.length > 0 && (
-              <Reveal as="ul" className="col-span-4 grid grid-cols-4 gap-1 self-end md:col-span-7">
-                {portraits.map((speaker) => (
-                  <li key={speaker.slug}>
-                    <figure>
-                      <PixelPhoto
-                        image={{ ...speaker.headshot!, alt: speaker.headshot!.alt || `Portrait of ${speaker.name}` }}
-                        sizes="(min-width: 768px) 15vw, 25vw"
-                        className="aspect-square w-full"
-                      />
-                      <figcaption className="mt-2 hidden truncate text-small text-muted md:block">
-                        {speaker.name}
-                      </figcaption>
-                    </figure>
-                  </li>
-                ))}
+            <div data-dot-clear className="col-span-4 md:col-span-7">
+              <Reveal>
+                <PastTalks speakers={featuredTalks} />
               </Reveal>
-            )}
+            </div>
           </section>
         )}
 
