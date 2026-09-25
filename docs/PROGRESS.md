@@ -58,6 +58,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-24 | Only the 3 live Webflow sponsors migrated; archived sponsors/FAQs left behind. |
 | 2026-09-24 | The 2027 edition is in **Boston**. Feb 21 2026 edition: Arrow Street Arts. The earlier edition: April 2025. |
 | 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Owner corrected the `number` fields in Studio the same day. |
+| 2026-09-25 | Edition 3 venue is **Arrow Street Arts** (owner). Supersedes "Boston". |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
 
 ---
@@ -66,7 +67,7 @@ user-wide in `~/.claude/skills/`.
 
 - Logo: no SVG exists; the Webflow PNGs (`public/brand/`) stand in. Swap for SVG if one is ever made.
 - TEDx rules vs. the Partner **"Presenting"** tier.
-- Edition 3 (2027) venue and exact date; Edition 1 date and theme; Edition 2 theme.
+- Edition 3 (2027) exact date; Edition 1 date and theme; Edition 2 theme.
 - Job titles for the ten 2025 speakers (blank in Webflow too).
 - FAQ "How do I get there?" still describes Arrow Street Arts (2026 venue).
 - Arrow Street Arts white logo was inferred from Webflow's "Mask group-2" — confirm in Studio.
@@ -192,3 +193,19 @@ Follow-up: the speaker name index is removed from `/home2` at the owner's reques
 `/speakers` replaces it.
 
 The owner has since corrected the edition `number` fields in Studio (1/2/3).
+
+### 2026-09-25 — home 2 edits
+
+Motto now shows the whole mission statement: the first sentence as before, the
+second ("We exist to create those moments…") set smaller beneath it. Hero drops
+the red-square edition label; the edition line (number · venue · year) sits
+quietly in muted text beside the buttons. Past speakers is a section again:
+a count headline, the "Watch the talks" link, and a 4×2 contact sheet of the
+most recent portraits (B&W, red pixel hover). New Partners row with the three
+sponsor logos (`logoOnDark`, links out). Checked against local mock content
+(Sanity unreachable from the cloud sandbox): no overflow at 390 and 1440px, no
+console errors.
+
+**Studio edits the owner needs to make** (can't be done from the sandbox):
+Against Entropy → Venue: name "Arrow Street Arts", city "Cambridge"; and
+optionally drop the em dash from Site settings → Mission statement.

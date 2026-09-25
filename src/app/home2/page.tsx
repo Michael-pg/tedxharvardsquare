@@ -5,9 +5,11 @@ import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home2/dot-field";
 import { FitHeadline } from "@/components/home2/fit-headline";
 import { Motto } from "@/components/home2/motto";
+import { PartnerLogos } from "@/components/home2/partner-logos";
 import { PhotoStrip } from "@/components/home2/photo-strip";
+import { PixelPhoto } from "@/components/home2/pixel-photo";
 import { SquareLink } from "@/components/home2/square-link";
-import { getCurrentEdition, getHomePage, getSiteSettings } from "@/content";
+import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
 
 /**
  * A second home page, built alongside the current one so the dot-system
@@ -32,30 +34,42 @@ function Label({ children }: { children: string }) {
 }
 
 /**
- * The motto is the first sentence of the mission statement, broken into its
- * clauses: the first three on their own lines, the outcome kept whole.
+ * The motto is the mission statement. Its first sentence is the statement,
+ * broken into its clauses: the first three on their own lines, the outcome
+ * kept whole. The rest is the answer, set smaller beneath it.
  */
-function mottoLines(missionStatement: string) {
-  const sentence = missionStatement.split(/(?<=\.)\s/)[0] ?? missionStatement;
+function motto(missionStatement: string) {
+  const [sentence = missionStatement, ...rest] = missionStatement.split(/(?<=\.)\s/);
   const clauses = sentence.split(", ");
-  if (clauses.length < 4) return [sentence];
-  return [...clauses.slice(0, 3).map((c) => `${c},`), clauses.slice(3).join(", ")];
+  const lines =
+    clauses.length < 4 ? [sentence] : [...clauses.slice(0, 3).map((c) => `${c},`), clauses.slice(3).join(", ")];
+  return { lines, coda: rest.join(" ") || undefined };
 }
 
+/** How many portraits the past-speakers section shows. */
+const PORTRAITS = 8;
+
 export default async function Home2() {
-  const [site, home, edition] = await Promise.all([
+  const [site, home, edition, archive, partners] = await Promise.all([
     getSiteSettings(),
     getHomePage(),
     getCurrentEdition(),
+    getSpeakerArchive(),
+    getPartners(),
   ]);
 
   const headline = edition?.theme ?? site.tagline;
-  const editionLabel = edition
-    ? [`Edition ${pad(edition.number)}`, [edition.venue?.city, edition.year].filter(Boolean).join(" ")]
-        .filter(Boolean)
-        .join(" — ")
-    : undefined;
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
+  const editionLine = edition
+    ? [`Edition ${pad(edition.number)}`, venueKnown ? edition.venue?.name : edition.venue?.city, edition.year]
+        .filter(Boolean)
+        .join(" · ")
+    : undefined;
+  const { lines, coda } = motto(site.missionStatement);
+  const portraits = archive.filter((speaker) => speaker.headshot).slice(0, PORTRAITS);
+  const talkCount = archive.filter((speaker) => speaker.talk).length;
+  const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
+  const logoPartners = partners.filter((partner) => partner.logoOnDark ?? partner.logo);
 
   return (
     <>
@@ -68,17 +82,23 @@ export default async function Home2() {
           <div>
             <FitHeadline>{headline}</FitHeadline>
           </div>
-          <div data-dot-clear className="mt-8 flex max-w-md flex-col gap-4 md:mt-10">
-            {editionLabel && <Label>{editionLabel}</Label>}
-            {edition?.themeStatement && (
-              <p className="text-heading font-medium text-balance">{edition.themeStatement}</p>
+          {edition?.themeStatement && (
+            <p data-dot-clear className="mt-8 max-w-md text-heading font-medium text-balance md:mt-10">
+              {edition.themeStatement}
+            </p>
+          )}
+          <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
+            <div data-dot-clear className="flex flex-wrap gap-2">
+              {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
+              <SquareLink href="/speakers" variant="secondary">
+                Past talks
+              </SquareLink>
+            </div>
+            {editionLine && (
+              <p data-dot-clear className="text-small text-muted">
+                {editionLine}
+              </p>
             )}
-          </div>
-          <div data-dot-clear className="mt-auto flex flex-wrap gap-2 pt-16">
-            {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
-            <SquareLink href="/speakers" variant="secondary">
-              Past talks
-            </SquareLink>
           </div>
         </section>
 
@@ -87,7 +107,7 @@ export default async function Home2() {
           <Reveal className="mb-10">
             <Label>What we believe</Label>
           </Reveal>
-          <Motto lines={mottoLines(site.missionStatement)} />
+          <Motto lines={lines} coda={coda} />
         </section>
 
         {home.heroImages.length > 0 && (
@@ -140,17 +160,53 @@ export default async function Home2() {
           </section>
         )}
 
-        {/* Past editions get a pointer, not a showcase: the page leads with what is next. */}
-        <section className="flex flex-wrap items-center justify-between gap-6 px-6 py-24 md:py-40">
-          <Reveal>
-            <Label>Past speakers and talks</Label>
-          </Reveal>
-          <Reveal>
-            <SquareLink href="/speakers" variant="secondary">
-              Watch the talks
-            </SquareLink>
-          </Reveal>
-        </section>
+        {/* Past speakers: a contact sheet of recent faces and a way into the archive. */}
+        {archive.length > 0 && (
+          <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-10 md:col-span-5">
+              <Reveal>
+                <Label>Past speakers</Label>
+              </Reveal>
+              <Reveal as="h2" className="text-display font-medium text-balance">
+                {`${archive.length} speakers. ${talkCount} talks. ${editionCount} ${editionCount === 1 ? "stage" : "stages"}.`}
+              </Reveal>
+              <Reveal>
+                <SquareLink href="/speakers" variant="secondary">
+                  Watch the talks
+                </SquareLink>
+              </Reveal>
+            </div>
+            {portraits.length > 0 && (
+              <Reveal as="ul" className="col-span-4 grid grid-cols-4 gap-1 self-end md:col-span-7">
+                {portraits.map((speaker) => (
+                  <li key={speaker.slug}>
+                    <figure>
+                      <PixelPhoto
+                        image={{ ...speaker.headshot!, alt: speaker.headshot!.alt || `Portrait of ${speaker.name}` }}
+                        sizes="(min-width: 768px) 15vw, 25vw"
+                        className="aspect-square w-full"
+                      />
+                      <figcaption className="mt-2 hidden truncate text-small text-muted md:block">
+                        {speaker.name}
+                      </figcaption>
+                    </figure>
+                  </li>
+                ))}
+              </Reveal>
+            )}
+          </section>
+        )}
+
+        {logoPartners.length > 0 && (
+          <section className="flex flex-col gap-10 px-6 pb-24 md:pb-40">
+            <Reveal>
+              <Label>Partners</Label>
+            </Reveal>
+            <Reveal>
+              <PartnerLogos partners={logoPartners} />
+            </Reveal>
+          </section>
+        )}
       </main>
 
       <SiteFooter />
