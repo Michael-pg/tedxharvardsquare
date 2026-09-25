@@ -347,3 +347,23 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
   still open (duotone, B&W or colour, optionally colour on hover).
 - New reference: bymonolog.com (blocked from the sandbox; needs screenshots).
 - Sketch: `deliverables/hero-sketch-v5.html` (artifact version 5).
+
+## 12. Owner feedback, round 5 (2026-09-25)
+
+- **Hero is text-first: no photos.** The headline hugs the top-left. Dots drip
+  from the bottom edges of its letters (sampled from the rendered glyphs), scatter
+  grey as they fall (entropy), and land in a red halftone bed at the bottom that
+  builds up and slowly fades (order). The pointer catches falling dots and holds
+  them red and on the grid. The screen stays mostly black.
+- **Below the hero the field is sparser**, still going from grey to red with depth
+  and ending at the footer glow.
+- **Photos: B&W.** Hover fades them slowly to slight colour, with a red pixel
+  trail following the pointer (sampled from the photo, square pixels, decaying).
+- **Sections lean Flagship; the home page represents TEDxHarvardSquare as a
+  continuing org.** Order: hero → motto → photo band → Edition 04 (theme, spec,
+  early access) → the editions (04/03/02 as rows) → a small "Beyond the stage"
+  (hosted and co-hosted events) → footer. The Flagship page carries the detail.
+- **Open:** House is on the back burner. This conflicts with CLAUDE.md and
+  DESIGN.md ("equal weight", "House, never Community"), so update both once the
+  owner confirms the naming ("Beyond the stage" vs House).
+- Sketch: `deliverables/hero-sketch-v6.html` (artifact version 6).
