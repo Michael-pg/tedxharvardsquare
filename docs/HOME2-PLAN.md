@@ -307,3 +307,18 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
   pear.no (too much scroll, but good ideas), omegayeast.com.
 - Sketches (not committed): `deliverables/hero-sketch.html` (A vs B),
   `deliverables/hero-sketch-v2.html` (this direction).
+
+## 9. Owner feedback, round 2 (2026-09-25)
+
+- **Headline: "Against entropy."**
+- **No orb.** The field is the footer's drifting halftone bands with plenty of
+  plain black. Entropy is spatial: open space is grey, scattered, drifting;
+  next to type (and under the pointer) dots snap to the grid and turn red.
+- **No scroll lock, no literal photo story.** The motto becomes four boxed
+  statements staggered across the 12-column grid, plus a short paragraph each.
+  The field flows around the boxes, and scrolling nudges it along. Type
+  reveals once on scroll.
+- One fixed full-viewport canvas behind the page, with `[data-box]` elements
+  as keep-out zones, replaces per-section canvases.
+- Sketch: `deliverables/hero-sketch-v3.html`, also published as the private
+  "TEDxHarvardSquare Hero Sketch" artifact (version 2).
