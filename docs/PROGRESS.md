@@ -22,7 +22,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 
 | Area | State |
 | --- | --- |
-| Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
+| Pages | Home (3D hero with real photos, topics), `/home2` (new dot-system home, preview only, PR #13), `/speakers`, `/faq`, `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
 | Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
 
@@ -56,7 +56,8 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-24 | Year-round programme is called **House**, never "Community". |
 | 2026-09-24 | **Figtree** is the site typeface; **Helvetica Neue** is for the logo only. |
 | 2026-09-24 | Only the 3 live Webflow sponsors migrated; archived sponsors/FAQs left behind. |
-| 2026-09-24 | Edition 4 (2027) is in **Boston**. Edition 3: Feb 21 2026, Arrow Street Arts. Edition 2: April 2025. |
+| 2026-09-24 | The 2027 edition is in **Boston**. Feb 21 2026 edition: Arrow Street Arts. The earlier edition: April 2025. |
+| 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Owner corrected the `number` fields in Studio the same day. |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
 
 ---
@@ -65,11 +66,11 @@ user-wide in `~/.claude/skills/`.
 
 - Logo: no SVG exists; the Webflow PNGs (`public/brand/`) stand in. Swap for SVG if one is ever made.
 - TEDx rules vs. the Partner **"Presenting"** tier.
-- Edition 4 venue and exact date; Edition 2 date and theme; Edition 3 theme.
+- Edition 3 (2027) venue and exact date; Edition 1 date and theme; Edition 2 theme.
 - Job titles for the ten 2025 speakers (blank in Webflow too).
 - FAQ "How do I get there?" still describes Arrow Street Arts (2026 venue).
 - Arrow Street Arts white logo was inferred from Webflow's "Mask group-2" — confirm in Studio.
-- Webflow `/schedule` page (Edition 3 run-of-show): archive or drop?
+- Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
 
 ---
 
@@ -145,3 +146,49 @@ before the domain switch. Also `/code-of-conduct` and `/accessibility`
 business days (owner confirmed). Volunteer and
 Apply to speak stay out of the footer for now. Follow-up: move policy copy into
 Sanity if organizers need to edit it.
+
+### 2026-09-25 — home 2 brainstorm
+
+Owner wants the footer's red halftone dots to become the site-wide language
+("SaaS/code vibe for an ideas conference"), with a left-aligned hero, tried out
+on a separate `/home2`. Plan and open questions in `docs/HOME2-PLAN.md`. No
+code yet; first step is extracting the footer's dot renderer into a shared
+engine.
+
+### 2026-09-25 — home 2 (dot system), built
+
+Seven rounds of sketches with the owner (`docs/HOME2-PLAN.md` §8–13), then built
+at `/home2` (noindex, not linked): a full-width one-line headline, one fixed dot
+field for the page (an ordered red mass whose edge frays into grey dust, growing
+toward the footer), a scroll-lit motto, a sideways-drifting B&W photo strip with
+a red pixel hover trail, the dot field drawing the "04" edition number, and past
+speakers as a hover-portrait name index. New type tokens: `text-mega`,
+`text-statement`, `text-numeral`. Content here can't reach Sanity, so it was
+checked against local mock content, lint and typecheck only; check the Vercel
+preview with real photos. Open: House naming/weight (conflicts with CLAUDE.md and
+DESIGN.md), nav buttons to square, mono labels, and replacing `/`.
+
+### 2026-09-25 — home 2 QA and wrap-up
+
+PR #13 (draft) carries `/home2`; the Vercel preview built green with real Sanity
+content. QA fixes: the speaker name list was one unbreakable line (JSX drops
+whitespace between elements), which caused a huge horizontal scroll. Names now
+wrap, and are smaller on phones. Checked for no horizontal overflow at 375,
+1280 and 1920px, and no console errors (against local mock content, since
+Sanity is unreachable from the cloud sandbox).
+
+**Edition numbers corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026,
+3 = Against Entropy (2027). Docs are updated; **the three `number` fields in
+Studio still say 2/3/4 and must be edited** (the slugs `edition-2-2025`,
+`edition-3-2026`, `edition-4-against-entropy` also carry the old numbers;
+nothing links to them yet, so renaming is optional).
+
+**Next up for home 2:** review the preview with real photos; decide House vs
+"Beyond the stage"; square-button nav; mono labels or not; then swap `/home2`
+into `/` and delete the old hero and `pixel-blob` scene.
+
+Follow-up: the speaker name index is removed from `/home2` at the owner's request
+(don't showcase past speakers on home); a single "Watch the talks" link to
+`/speakers` replaces it.
+
+The owner has since corrected the edition `number` fields in Studio (1/2/3).

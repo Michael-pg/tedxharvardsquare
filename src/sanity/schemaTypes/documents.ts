@@ -199,7 +199,7 @@ export const edition = defineType({
       name: "number",
       type: "number",
       description:
-        'Sequential number as the org counts them — "Edition 4". The current edition\'s number and theme appear in red above the home page headline.',
+        'Sequential number as the org counts them — "Edition 3". The current edition\'s number and theme appear in red above the home page headline.',
       validation: (r) => r.required().integer().positive(),
     }),
     defineField({
