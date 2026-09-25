@@ -57,7 +57,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-24 | **Figtree** is the site typeface; **Helvetica Neue** is for the logo only. |
 | 2026-09-24 | Only the 3 live Webflow sponsors migrated; archived sponsors/FAQs left behind. |
 | 2026-09-24 | The 2027 edition is in **Boston**. Feb 21 2026 edition: Arrow Street Arts. The earlier edition: April 2025. |
-| 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Studio still has 2/3/4 — fix the `number` fields. |
+| 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Owner corrected the `number` fields in Studio the same day. |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
 
 ---
@@ -190,3 +190,5 @@ into `/` and delete the old hero and `pixel-blob` scene.
 Follow-up: the speaker name index is removed from `/home2` at the owner's request
 (don't showcase past speakers on home); a single "Watch the talks" link to
 `/speakers` replaces it.
+
+The owner has since corrected the edition `number` fields in Studio (1/2/3).

@@ -92,8 +92,8 @@ House events, team, and past-edition themes are still empty, awaiting real
 content from the organizers. Do not fill them with plausible-looking fakes;
 placeholder people survive to production. **Edition numbering (owner, 2026-09-25):**
 Edition 1 = April 2025, Edition 2 = Feb 21 2026 (Arrow Street Arts), Edition 3 =
-"Against Entropy" (Boston, 2027). The import stored them as 2/3/4; the `number`
-fields in Studio must be corrected. Still unconfirmed: Edition 3's venue
+"Against Entropy" (Boston, 2027). The import stored them as 2/3/4; the owner
+corrected the `number` fields in Studio (the slugs still carry the old numbers). Still unconfirmed: Edition 3's venue
 and exact date, Edition 1's date and theme, and job titles for the 2025 speakers.
 
 Published content revalidates every 60 seconds, so Studio edits go live
