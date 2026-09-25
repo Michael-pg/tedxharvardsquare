@@ -75,6 +75,21 @@ export const siteSettings = defineType({
       type: "string",
       validation: (r) => r.required().email(),
     }),
+    defineField({
+      name: "menuImages",
+      title: "Menu images",
+      type: "object",
+      description:
+        "Photographs for the full-screen menu. The general image shows when the menu opens; each page's image replaces it while that link is hovered. Empty slots fall back to the home-page hero photos.",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({ name: "general", title: "General", type: "accessibleImage" }),
+        defineField({ name: "flagship", title: "Flagship", type: "accessibleImage" }),
+        defineField({ name: "house", title: "House", type: "accessibleImage" }),
+        defineField({ name: "speakers", title: "Speakers", type: "accessibleImage" }),
+        defineField({ name: "sponsor", title: "Sponsor", type: "accessibleImage" }),
+      ],
+    }),
   ],
   preview: { prepare: () => ({ title: "Site settings" }) },
 });

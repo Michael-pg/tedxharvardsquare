@@ -1,5 +1,5 @@
 import { Hero } from "@/components/sections/hero";
-import { Nav } from "@/components/site/nav";
+import { SiteNav } from "@/components/site/site-nav";
 import { Reveal } from "@/components/motion/reveal";
 import { heroImages as placeholderHeroImages } from "@/content/hero-images";
 import { getCurrentEdition, getHomePage, getSiteSettings, getTopics } from "@/content";
@@ -17,7 +17,7 @@ export default async function Home() {
 
   return (
     <>
-      <Nav contactEmail={site.contactEmail} />
+      <SiteNav />
       <main>
         <Hero
           tagline={site.tagline}
@@ -35,7 +35,7 @@ export default async function Home() {
           the hero are deliberately unstyled beyond the type ramp until their
           content and treatment are decided.
         */}
-        <section className="relative z-10 border-t border-rule bg-background px-6 py-24 md:px-12 md:py-40">
+        <section className="relative z-10 border-t border-rule bg-background px-6 py-24 md:py-40">
           <Reveal as="h2" className="mb-12 text-label text-muted uppercase">
             What we program against
           </Reveal>
@@ -52,7 +52,7 @@ export default async function Home() {
           </Reveal>
         </section>
 
-        <footer className="relative z-10 border-t border-rule bg-background px-6 py-12 md:px-12">
+        <footer className="relative z-10 border-t border-rule bg-background px-6 py-12">
           <p className="text-small text-muted">Scaffolding build · {site.name}</p>
         </footer>
       </main>

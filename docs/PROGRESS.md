@@ -24,7 +24,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 | --- | --- |
 | Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
-| Nav | Flagship · Speakers · House · About (+ menu). Only Speakers/FAQ exist yet |
+| Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
 
 ### Infrastructure
 
@@ -112,3 +112,12 @@ Vercel project. Imported Webflow CMS into Sanity. Wrote `DESIGN.md` and this log
 **Token notes:** the costliest things were screenshots, reading whole web
 pages, and very large tool results (the Webflow guide). One task per chat;
 say "skip screenshots" when visual checks aren't needed.
+
+### 2026-09-25 — header and menu
+
+Split the header: larger lockup on the left (swaps white/black over
+`data-nav-theme="light"` sections), glass pill on the right. New full-screen
+menu with a wipe-down entrance and per-link hover photos. Dropped Past
+Editions, Volunteer, Apply to Speak. Menu photos are a new optional Studio
+field (Site settings → Menu images); until filled they borrow the home hero
+photos.

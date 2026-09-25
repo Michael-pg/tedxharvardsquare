@@ -109,7 +109,7 @@ for the logo only.
 
 ## 5. Layout & spacing
 
-- **Gutters:** `px-6 md:px-12` on every page.
+- **Gutters:** `px-6` (24px) on every page, at every width. The header uses the same gutter so the lockup lines up with page content.
 - **Inner page header:** `pt-40 md:pt-56`, eyebrow → `h1` → lead, then
   `mb-20 md:mb-28` before content.
 - **Sections:** `py-24 md:py-40`, separated by `border-t border-rule`.
@@ -158,7 +158,7 @@ for the logo only.
 
 | Component | Where | Notes |
 | --- | --- | --- |
-| `Nav` | `components/site/nav.tsx` | Floating glass bar; four primary items. |
+| `Nav` | `components/site/nav.tsx` (render via `SiteNav`) | Lockup left, glass pill right (Flagship · House · Speakers + menu). Lockup and pill turn dark over sections tagged `data-nav-theme="light"`. Full-screen menu wipes down: photo left (per-link on hover, set in Studio → Site settings → Menu images), large key pages, small secondary pages. |
 | `GlassButton` | `components/ui/glass-button.tsx` | Only over the WebGL layer. |
 | `Reveal` / `SplitReveal` | `components/motion/` | Default entrances. |
 | `SpeakerArchive` | `components/speakers/` | Year tabs, portrait cards, detail dialog with YouTube embed, `#slug` deep links. |
@@ -171,7 +171,8 @@ Shared patterns:
 - **Inline links:** `underline decoration-rule underline-offset-4`, decoration
   turns `brand` on hover.
 - **Dialogs:** native `<dialog>`, `ink-900` panel, `border-rule`, close on
-  button, Escape, and backdrop click.
+  button, Escape, and backdrop click. Below `md` they become a full-screen
+  sheet that slides up, with the close button fixed top-right.
 
 ---
 
