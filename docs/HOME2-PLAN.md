@@ -334,3 +334,16 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
 - The motto stays together as one large statement (lines indented along the grid),
   with no per-line explanations. One short coda line beside it.
 - Sketch: `deliverables/hero-sketch-v4.html` (artifact version 3).
+
+## 11. Owner feedback, round 4 (2026-09-25)
+
+- Motto: all lines flush left, no stepped indents.
+- **Dot symbolism: reading pushes back against entropy.** The deeper into the
+  page, the more of the field is red and gridded and the slower the grey drift,
+  ending in the footer glow. A small "Entropy 1.00 → 0.00" readout tracks it.
+- **Photos float through the whole page**, as in the original hero, with parallax
+  at different speeds: two in the hero, a wide band, one by the motto, one per
+  programme (six slots, matching the six hero photos in Studio). The treatment is
+  still open (duotone, B&W or colour, optionally colour on hover).
+- New reference: bymonolog.com (blocked from the sandbox; needs screenshots).
+- Sketch: `deliverables/hero-sketch-v5.html` (artifact version 5).
