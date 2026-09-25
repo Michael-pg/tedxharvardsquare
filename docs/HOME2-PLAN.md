@@ -367,3 +367,18 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
   DESIGN.md ("equal weight", "House, never Community"), so update both once the
   owner confirms the naming ("Beyond the stage" vs House).
 - Sketch: `deliverables/hero-sketch-v6.html` (artifact version 6).
+
+## 13. Owner feedback, round 6 (2026-09-25)
+
+- Dots coming out of the type felt dated, and the hard line at the bottom of the
+  hero didn't work. Both are gone.
+- **One field for the whole page (no seam).** It is a single soft halftone mass
+  rising from the lower right, like the footer glow, with its gradient made only of
+  dot size. The ordered red core frays at the edge: dots slip off the grid, go grey
+  and drift outward. The pointer pulls strays back. Scrolling grows the mass and
+  widens it into the footer glow. Dots never interact with the type beyond a soft
+  clearing.
+- **Headline on one line across the full grid width** ("Against entropy"), fitted
+  to the width; it stacks on phones. The red period is out: either no period or a
+  white one (owner deciding).
+- Sketch: `deliverables/hero-sketch-v7.html` (artifact version 7).
