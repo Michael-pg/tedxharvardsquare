@@ -6,9 +6,8 @@ import { DotField } from "@/components/home2/dot-field";
 import { FitHeadline } from "@/components/home2/fit-headline";
 import { Motto } from "@/components/home2/motto";
 import { PhotoStrip } from "@/components/home2/photo-strip";
-import { SpeakerIndex } from "@/components/home2/speaker-index";
 import { SquareLink } from "@/components/home2/square-link";
-import { getCurrentEdition, getHomePage, getSiteSettings, getSpeakerArchive } from "@/content";
+import { getCurrentEdition, getHomePage, getSiteSettings } from "@/content";
 
 /**
  * A second home page, built alongside the current one so the dot-system
@@ -44,11 +43,10 @@ function mottoLines(missionStatement: string) {
 }
 
 export default async function Home2() {
-  const [site, home, edition, speakers] = await Promise.all([
+  const [site, home, edition] = await Promise.all([
     getSiteSettings(),
     getHomePage(),
     getCurrentEdition(),
-    getSpeakerArchive(),
   ]);
 
   const headline = edition?.theme ?? site.tagline;
@@ -58,7 +56,6 @@ export default async function Home2() {
         .join(" — ")
     : undefined;
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
-  const editionYears = new Set(speakers.map((s) => s.editionYear).filter(Boolean));
 
   return (
     <>
@@ -143,22 +140,17 @@ export default async function Home2() {
           </section>
         )}
 
-        {/* A nod to everyone who has stood on the stage. */}
-        {speakers.length > 0 && (
-          <section className="px-6 py-24 md:py-40">
-            <Reveal className="mb-10 flex flex-wrap items-baseline justify-between gap-4">
-              <Label>
-                {`On our stage — ${speakers.length} speakers across ${editionYears.size} editions`}
-              </Label>
-            </Reveal>
-            <SpeakerIndex speakers={speakers} />
-            <Reveal className="mt-14">
-              <SquareLink href="/speakers" variant="secondary">
-                All speakers and talks
-              </SquareLink>
-            </Reveal>
-          </section>
-        )}
+        {/* Past editions get a pointer, not a showcase: the page leads with what is next. */}
+        <section className="flex flex-wrap items-center justify-between gap-6 px-6 py-24 md:py-40">
+          <Reveal>
+            <Label>Past speakers and talks</Label>
+          </Reveal>
+          <Reveal>
+            <SquareLink href="/speakers" variant="secondary">
+              Watch the talks
+            </SquareLink>
+          </Reveal>
+        </section>
       </main>
 
       <SiteFooter />

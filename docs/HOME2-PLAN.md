@@ -411,3 +411,6 @@ reduced motion.
 Not in this pass: House or "Beyond the stage" (on hold), square-button nav
 (the page still uses the glass-pill `SiteNav`), and a mono face for labels
 (labels stay Figtree).
+
+**Update:** "On our stage" (the speaker name index) was removed. Home now links
+to `/speakers` with one button instead of showcasing past speakers.

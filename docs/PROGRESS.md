@@ -186,3 +186,7 @@ nothing links to them yet, so renaming is optional).
 **Next up for home 2:** review the preview with real photos; decide House vs
 "Beyond the stage"; square-button nav; mono labels or not; then swap `/home2`
 into `/` and delete the old hero and `pixel-blob` scene.
+
+Follow-up: the speaker name index is removed from `/home2` at the owner's request
+(don't showcase past speakers on home); a single "Watch the talks" link to
+`/speakers` replaces it.
