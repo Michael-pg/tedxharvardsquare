@@ -153,3 +153,16 @@ Owner wants the footer's red halftone dots to become the site-wide language
 on a separate `/home2`. Plan and open questions in `docs/HOME2-PLAN.md`. No
 code yet; first step is extracting the footer's dot renderer into a shared
 engine.
+
+### 2026-09-25 — home 2 (dot system), built
+
+Seven rounds of sketches with the owner (`docs/HOME2-PLAN.md` §8–13), then built
+at `/home2` (noindex, not linked): a full-width one-line headline, one fixed dot
+field for the page (an ordered red mass whose edge frays into grey dust, growing
+toward the footer), a scroll-lit motto, a sideways-drifting B&W photo strip with
+a red pixel hover trail, the dot field drawing the "04" edition number, and past
+speakers as a hover-portrait name index. New type tokens: `text-mega`,
+`text-statement`, `text-numeral`. Content here can't reach Sanity, so it was
+checked against local mock content, lint and typecheck only; check the Vercel
+preview with real photos. Open: House naming/weight (conflicts with CLAUDE.md and
+DESIGN.md), nav buttons to square, mono labels, and replacing `/`.

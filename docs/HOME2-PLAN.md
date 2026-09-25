@@ -382,3 +382,32 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
   to the width; it stacks on phones. The red period is out: either no period or a
   white one (owner deciding).
 - Sketch: `deliverables/hero-sketch-v7.html` (artifact version 7).
+
+## 14. Built: `/home2` (2026-09-25)
+
+Owner approved round 7 (no period) with changes: no invented coda under the
+motto; motto one colour, lit word by word on scroll; images and the Flagship
+section rethought; past editions replaced by a nod to past speakers.
+
+What is on the page (`src/app/home2/page.tsx`, components in `src/components/home2/`):
+
+1. **Hero:** the current edition's theme on one line, fitted to the grid width
+   (`FitHeadline`); the edition label and theme statement; square buttons.
+2. **Motto:** the first sentence of the Studio mission statement, split at its
+   clauses. Words go from dim to lit as it scrolls (scrubbed, not pinned) (`Motto`).
+3. **Photo strip:** the Studio home photos in one row that drifts sideways with the
+   scroll. B&W, with slow partial colour on hover and a red pixel trail (`PhotoStrip`,
+   `PixelPhoto`).
+4. **Flagship, Edition 04:** theme, when and where, early access. The dot field
+   draws the edition number itself as the section arrives (`data-dot-glyph`).
+5. **On our stage:** every past Flagship speaker's name in large type, each
+   linking to the archive, with the portrait following the pointer (`SpeakerIndex`).
+6. **Footer:** unchanged. The page field fades out above it.
+
+`DotField` is one fixed 2D canvas for the whole page. It uses the
+`data-dot-clear` and `data-dot-glyph` attributes, and draws still frames under
+reduced motion.
+
+Not in this pass: House or "Beyond the stage" (on hold), square-button nav
+(the page still uses the glass-pill `SiteNav`), and a mono face for labels
+(labels stay Figtree).

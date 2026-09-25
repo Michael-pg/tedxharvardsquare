@@ -41,6 +41,23 @@
   --text-hero--line-height: 0.92;
   --text-hero--letter-spacing: -0.035em;
 
+  /* Home 2: a headline set on one line across the full grid. The size here is
+     the no-JS fallback; `FitHeadline` scales it to the exact grid width. */
+  --text-mega: clamp(4.5rem, 12vw, 18rem);
+  --text-mega--line-height: 0.9;
+  --text-mega--letter-spacing: -0.055em;
+
+  /* Home 2: large running statements, e.g. the motto. */
+  --text-statement: clamp(2.75rem, 7.2vw, 8.5rem);
+  --text-statement--line-height: 0.95;
+  --text-statement--letter-spacing: -0.045em;
+
+  /* Home 2: the edition number the dot field draws. Never rendered as visible
+     text — the field reads this size to lay out the dots. */
+  --text-numeral: clamp(14rem, 34vw, 38rem);
+  --text-numeral--line-height: 0.8;
+  --text-numeral--letter-spacing: -0.06em;
+
   --text-display: clamp(2.25rem, 6vw, 4.5rem);
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.03em;
