@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { barNav, menuPrimary, menuSecondary } from "@/content/navigation";
 import type { MenuImageKey, MenuImages } from "@/content/types";
 import { cn } from "@/lib/utils";
+import { FooterGlow } from "./footer-glow";
 
 type Tone = "dark" | "light";
 type ImageKey = MenuImageKey | "general";
@@ -27,9 +28,10 @@ const CLIP_TOP = "inset(0% 0% 100% 0%)";
  * what sits behind it. Sections opt in with `data-nav-theme="light"`; anything
  * untagged is treated as dark, which is the whole site today.
  *
- * The menu is a full-screen panel that wipes down from above: a photograph on
- * the left (swapped per link on hover), large key pages and small secondary
- * pages on the right.
+ * The menu is a full-screen panel that wipes down from above: the key pages as
+ * ruled rows, the secondary pages beneath, and the footer's red halftone
+ * rising from the bottom edge. From md up a photograph fills the left column,
+ * swapped per link on hover; phones skip it and give the space to the links.
  */
 export function Nav({
   contactEmail,
@@ -356,14 +358,12 @@ export function Nav({
         aria-label="Site menu"
         inert={!open}
         tabIndex={-1}
-        className="invisible fixed inset-0 z-40 bg-ink-950 outline-none"
+        className="invisible fixed inset-0 z-40 overflow-y-auto bg-ink-950 outline-none"
       >
-        <div className="flex h-full flex-col gap-10 px-6 pt-28 pb-10 md:grid md:grid-cols-2 md:gap-12 md:pt-36 md:pb-16 lg:gap-24">
-          {/* A short band on phones, the full left column from md up. */}
-          <div
-            ref={media}
-            className="relative aspect-video shrink-0 overflow-hidden bg-ink-900 md:aspect-auto"
-          >
+        <FooterGlow active={open} className="absolute inset-x-0 bottom-0 h-1/2" />
+        <div className="relative flex min-h-full flex-col px-6 pt-28 pb-10 md:grid md:grid-cols-2 md:gap-12 md:pt-36 md:pb-16 lg:gap-24">
+          {/* The full left column from md up; phones give the space to the links. */}
+          <div ref={media} className="relative hidden overflow-hidden bg-ink-900 md:block">
             {imageKeys.map((key) => {
               const image = menuImages[key]!;
               return (
@@ -386,40 +386,45 @@ export function Nav({
           </div>
 
           <div className="flex flex-col md:justify-center">
-            <ul onMouseLeave={() => setActive(null)}>
+            <ul onMouseLeave={() => setActive(null)} className="border-t border-rule">
               {menuPrimary.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="border-b border-rule">
                   <Link
                     href={item.href}
                     onClick={close}
                     onMouseEnter={() => setActive(item.image)}
                     onFocus={() => setActive(item.image)}
                     onBlur={() => setActive(null)}
-                    className="block overflow-hidden pb-2"
+                    className="group block overflow-hidden"
                   >
                     <span
                       data-menu-line
                       className={cn(
-                        "block text-display font-medium transition-colors duration-300",
+                        "flex items-center justify-between gap-6 py-3 text-display font-medium transition-colors duration-300 md:py-4",
                         active === null && "text-ink-200",
                         active === item.image && "text-foreground",
                         active !== null && active !== item.image && "text-muted",
                       )}
                     >
                       {item.label}
+                      <ArrowRight
+                        aria-hidden="true"
+                        strokeWidth={1.5}
+                        className="size-6 shrink-0 text-muted transition-[color,transform] duration-300 ease-out-quart group-hover:translate-x-1 group-hover:text-brand md:size-8"
+                      />
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
 
-            <ul className="mt-12 flex flex-wrap gap-x-10 gap-y-4 md:mt-16">
+            <ul className="mt-8 grid grid-cols-3 md:mt-10">
               {secondary.map((item) => (
                 <li key={item.href} data-menu-minor>
                   <Link
                     href={item.href}
                     onClick={close}
-                    className="text-heading font-medium text-muted transition-colors duration-200 hover:text-foreground"
+                    className="block py-2 text-heading font-medium text-muted transition-colors duration-200 hover:text-foreground"
                   >
                     {item.label}
                   </Link>

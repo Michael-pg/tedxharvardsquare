@@ -4,7 +4,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 
 /**
- * Hard-edged square button for the dot-system pages. Primary is solid white
+ * Hard-edged square button, the site's button shape. Primary is solid white
  * and turns TEDx red on hover; secondary is an outline. External links open in
  * a new tab and point up-right.
  */

@@ -222,3 +222,11 @@ footer's rounded button.
 Owner didn't like speaker portraits on home (read as the next lineup). Replaced
 with "Watch past talks": four recorded talks as rows (title, speaker, year,
 small B&W thumbnail), videos first, linking out to the video or `/speakers`.
+
+Menu and footer squared (PR #14). Menu: key pages are ruled full-width rows
+with an arrow (red on hover); the photo is desktop-only (phones gave it a
+cramped band); the footer's red halftone (`FooterGlow`, now with `className`
+and `active` props, paused while the menu is closed) rises from the panel's
+bottom edge. Footer: "Stay in the room." is the heading (no eyebrow), buttons
+are `SquareLink` (moved to `src/components/ui/`), and each column hangs from a
+hairline rule with a plain small heading. Glow animation unchanged.

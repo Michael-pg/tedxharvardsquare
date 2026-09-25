@@ -8,7 +8,7 @@ import { Motto } from "@/components/home2/motto";
 import { PartnerLogos } from "@/components/home2/partner-logos";
 import { PhotoStrip } from "@/components/home2/photo-strip";
 import { PastTalks } from "@/components/home2/past-talks";
-import { SquareLink } from "@/components/home2/square-link";
+import { SquareLink } from "@/components/ui/square-link";
 import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
 
 /**
