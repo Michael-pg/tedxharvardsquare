@@ -143,3 +143,57 @@ body {
     transform: none !important;
   }
 }
+
+/* ==========================================================================
+   Prose — long-form text such as the legal pages. Sections are `<section>`s
+   with an `h2`; everything uses ramp tokens.
+   ========================================================================== */
+
+@layer components {
+  .prose {
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    color: var(--color-ink-200);
+  }
+  .prose > section + section {
+    margin-top: --spacing(16);
+  }
+  .prose h2 {
+    margin-bottom: --spacing(5);
+    font-size: var(--text-heading);
+    line-height: var(--text-heading--line-height);
+    letter-spacing: var(--text-heading--letter-spacing);
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-wrap: balance;
+  }
+  .prose p + p,
+  .prose p + ul,
+  .prose ul + p {
+    margin-top: --spacing(4);
+  }
+  .prose ul {
+    list-style: disc;
+    padding-left: --spacing(5);
+  }
+  .prose li + li {
+    margin-top: --spacing(2);
+  }
+  .prose li::marker {
+    color: var(--color-ink-500);
+  }
+  .prose strong {
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+  .prose a {
+    color: var(--color-foreground);
+    text-decoration: underline;
+    text-decoration-color: var(--color-rule);
+    text-underline-offset: 4px;
+    transition: text-decoration-color var(--duration-fast);
+  }
+  .prose a:hover {
+    text-decoration-color: var(--color-brand);
+  }
+}

@@ -22,7 +22,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 
 | Area | State |
 | --- | --- |
-| Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/studio` |
+| Pages | Home (3D hero with real photos, topics), `/speakers`, `/faq`, `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
 | Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
 
@@ -87,7 +87,6 @@ user-wide in `~/.claude/skills/`.
 ## Next up (suggested order)
 
 1. Fix the red-text contrast issue (small, visible to every visitor).
-2. Footer: newsletter (Substack), contact, Instagram/LinkedIn — data already in Sanity.
 3. **Flagship page** — build it as the reference-quality "golden page";
    everything after reuses its parts.
 4. House page, Sponsor page (sponsor pitch: audience, packages, past partners).
@@ -131,3 +130,18 @@ data changed. CORS already allows `https://tedxharvardsquare.vercel.app` with
 credentials, so invited editors can sign in at `/studio`. Invite them at
 sanity.io/manage → Members with the Editor role. Follow-up: Presentation tool
 (click-to-edit on the live page) needs draft mode + stega in `@/content`.
+
+### 2026-09-25 — footer and legal pages
+
+Site footer on every page: sign-up CTA (Mailchimp early-access list +
+Substack), link columns, live Cambridge clock, back to top, the TEDx licence
+line, and a full-width lockup over a red halftone glow (2D canvas, not WebGL).
+New Studio field **Early-access list link** (Contact & social); set to the
+2026 Mailchimp list. Trimmed white lockup added as
+`public/brand/tedx-harvard-square-white-trim.png`. Generic `/privacy` and
+`/terms` pages (static, in code) — have someone with legal knowledge review
+before the domain switch. Also `/code-of-conduct` and `/accessibility`
+(footer column "Policies"). Accessibility page promises a reply within five
+business days (owner confirmed). Volunteer and
+Apply to speak stay out of the footer for now. Follow-up: move policy copy into
+Sanity if organizers need to edit it.
