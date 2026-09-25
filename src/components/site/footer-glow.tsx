@@ -80,19 +80,32 @@ export function FooterGlow() {
           Math.sin(x * 0.0021 + t * 0.22) * 0.5 +
           Math.sin(x * 0.0053 - t * 0.31) * 0.32 +
           Math.sin(x * 0.0117 + t * 0.47) * 0.18;
-        // Height of the horizon, as a fraction of the canvas from the bottom.
-        const horizon = 0.46 + wave * 0.2;
+        // Height of the horizon in pixels from the bottom. It scales with
+        // width, not canvas height, so the body of the glow sits behind the
+        // lower half of the lockup (whose height also tracks width) at every
+        // breakpoint — and never behind the red TEDx mark.
+        const horizon = 45 + width * 0.13 + wave * (20 + width * 0.07);
 
         for (let row = 0; row < rows; row++) {
           // Offset alternate rows by half a cell — the classic halftone screen.
           const px = x + (row % 2 ? CELL / 2 : 0);
           const py = row * CELL;
           const fromBottom = 1 - py / height;
+          const fromBottomPx = height - py;
 
-          let intensity = smoothstep(horizon + 0.22, horizon - 0.3, fromBottom);
-          // Fine texture so the body of the glow breathes instead of sitting flat.
-          intensity *=
-            0.78 + 0.22 * Math.sin(px * 0.018 + py * 0.011 + t * 0.9) * Math.sin(py * 0.024 - t * 0.6);
+          const texture =
+            Math.sin(px * 0.018 + py * 0.011 + t * 0.9) * Math.sin(py * 0.024 - t * 0.6);
+          // The body of the glow, with fine texture so it breathes instead of
+          // sitting flat.
+          let intensity =
+            smoothstep(horizon + 40 + width * 0.1, horizon - 40 - width * 0.12, fromBottomPx) *
+            (0.78 + 0.22 * texture);
+          // A faint, broken tail of tiny dots that reaches up toward the links.
+          // `max` rather than `+`, so the tail never brightens the body.
+          intensity = Math.max(
+            intensity,
+            0.32 * smoothstep(0.98, 0.35, fromBottom) * Math.max(0, 0.4 + 0.6 * texture),
+          );
 
           if (pointer.strength > 0.01) {
             const dx = px - pointer.x;
@@ -106,7 +119,7 @@ export function FooterGlow() {
           const radius = CELL * 0.46 * Math.pow(intensity, 0.85);
           // The hot core colour is reserved for the brightest peaks.
           const bucket =
-            intensity > 0.985
+            intensity > 0.99
               ? BUCKETS.length - 1
               : Math.min(BUCKETS.length - 2, Math.floor(intensity * (BUCKETS.length - 1)));
           const path = paths[bucket];
@@ -171,8 +184,8 @@ export function FooterGlow() {
     });
     intersection.observe(canvas);
 
-    // The canvas sits behind the footer's content, so listen on its parent.
-    const surface = canvas.parentElement;
+    // The canvas sits behind the footer's content, so listen on the footer.
+    const surface = canvas.closest("footer") ?? canvas.parentElement;
     if (!reducedMotion && surface) {
       surface.addEventListener("pointermove", onMove);
       surface.addEventListener("pointerleave", onLeave);
@@ -188,10 +201,13 @@ export function FooterGlow() {
   }, [reducedMotion]);
 
   return (
-    <canvas
-      ref={canvasRef}
+    // A canvas will not stretch between `top` and `bottom` the way a div does,
+    // so a wrapper takes the offsets and the canvas fills it.
+    <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 size-full"
-    />
+      className="pointer-events-none absolute inset-x-0 -top-40 bottom-0 md:-top-64"
+    >
+      <canvas ref={canvasRef} className="size-full" />
+    </div>
   );
 }

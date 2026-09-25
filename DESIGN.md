@@ -159,7 +159,7 @@ for the logo only.
 | Component | Where | Notes |
 | --- | --- | --- |
 | `Nav` | `components/site/nav.tsx` (render via `SiteNav`) | Lockup left, glass pill right (Flagship · House · Speakers + menu). Lockup and pill turn dark over sections tagged `data-nav-theme="light"`. Full-screen menu wipes down: photo left (per-link on hover, set in Studio → Site settings → Menu images), large key pages, small secondary pages. |
-| `SiteFooter` | `components/site/site-footer.tsx` | Sign-up CTA (early access + Substack), link columns, Cambridge clock / back to top / ©, the TEDx licence line (required wording), then the full-width lockup over `FooterGlow` — a 2D-canvas red halftone that rises from the bottom and swells under the pointer. Render on every page after `</main>`. |
+| `SiteFooter` | `components/site/site-footer.tsx` | One row: sign-up (early access + Substack) beside four link columns (Programs, Organization, Follow, Policies). Then Cambridge clock / back to top / ©, the TEDx licence line (required wording), and the lockup at 85% width over `FooterGlow` — a 2D-canvas red halftone that rises from the bottom, hints up toward the links, and swells under the pointer. No divider lines. Render on every page after `</main>`. |
 | `GlassButton` | `components/ui/glass-button.tsx` | Only over the WebGL layer. |
 | `Reveal` / `SplitReveal` | `components/motion/` | Default entrances. |
 | `SpeakerArchive` | `components/speakers/` | Year tabs, portrait cards, detail dialog with YouTube embed, `#slug` deep links. |
