@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SiteNav } from "@/components/site/site-nav";
+import { SiteFooter } from "@/components/site/site-footer";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { FaqAccordion } from "@/components/faq/faq-accordion";
@@ -47,6 +48,7 @@ export default async function FaqPage() {
           .
         </Reveal>
       </main>
+      <SiteFooter />
     </>
   );
 }

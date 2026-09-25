@@ -98,7 +98,7 @@ const houseEventFields = `
 const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
   name, tagline, description, missionStatement, url, locale,
   "social": coalesce(social[]{ label, href }, []),
-  newsletterUrl, contactEmail
+  newsletterUrl, earlyAccessUrl, contactEmail
 }`);
 
 export async function getSiteSettings(): Promise<SiteSettings> {

@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { SiteNav } from "@/components/site/site-nav";
+import { SiteFooter } from "@/components/site/site-footer";
 import { Reveal } from "@/components/motion/reveal";
 import { heroImages as placeholderHeroImages } from "@/content/hero-images";
 import { getCurrentEdition, getHomePage, getSiteSettings, getTopics } from "@/content";
@@ -51,11 +52,8 @@ export default async function Home() {
             ))}
           </Reveal>
         </section>
-
-        <footer className="relative z-10 border-t border-rule bg-background px-6 py-12">
-          <p className="text-small text-muted">Scaffolding build · {site.name}</p>
-        </footer>
       </main>
+      <SiteFooter />
     </>
   );
 }

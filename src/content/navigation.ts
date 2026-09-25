@@ -31,3 +31,32 @@ export const menuSecondary: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "FAQ", href: "/faq" },
 ];
+
+/** The footer's legal links. Both pages are static routes under `src/app`. */
+export const legalNav: NavItem[] = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+];
+
+/**
+ * The footer's internal link columns. Contact and the social links are added
+ * by the footer from site settings, so editors manage them in one place.
+ */
+export const footerNav: { title: string; links: NavItem[] }[] = [
+  {
+    title: "Programs",
+    links: [
+      { label: "Flagship", href: "/flagship" },
+      { label: "House", href: "/house" },
+      { label: "Speakers", href: "/speakers" },
+    ],
+  },
+  {
+    title: "Organization",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Sponsor", href: "/sponsor" },
+      { label: "FAQ", href: "/faq" },
+    ],
+  },
+];

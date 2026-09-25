@@ -164,6 +164,8 @@ export type SiteConfig = {
   locale: string;
   social: Link[];
   newsletterUrl?: string;
+  /** Sign-up list for first word on Flagship tickets. */
+  earlyAccessUrl?: string;
   contactEmail: string;
 };
 

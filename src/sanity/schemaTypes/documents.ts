@@ -114,7 +114,7 @@ export const siteSettings = defineType({
       type: "string",
       group: "contact",
       description:
-        'Where the "Contact" link in the menu and the email link on the FAQ page send messages.',
+        'Where the "Contact" links in the menu and footer, and the email link on the FAQ page, send messages.',
       validation: (r) => r.required().email(),
     }),
     defineField({
@@ -122,7 +122,8 @@ export const siteSettings = defineType({
       title: "Social links",
       type: "array",
       group: "contact",
-      description: "The org's social media profiles, in the order they should appear.",
+      description:
+        "The org's social media profiles, listed in the footer under Follow in this order.",
       of: [defineArrayMember({ type: "link" })],
     }),
     defineField({
@@ -130,7 +131,16 @@ export const siteSettings = defineType({
       title: "Newsletter sign-up link",
       type: "url",
       group: "contact",
-      description: "Where people go to subscribe to the newsletter.",
+      description:
+        'Where people go to subscribe to the newsletter. The footer\'s "Subscribe" button and its Substack link both point here.',
+    }),
+    defineField({
+      name: "earlyAccessUrl",
+      title: "Early-access list link",
+      type: "url",
+      group: "contact",
+      description:
+        'The footer\'s "Get early access" button — the sign-up list for first word on the next Flagship\'s tickets. Leave empty to hide the button.',
     }),
     defineField({
       name: "menuImages",
