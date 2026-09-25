@@ -171,7 +171,8 @@ Shared patterns:
 - **Inline links:** `underline decoration-rule underline-offset-4`, decoration
   turns `brand` on hover.
 - **Dialogs:** native `<dialog>`, `ink-900` panel, `border-rule`, close on
-  button, Escape, and backdrop click.
+  button, Escape, and backdrop click. Below `md` they become a full-screen
+  sheet that slides up, with the close button fixed top-right.
 
 ---
 

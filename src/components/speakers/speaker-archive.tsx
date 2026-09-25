@@ -90,10 +90,19 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
     if (!open || !element || element.open) return;
     element.showModal();
     if (!reducedMotion && panel.current) {
+      // Phones get a full-screen sheet that slides up; larger screens a panel
+      // that rises a little. The transform is cleared afterwards because it
+      // would otherwise pin the sheet's fixed close button to the panel.
+      const sheet = !window.matchMedia("(min-width: 768px)").matches;
       gsap.fromTo(
         panel.current,
-        { autoAlpha: 0, y: 32 },
-        { autoAlpha: 1, y: 0, duration: timing.duration.base, ease: timing.ease.expo },
+        sheet ? { yPercent: 100 } : { autoAlpha: 0, y: 32 },
+        {
+          ...(sheet ? { yPercent: 0 } : { autoAlpha: 1, y: 0 }),
+          duration: timing.duration.base,
+          ease: timing.ease.expo,
+          clearProps: "transform",
+        },
       );
     }
   }, [open, reducedMotion]);
@@ -186,21 +195,23 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
         }}
         aria-labelledby="speaker-dialog-name"
         className={cn(
-          "m-auto max-h-full w-full max-w-5xl bg-transparent p-4 text-foreground md:p-8",
+          // Full-screen sheet on phones; a centred panel from md up.
+          "m-0 h-dvh max-h-none w-full max-w-none overscroll-contain bg-transparent p-0 text-foreground",
+          "md:m-auto md:h-auto md:max-h-full md:max-w-5xl md:p-8",
           "backdrop:bg-ink-950/85 backdrop:backdrop-blur-sm",
         )}
       >
         {open ? (
           <div
             ref={panel}
-            className="relative grid gap-8 border border-rule bg-ink-900 p-6 md:grid-cols-5 md:gap-12 md:p-12"
+            className="relative grid min-h-full content-start gap-8 bg-ink-900 px-6 pt-20 pb-12 md:min-h-0 md:grid-cols-5 md:gap-12 md:border md:border-rule md:p-12"
           >
             <button
               type="button"
               onClick={closeSpeaker}
-              // Raised and backed so it stays visible where the portrait sits
-              // underneath it (the single-column layout on phones).
-              className="absolute top-4 right-4 z-10 inline-flex size-10 items-center justify-center rounded-full border border-rule bg-ink-900/80 text-ink-200 backdrop-blur-md transition-colors hover:border-foreground hover:text-foreground"
+              // Fixed on the phone sheet so it stays reachable while scrolling;
+              // backed so it reads over the portrait if they meet.
+              className="fixed top-4 right-4 z-10 md:absolute inline-flex size-10 items-center justify-center rounded-full border border-rule bg-ink-900/80 text-ink-200 backdrop-blur-md transition-colors hover:border-foreground hover:text-foreground"
               aria-label="Close"
             >
               <X aria-hidden className="size-4" />
