@@ -18,8 +18,10 @@ const CLIP_OPEN = "inset(0% 0% 0% 0%)";
 const CLIP_TOP = "inset(0% 0% 100% 0%)";
 
 /**
- * Site header: the lockup on the left, a glass pill on the right with the
- * three key destinations and the menu toggle.
+ * Site header: the lockup on the left, a hard-edged box on the right with the
+ * three key destinations and the menu toggle — the same square language as
+ * the page buttons. The box is solid, not glass, so it reads over photos and
+ * the dot field alike.
  *
  * The lockup swaps between the supplied white and black artwork depending on
  * what sits behind it. Sections opt in with `data-nav-theme="light"`; anything
@@ -292,26 +294,19 @@ export function Nav({
         <nav
           aria-label="Primary"
           className={cn(
-            "pointer-events-auto flex items-center gap-1 rounded-full border p-1.5",
-            "transition-[background-color,border-color,box-shadow] duration-300",
-            // Below md the pill holds only the toggle, so the toggle carries the
-            // glass itself — a pill around a lone button reads as a double ring.
-            "max-md:border-transparent max-md:bg-transparent max-md:p-0 max-md:shadow-none max-md:backdrop-blur-none",
-            // With the menu open the glass dissolves, leaving only the close button.
+            "pointer-events-auto flex h-11 items-stretch border transition-colors duration-300",
+            // With the menu open the box dissolves, leaving only the close button.
             open
               ? "border-transparent bg-transparent"
               : onLight
-                ? "border-black/10 bg-white/60 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.25)] backdrop-blur-2xl"
-                : cn(
-                    "border-white/12 bg-black/25 backdrop-blur-2xl",
-                    "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_8px_40px_-12px_rgba(0,0,0,0.8)]",
-                  ),
+                ? "border-ink-200 bg-ink-50"
+                : "border-ink-600 bg-background",
           )}
         >
           <ul
             inert={open}
             className={cn(
-              "hidden items-center gap-1 pl-1 transition-opacity duration-300 md:flex",
+              "hidden items-stretch transition-opacity duration-300 md:flex",
               open && "opacity-0",
             )}
           >
@@ -320,10 +315,10 @@ export function Nav({
                 <Link
                   href={item.href}
                   className={cn(
-                    "block rounded-full px-4 py-2 text-small transition-colors duration-200",
+                    "flex h-full items-center px-4.5 text-small transition-colors duration-200",
                     onLight
-                      ? "text-ink-800 hover:bg-black/8 hover:text-ink-950"
-                      : "text-ink-200 hover:bg-white/10 hover:text-foreground",
+                      ? "text-ink-800 hover:bg-ink-100 hover:text-ink-950"
+                      : "text-ink-200 hover:bg-ink-800 hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -340,10 +335,12 @@ export function Nav({
             aria-controls="site-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             className={cn(
-              "grid size-10 place-items-center rounded-full border backdrop-blur-xl transition-colors duration-200",
+              "grid w-11 place-items-center transition-colors duration-200",
+              // A rule divides it from the links; alone (phones, menu open) it needs none.
+              !open && "md:border-l",
               onLight
-                ? "border-black/10 bg-black/5 text-ink-950 hover:bg-black/10 max-md:border-transparent"
-                : "border-white/12 bg-white/8 text-foreground hover:bg-white/16 max-md:border-transparent",
+                ? "border-ink-200 text-ink-950 hover:bg-ink-950 hover:text-ink-50"
+                : "border-ink-600 text-foreground hover:bg-foreground hover:text-background",
             )}
           >
             {open ? <X size={16} strokeWidth={2} /> : <Menu size={16} strokeWidth={2} />}

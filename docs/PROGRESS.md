@@ -209,3 +209,12 @@ console errors.
 **Studio edits the owner needs to make** (can't be done from the sandbox):
 Against Entropy → Venue: name "Arrow Street Arts", city "Cambridge"; and
 optionally drop the em dash from Site settings → Mission statement.
+
+Follow-up the same day: the header's glass pill is now a hard-edged solid box
+(links + a square menu toggle split by a rule), matching the square buttons.
+It is site-wide, so it shows on `/` too. `/home2` drops every eyebrow label
+(red square + small caps): the motto stands alone, "Flagship · Edition 03" is
+a row in the When/Where table, the speaker count headline says "past
+speakers", and the partners row opens with a plain line of text. Still to
+match: eyebrows on `/speakers`, `/faq`, the footer ("Stay in the room") and the
+footer's rounded button.

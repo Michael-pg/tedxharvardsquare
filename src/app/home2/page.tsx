@@ -23,16 +23,6 @@ export const metadata: Metadata = {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/** A small red square beside a label: the site's signal mark. */
-function Label({ children }: { children: string }) {
-  return (
-    <p className="flex items-center gap-2.5 text-label text-muted uppercase">
-      <span aria-hidden="true" className="size-2 bg-brand" />
-      {children}
-    </p>
-  );
-}
-
 /**
  * The motto is the mission statement. Its first sentence is the statement,
  * broken into its clauses: the first three on their own lines, the outcome
@@ -103,10 +93,7 @@ export default async function Home2() {
         </section>
 
         {/* The motto, lit word by word as it scrolls through. */}
-        <section className="px-6 py-24 md:py-40">
-          <Reveal className="mb-10">
-            <Label>What we believe</Label>
-          </Reveal>
+        <section aria-label="What we believe" className="px-6 py-24 md:py-40">
           <Motto lines={lines} coda={coda} />
         </section>
 
@@ -120,22 +107,21 @@ export default async function Home2() {
         {edition && (
           <section className="grid grid-cols-4 gap-x-6 px-6 py-24 md:grid-cols-12 md:py-40">
             <div data-dot-clear className="col-span-4 flex flex-col gap-10 md:col-span-6 md:pt-16">
-              <Reveal>
-                <Label>{`Flagship — Edition ${pad(edition.number)}`}</Label>
-              </Reveal>
               {edition.theme && (
                 <Reveal as="h2" className="text-display font-medium text-balance">
                   {edition.theme}
                 </Reveal>
               )}
               <Reveal as="dl" className="grid max-w-lg grid-cols-3 border-t border-rule text-small">
-                <dt className="border-b border-rule py-3 text-label text-muted uppercase">When</dt>
+                <dt className="border-b border-rule py-3 text-muted">Flagship</dt>
+                <dd className="col-span-2 border-b border-rule py-3 tabular-nums">{`Edition ${pad(edition.number)}`}</dd>
+                <dt className="border-b border-rule py-3 text-muted">When</dt>
                 <dd className="col-span-2 border-b border-rule py-3 tabular-nums">
                   {edition.date
                     ? new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))
                     : `${edition.year}, date to be announced`}
                 </dd>
-                <dt className="border-b border-rule py-3 text-label text-muted uppercase">Where</dt>
+                <dt className="border-b border-rule py-3 text-muted">Where</dt>
                 <dd className="col-span-2 border-b border-rule py-3">
                   {venueKnown
                     ? `${edition.venue?.name}, ${edition.venue?.city}`
@@ -164,11 +150,8 @@ export default async function Home2() {
         {archive.length > 0 && (
           <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
             <div data-dot-clear className="col-span-4 flex flex-col items-start gap-10 md:col-span-5">
-              <Reveal>
-                <Label>Past speakers</Label>
-              </Reveal>
               <Reveal as="h2" className="text-display font-medium text-balance">
-                {`${archive.length} speakers. ${talkCount} talks. ${editionCount} ${editionCount === 1 ? "stage" : "stages"}.`}
+                {`${archive.length} past speakers. ${talkCount} talks. ${editionCount} ${editionCount === 1 ? "stage" : "stages"}.`}
               </Reveal>
               <Reveal>
                 <SquareLink href="/speakers" variant="secondary">
@@ -198,12 +181,9 @@ export default async function Home2() {
         )}
 
         {logoPartners.length > 0 && (
-          <section className="flex flex-col gap-10 px-6 pb-24 md:pb-40">
+          <section aria-label="Partners" className="px-6 pb-24 md:pb-40">
             <Reveal>
-              <Label>Partners</Label>
-            </Reveal>
-            <Reveal>
-              <PartnerLogos partners={logoPartners} />
+              <PartnerLogos lead="With thanks to our partners" partners={logoPartners} />
             </Reveal>
           </section>
         )}
