@@ -322,3 +322,15 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
   as keep-out zones, replaces per-section canvases.
 - Sketch: `deliverables/hero-sketch-v3.html`, also published as the private
   "TEDxHarvardSquare Hero Sketch" artifact (version 2).
+
+## 10. Owner feedback, round 3 (2026-09-25)
+
+- Dots hugging the type read as Pac-Man, and the black boxes felt tight: both
+  are gone. Text now gets a soft, feathered clearing in the field (from its line
+  boxes), with no hard edges and no colour change.
+- Order vs entropy is its own slow field drifting through the dots: red, gridded
+  stretches and grey, scattered ones move through each other. The pointer still
+  brings order. The default field strength stays; "calmer" is dropped.
+- The motto stays together as one large statement (lines indented along the grid),
+  with no per-line explanations. One short coda line beside it.
+- Sketch: `deliverables/hero-sketch-v4.html` (artifact version 3).
