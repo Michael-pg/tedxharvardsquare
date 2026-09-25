@@ -282,3 +282,28 @@ Savee, Cosmos, and Fonts In Use (to see mono and grotesk pairings in the wild).
 4. Tagline: keep "Where Ideas Meet Community" or ask the organizers for a new line?
 5. Real attendee numbers for the stats section, or leave the stat out?
 6. Is Nothing-adjacent OK, or should we deliberately steer away from it?
+
+---
+
+## 8. Owner feedback, round 1 (2026-09-25)
+
+- **Hero: A, made subtler.** B's pulse is too literal; drop it (no click ripple either).
+  Disorder is grey drifting noise; order is red on the grid. The pointer brings
+  order without turning everything red.
+- **Story scroll after the hero, ~300vh pinned**, built on the motto: "The right
+  idea, heard by the right person, at the right moment, can change the course of
+  a life, a company, a policy." Noise → one idea (red dot) → it reaches a person
+  (halftone portrait in a tagged frame) → the field orders → the real photo resolves.
+  This becomes the page's one pinned set piece.
+- **Swiss grid:** a strict 12-column grid, very large type, information spread
+  across columns in a clear reading order.
+- **Hard-edged square buttons**, replacing the glass pills. White fill for primary,
+  1px outline for secondary, red only on hover.
+- **Duotone images:** red halftone at rest, grayscale photo with red multiply on reveal.
+- **Framed media with mono tags and corner handles** (e.g. `PERSON_01.RAW`), after
+  builderstable.net.
+- Hero copy is open; the motto may lead.
+- References the owner likes: craft.wild.as, builderstable.net, thedesignsociety.fr,
+  pear.no (too much scroll, but good ideas), omegayeast.com.
+- Sketches (not committed): `deliverables/hero-sketch.html` (A vs B),
+  `deliverables/hero-sketch-v2.html` (this direction).
