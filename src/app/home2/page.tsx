@@ -7,6 +7,7 @@ import { FitHeadline } from "@/components/home2/fit-headline";
 import { Motto } from "@/components/home2/motto";
 import { PartnerLogos } from "@/components/home2/partner-logos";
 import { PhotoStrip } from "@/components/home2/photo-strip";
+import { HalftonePhoto } from "@/components/home2/halftone-photo";
 import { PastTalks } from "@/components/home2/past-talks";
 import { SquareLink } from "@/components/ui/square-link";
 import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
@@ -56,13 +57,18 @@ export default async function Home2() {
         .join(" · ")
     : undefined;
   const { lines, coda } = motto(site.missionStatement);
-  // Talks with a published video first, so most rows play something.
+  // Talks with a stage photo and a published video first, so most rows show
+  // the talk itself and play something.
+  const talkRank = (speaker: (typeof archive)[number]) =>
+    Number(Boolean(speaker.talk?.still)) * 2 + Number(Boolean(speaker.talk?.videoUrl));
   const featuredTalks = archive
     .filter((speaker) => speaker.talk?.title)
-    .sort((a, b) => Number(Boolean(b.talk?.videoUrl)) - Number(Boolean(a.talk?.videoUrl)))
+    .sort((a, b) => talkRank(b) - talkRank(a))
     .slice(0, FEATURED_TALKS);
   const talkCount = archive.filter((speaker) => speaker.talk).length;
   const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
+  // The edition's own poster when Studio has one, else a photo from the last one.
+  const flagshipPhoto = edition?.poster ?? home.heroImages[0];
   const logoPartners = partners.filter((partner) => partner.logoOnDark ?? partner.logo);
 
   return (
@@ -107,46 +113,37 @@ export default async function Home2() {
           </section>
         )}
 
-        {/* Flagship: the dot field draws the edition number as it arrives. */}
+        {/* Flagship: a photograph from the last edition, printed in red dots. */}
         {edition && (
-          <section className="grid grid-cols-4 gap-x-6 px-6 py-24 md:grid-cols-12 md:py-40">
-            <div data-dot-clear className="col-span-4 flex flex-col gap-10 md:col-span-6 md:pt-16">
+          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
               {edition.theme && (
                 <Reveal as="h2" className="text-display font-medium text-balance">
                   {edition.theme}
                 </Reveal>
               )}
-              <Reveal as="dl" className="grid max-w-lg grid-cols-3 border-t border-rule text-small">
-                <dt className="border-b border-rule py-3 text-muted">Flagship</dt>
-                <dd className="col-span-2 border-b border-rule py-3 tabular-nums">{`Edition ${pad(edition.number)}`}</dd>
-                <dt className="border-b border-rule py-3 text-muted">When</dt>
-                <dd className="col-span-2 border-b border-rule py-3 tabular-nums">
-                  {edition.date
-                    ? new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))
-                    : `${edition.year}, date to be announced`}
-                </dd>
-                <dt className="border-b border-rule py-3 text-muted">Where</dt>
-                <dd className="col-span-2 border-b border-rule py-3">
-                  {venueKnown
-                    ? `${edition.venue?.name}, ${edition.venue?.city}`
-                    : `${edition.venue?.city ?? "Venue"}, venue to be announced`}
-                </dd>
+              {/* The facts as a sentence, not a table. */}
+              <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
+                <span className="text-foreground">{`Flagship, edition ${edition.number}.`}</span>{" "}
+                {[
+                  venueKnown
+                    ? `${edition.year} at ${edition.venue?.name}, ${edition.venue?.city}.`
+                    : `${edition.year} in ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
+                  edition.date
+                    ? `${new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))}.`
+                    : "Date to be announced.",
+                ].join(" ")}
               </Reveal>
-              <Reveal className="flex flex-wrap gap-2">
+              <Reveal className="mt-4 flex flex-wrap gap-2">
                 {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
                 <SquareLink href="/faq" variant="secondary">
                   Questions
                 </SquareLink>
               </Reveal>
             </div>
-            {/* Drawn by the dot field; the text itself is never painted. */}
-            <p
-              aria-hidden="true"
-              data-dot-glyph
-              className="col-span-4 self-center justify-self-end text-numeral font-medium text-transparent select-none md:col-span-6"
-            >
-              {pad(edition.number)}
-            </p>
+            {flagshipPhoto && (
+              <HalftonePhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-7" />
+            )}
           </section>
         )}
 

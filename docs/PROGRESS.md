@@ -230,3 +230,21 @@ and `active` props, paused while the menu is closed) rises from the panel's
 bottom edge. Footer: "Stay in the room." is the heading (no eyebrow), buttons
 are `SquareLink` (moved to `src/components/ui/`), and each column hangs from a
 hairline rule with a plain small heading. Glow animation unchanged.
+
+**Needs real content — talk stage photos.** Talks have a new optional Studio
+field, **Stage photo** (`still`). The home page's past-talks rows show it; until
+it is filled, each row shows the speaker's portrait instead. The owner has a
+photo for every talk: upload them in Studio → Talk → Stage photo (landscape,
+with alt text). Rows with a stage photo are listed first.
+
+Flagship section on `/home2` reworked: the ruled When/Where table and the
+dot-drawn "03" are gone. The facts are one sentence ("Flagship, edition 3. 2027
+at Arrow Street Arts, Cambridge. Date to be announced.") and the right side is a
+photo printed entirely in red halftone (`HalftonePhoto`), which settles in from
+the top and swells under the pointer. It uses the edition's **Poster** field
+if set, else the first home page photo. New `data-dot-clear="wide"` makes the
+page's dot field fade far out around it.
+
+Mobile "scroll past the footer" was iOS rubber-band overscroll revealing black
+under the footer glow; `overscroll-behavior-y: none` on `html` stops it (also
+disables pull-to-refresh in Android Chrome).

@@ -81,13 +81,15 @@ export type Talk = {
   editionSlug?: Slug;
   /** Canonical TED.com or YouTube URL. Absent until the talk is published. */
   videoUrl?: string;
+  /** A photo of the talk on stage. Absent until the organizers add one. */
+  still?: Image;
   durationSeconds?: number;
   topicSlugs: Slug[];
 };
 
 /** A speaker as the archive shows them: person, talk, and edition together. */
 export type SpeakerWithTalk = Speaker & {
-  talk?: Pick<Talk, "slug" | "title" | "premise" | "videoUrl">;
+  talk?: Pick<Talk, "slug" | "title" | "premise" | "videoUrl" | "still">;
   editionYear?: number;
 };
 

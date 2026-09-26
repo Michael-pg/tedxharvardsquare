@@ -111,6 +111,9 @@
 html {
   /* GSAP ScrollTrigger and CSS smooth scrolling fight each other. */
   scroll-behavior: auto;
+  /* No rubber-band past the top or the footer: on iOS it pulls empty black
+     out from under the footer's glow, which reads as the page carrying on. */
+  overscroll-behavior-y: none;
 }
 
 body {

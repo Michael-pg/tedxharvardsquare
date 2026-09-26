@@ -83,7 +83,7 @@ const talkFields = `
   "slug": slug.current, title, premise,
   "speakerSlug": speaker->slug.current,
   "editionSlug": edition->slug.current,
-  videoUrl, durationSeconds,
+  videoUrl, "still": ${image("still")}, durationSeconds,
   "topicSlugs": coalesce(topics[]->slug.current, [])
 `;
 
@@ -224,7 +224,7 @@ export async function getSpeakerArchive(): Promise<SpeakerWithTalk[]> {
         ${speakerFields},
         "editionYear": edition->year,
         "talk": *[_type == "talk" && references(^._id)][0]{
-          "slug": slug.current, title, premise, videoUrl
+          "slug": slug.current, title, premise, videoUrl, "still": ${image("still")}
         }
       }`,
     {},
