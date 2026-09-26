@@ -215,16 +215,24 @@ export function Nav({
   );
 
   // While open: Escape closes, the page behind is inert and cannot scroll, and
-  // focus moves into the menu — then returns to the toggle on close.
+  // focus moves into the menu — then returns to the toggle on close, but only
+  // for keyboard users. After a tap or click, handing focus back would light
+  // the focus ring on the toggle (iOS Safari shows it for programmatic focus).
   useEffect(() => {
     if (!open) return;
+    let usingPointer = false;
+    const onPointer = () => {
+      usingPointer = true;
+    };
     const onKey = (event: KeyboardEvent) => {
+      usingPointer = false;
       if (event.key === "Escape") {
         setOpen(false);
         setActive(null);
       }
     };
     document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const outside = [...document.body.children].filter(
@@ -239,9 +247,16 @@ export function Nav({
 
     return () => {
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
       document.body.style.overflow = previousOverflow;
       outside.forEach((element) => (element.inert = false));
-      toggleButton?.focus({ preventScroll: true });
+      if (usingPointer) {
+        // Focus was on the panel, which is now hidden; drop it rather than
+        // leave it stranded there.
+        (document.activeElement as HTMLElement | null)?.blur();
+      } else {
+        toggleButton?.focus({ preventScroll: true });
+      }
     };
   }, [open]);
 
