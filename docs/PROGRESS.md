@@ -63,15 +63,35 @@ user-wide in `~/.claude/skills/`.
 
 ---
 
-## Open questions (need the owner/organizers)
+## Owner to-do (as of 2026-09-25)
 
-- Logo: no SVG exists; the Webflow PNGs (`public/brand/`) stand in. Swap for SVG if one is ever made.
-- TEDx rules vs. the Partner **"Presenting"** tier.
-- Edition 3 (2027) exact date; Edition 1 date and theme; Edition 2 theme.
-- Job titles for the ten 2025 speakers (blank in Webflow too).
-- FAQ "How do I get there?" still describes Arrow Street Arts (2026 venue).
-- Arrow Street Arts white logo was inferred from Webflow's "Mask group-2" — confirm in Studio.
-- Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
+Everything waiting on the owner, in one place. Tick items off here as they land.
+
+**In Studio (`/studio`)**
+- [ ] **Talk stage photos**: Talk → Stage photo, one per talk (21), landscape, with alt text. Until filled, `/home2` past-talk rows show speaker portraits.
+- [ ] Against Entropy → **Date** once confirmed (left empty on purpose; the site says "Date to be announced").
+- [ ] Optional: Against Entropy → **Poster** (else `/home2` uses the first home photo in red halftone).
+- [ ] Optional: Site settings → Mission statement, drop the em dash.
+- [ ] Edition 1 date and theme; Edition 2 theme.
+- [ ] Job titles for the ten 2025 speakers (blank in Webflow too).
+- [ ] Confirm the Arrow Street Arts white logo (inferred from Webflow's "Mask group-2").
+- [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
+- [ ] Real content for House events, team, and past-edition themes (no placeholders).
+- [ ] Invite marketing editors: sanity.io/manage → Members → Editor.
+
+**Decisions**
+- [ ] Review `/home2` on production; approve swapping it into `/` (then delete the old hero and `pixel-blob`).
+- [ ] House naming and weight on `/home2` (vs CLAUDE.md / DESIGN.md).
+- [ ] TEDx rules vs. the Partner **"Presenting"** tier.
+- [ ] Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
+- [ ] Logo: no SVG exists; PNGs in `public/brand/` stand in.
+- [ ] Legal review of `/privacy` and `/terms` before any domain switch.
+
+**Tooling (one-time, per machine)**
+- [ ] Vercel MCP sign-in (`/mcp` in an interactive `claude` session).
+- [ ] Let Claude write to Sanity and merge docs PRs without prompts: auto mode blocked partner creation and a docs merge on 2026-09-25 even after chat approval. Add allow rules in settings, or approve from an interactive session.
+
+Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, which is the 2027 venue too, so it is correct again.
 
 ---
 
