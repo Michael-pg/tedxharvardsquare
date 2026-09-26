@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { barNav, menuPrimary, menuSecondary } from "@/content/navigation";
 import type { MenuImageKey, MenuImages } from "@/content/types";
 import { cn } from "@/lib/utils";
+import { FooterGlow } from "./footer-glow";
 
 type Tone = "dark" | "light";
 type ImageKey = MenuImageKey | "general";
@@ -18,16 +19,19 @@ const CLIP_OPEN = "inset(0% 0% 0% 0%)";
 const CLIP_TOP = "inset(0% 0% 100% 0%)";
 
 /**
- * Site header: the lockup on the left, a glass pill on the right with the
- * three key destinations and the menu toggle.
+ * Site header: the lockup on the left, a hard-edged box on the right with the
+ * three key destinations and the menu toggle — the same square language as
+ * the page buttons. The box is solid, not glass, so it reads over photos and
+ * the dot field alike.
  *
  * The lockup swaps between the supplied white and black artwork depending on
  * what sits behind it. Sections opt in with `data-nav-theme="light"`; anything
  * untagged is treated as dark, which is the whole site today.
  *
- * The menu is a full-screen panel that wipes down from above: a photograph on
- * the left (swapped per link on hover), large key pages and small secondary
- * pages on the right.
+ * The menu is a full-screen panel that wipes down from above: the key pages as
+ * ruled rows, the secondary pages beneath, and the footer's red halftone
+ * rising from the bottom edge. From md up a photograph fills the left column,
+ * swapped per link on hover; phones skip it and give the space to the links.
  */
 export function Nav({
   contactEmail,
@@ -211,16 +215,24 @@ export function Nav({
   );
 
   // While open: Escape closes, the page behind is inert and cannot scroll, and
-  // focus moves into the menu — then returns to the toggle on close.
+  // focus moves into the menu — then returns to the toggle on close, but only
+  // for keyboard users. After a tap or click, handing focus back would light
+  // the focus ring on the toggle (iOS Safari shows it for programmatic focus).
   useEffect(() => {
     if (!open) return;
+    let usingPointer = false;
+    const onPointer = () => {
+      usingPointer = true;
+    };
     const onKey = (event: KeyboardEvent) => {
+      usingPointer = false;
       if (event.key === "Escape") {
         setOpen(false);
         setActive(null);
       }
     };
     document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const outside = [...document.body.children].filter(
@@ -235,9 +247,16 @@ export function Nav({
 
     return () => {
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
       document.body.style.overflow = previousOverflow;
       outside.forEach((element) => (element.inert = false));
-      toggleButton?.focus({ preventScroll: true });
+      if (usingPointer) {
+        // Focus was on the panel, which is now hidden; drop it rather than
+        // leave it stranded there.
+        (document.activeElement as HTMLElement | null)?.blur();
+      } else {
+        toggleButton?.focus({ preventScroll: true });
+      }
     };
   }, [open]);
 
@@ -292,26 +311,19 @@ export function Nav({
         <nav
           aria-label="Primary"
           className={cn(
-            "pointer-events-auto flex items-center gap-1 rounded-full border p-1.5",
-            "transition-[background-color,border-color,box-shadow] duration-300",
-            // Below md the pill holds only the toggle, so the toggle carries the
-            // glass itself — a pill around a lone button reads as a double ring.
-            "max-md:border-transparent max-md:bg-transparent max-md:p-0 max-md:shadow-none max-md:backdrop-blur-none",
-            // With the menu open the glass dissolves, leaving only the close button.
+            "pointer-events-auto flex h-11 items-stretch border transition-colors duration-300",
+            // With the menu open the box dissolves, leaving only the close button.
             open
               ? "border-transparent bg-transparent"
               : onLight
-                ? "border-black/10 bg-white/60 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.25)] backdrop-blur-2xl"
-                : cn(
-                    "border-white/12 bg-black/25 backdrop-blur-2xl",
-                    "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_8px_40px_-12px_rgba(0,0,0,0.8)]",
-                  ),
+                ? "border-ink-200 bg-ink-50"
+                : "border-ink-600 bg-background",
           )}
         >
           <ul
             inert={open}
             className={cn(
-              "hidden items-center gap-1 pl-1 transition-opacity duration-300 md:flex",
+              "hidden items-stretch transition-opacity duration-300 md:flex",
               open && "opacity-0",
             )}
           >
@@ -320,10 +332,10 @@ export function Nav({
                 <Link
                   href={item.href}
                   className={cn(
-                    "block rounded-full px-4 py-2 text-small transition-colors duration-200",
+                    "flex h-full items-center px-4.5 text-small transition-colors duration-200",
                     onLight
-                      ? "text-ink-800 hover:bg-black/8 hover:text-ink-950"
-                      : "text-ink-200 hover:bg-white/10 hover:text-foreground",
+                      ? "text-ink-800 hover:bg-ink-100 hover:text-ink-950"
+                      : "text-ink-200 hover:bg-ink-800 hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -340,10 +352,12 @@ export function Nav({
             aria-controls="site-menu"
             aria-label={open ? "Close menu" : "Open menu"}
             className={cn(
-              "grid size-10 place-items-center rounded-full border backdrop-blur-xl transition-colors duration-200",
+              "grid w-11 place-items-center transition-colors duration-200",
+              // A rule divides it from the links; alone (phones, menu open) it needs none.
+              !open && "md:border-l",
               onLight
-                ? "border-black/10 bg-black/5 text-ink-950 hover:bg-black/10 max-md:border-transparent"
-                : "border-white/12 bg-white/8 text-foreground hover:bg-white/16 max-md:border-transparent",
+                ? "border-ink-200 text-ink-950 hover:bg-ink-950 hover:text-ink-50"
+                : "border-ink-600 text-foreground hover:bg-foreground hover:text-background",
             )}
           >
             {open ? <X size={16} strokeWidth={2} /> : <Menu size={16} strokeWidth={2} />}
@@ -359,14 +373,12 @@ export function Nav({
         aria-label="Site menu"
         inert={!open}
         tabIndex={-1}
-        className="invisible fixed inset-0 z-40 bg-ink-950 outline-none"
+        className="invisible fixed inset-0 z-40 overflow-y-auto bg-ink-950 outline-none"
       >
-        <div className="flex h-full flex-col gap-10 px-6 pt-28 pb-10 md:grid md:grid-cols-2 md:gap-12 md:pt-36 md:pb-16 lg:gap-24">
-          {/* A short band on phones, the full left column from md up. */}
-          <div
-            ref={media}
-            className="relative aspect-video shrink-0 overflow-hidden bg-ink-900 md:aspect-auto"
-          >
+        <FooterGlow active={open} className="absolute inset-x-0 bottom-0 h-1/2" />
+        <div className="relative flex min-h-full flex-col px-6 pt-28 pb-10 md:grid md:grid-cols-2 md:gap-12 md:pt-36 md:pb-16 lg:gap-24">
+          {/* The full left column from md up; phones give the space to the links. */}
+          <div ref={media} className="relative hidden overflow-hidden bg-ink-900 md:block">
             {imageKeys.map((key) => {
               const image = menuImages[key]!;
               return (
@@ -389,40 +401,45 @@ export function Nav({
           </div>
 
           <div className="flex flex-col md:justify-center">
-            <ul onMouseLeave={() => setActive(null)}>
+            <ul onMouseLeave={() => setActive(null)} className="border-t border-rule">
               {menuPrimary.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="border-b border-rule">
                   <Link
                     href={item.href}
                     onClick={close}
                     onMouseEnter={() => setActive(item.image)}
                     onFocus={() => setActive(item.image)}
                     onBlur={() => setActive(null)}
-                    className="block overflow-hidden pb-2"
+                    className="group block overflow-hidden"
                   >
                     <span
                       data-menu-line
                       className={cn(
-                        "block text-display font-medium transition-colors duration-300",
+                        "flex items-center justify-between gap-6 py-3 text-display font-medium transition-colors duration-300 md:py-4",
                         active === null && "text-ink-200",
                         active === item.image && "text-foreground",
                         active !== null && active !== item.image && "text-muted",
                       )}
                     >
                       {item.label}
+                      <ArrowRight
+                        aria-hidden="true"
+                        strokeWidth={1.5}
+                        className="size-6 shrink-0 text-muted transition-[color,transform] duration-300 ease-out-quart group-hover:translate-x-1 group-hover:text-brand md:size-8"
+                      />
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
 
-            <ul className="mt-12 flex flex-wrap gap-x-10 gap-y-4 md:mt-16">
+            <ul className="mt-8 grid grid-cols-3 md:mt-10">
               {secondary.map((item) => (
                 <li key={item.href} data-menu-minor>
                   <Link
                     href={item.href}
                     onClick={close}
-                    className="text-heading font-medium text-muted transition-colors duration-200 hover:text-foreground"
+                    className="block py-2 text-heading font-medium text-muted transition-colors duration-200 hover:text-foreground"
                   >
                     {item.label}
                   </Link>

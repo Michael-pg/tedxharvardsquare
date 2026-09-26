@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { getSiteSettings } from "@/content";
 import { footerNav, policyNav, type NavItem } from "@/content/navigation";
+import { SquareLink } from "@/components/ui/square-link";
 import { FooterGlow } from "./footer-glow";
 import { BackToTop, CambridgeTime } from "./footer-meta";
 
@@ -40,8 +41,8 @@ function FooterLink({ label, href }: NavItem) {
 function Column({ title, links }: { title: string; links: NavItem[] }) {
   if (links.length === 0) return null;
   return (
-    <div className="lg:col-span-2">
-      <h2 className="mb-5 text-label text-muted uppercase">{title}</h2>
+    <div className="border-t border-rule pt-4 lg:col-span-2">
+      <h2 className="mb-5 text-small text-muted">{title}</h2>
       <ul className="space-y-2.5">
         {links.map((link) => (
           <li key={link.href}>
@@ -54,9 +55,10 @@ function Column({ title, links }: { title: string; links: NavItem[] }) {
 }
 
 /**
- * Site footer: sign-up and link columns in one row, then a meta row and the
- * lockup over a red halftone glow — the hero's pixel field returning at the
- * bottom of the page. No dividers; space does the separating.
+ * Site footer: sign-up and link columns in one row, each hung from a hairline
+ * rule so the row reads as a grid, then a meta row and the lockup over a red
+ * halftone glow — the hero's pixel field returning at the bottom of the page.
+ * Buttons are the site's square ones.
  *
  * Everything editable (contact, social, newsletter, early-access list)
  * comes from site settings; the page structure comes from `navigation.ts`.
@@ -87,35 +89,17 @@ export async function SiteFooter() {
     <footer className="relative z-10 overflow-hidden bg-background">
       {/* Sign-up and links */}
       <div className="relative z-10 grid grid-cols-2 gap-x-8 gap-y-14 px-6 pt-24 md:grid-cols-4 md:pt-40 lg:grid-cols-12">
-        <div className="col-span-2 md:col-span-4 lg:col-span-4 lg:pr-12">
-          <h2 className="flex items-center gap-3 text-label text-foreground uppercase">
-            <span aria-hidden="true" className="size-2 rounded-full bg-brand" />
-            Stay in the room
-          </h2>
-          <p className="mt-5 max-w-sm text-heading font-medium text-balance">
+        <div className="col-span-2 border-t border-rule pt-4 md:col-span-4 lg:col-span-4 lg:pr-12">
+          <h2 className="text-title font-medium">Stay in the room.</h2>
+          <p className="mt-3 max-w-sm text-lead text-balance text-ink-300">
             First word on Flagship tickets, House events, and new talks.
           </p>
           {signUps.length > 0 && (
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-2">
               {signUps.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={
-                    link.primary
-                      ? "group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-small font-medium text-background transition-colors duration-fast hover:bg-ink-200"
-                      : "group inline-flex items-center gap-2 rounded-full border border-ink-600 px-5 py-3 text-small font-medium text-foreground transition-colors duration-fast hover:border-ink-400"
-                  }
-                >
+                <SquareLink key={link.href} href={link.href} variant={link.primary ? "primary" : "secondary"}>
                   {link.label}
-                  <ArrowUpRight
-                    aria-hidden="true"
-                    className="size-4 transition-transform duration-fast ease-out-quart group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
+                </SquareLink>
               ))}
             </div>
           )}

@@ -252,7 +252,8 @@ export const edition = defineType({
     defineField({
       name: "poster",
       type: "accessibleImage",
-      description: "Key art for this edition.",
+      description:
+        "Key art or a stage photo for this edition. The home page prints it in red dots beside the edition's theme; until one is added, the first home page photo is used.",
     }),
   ],
   orderings: [
@@ -401,6 +402,13 @@ export const talk = defineType({
       type: "url",
       description:
         "The talk's TED.com or YouTube link. YouTube links play inside the speaker's panel on the Speakers page. Leave empty until the talk is published.",
+    }),
+    defineField({
+      name: "still",
+      title: "Stage photo",
+      type: "accessibleImage",
+      description:
+        "A photo of this talk being given, landscape. Shown beside the talk in the home page's past talks; until one is added, the speaker's portrait stands in.",
     }),
     defineField({
       name: "durationSeconds",

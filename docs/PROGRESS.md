@@ -58,6 +58,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-24 | Only the 3 live Webflow sponsors migrated; archived sponsors/FAQs left behind. |
 | 2026-09-24 | The 2027 edition is in **Boston**. Feb 21 2026 edition: Arrow Street Arts. The earlier edition: April 2025. |
 | 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Owner corrected the `number` fields in Studio the same day. |
+| 2026-09-25 | Edition 3 venue is **Arrow Street Arts** (owner). Supersedes "Boston". |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
 
 ---
@@ -66,7 +67,7 @@ user-wide in `~/.claude/skills/`.
 
 - Logo: no SVG exists; the Webflow PNGs (`public/brand/`) stand in. Swap for SVG if one is ever made.
 - TEDx rules vs. the Partner **"Presenting"** tier.
-- Edition 3 (2027) venue and exact date; Edition 1 date and theme; Edition 2 theme.
+- Edition 3 (2027) exact date; Edition 1 date and theme; Edition 2 theme.
 - Job titles for the ten 2025 speakers (blank in Webflow too).
 - FAQ "How do I get there?" still describes Arrow Street Arts (2026 venue).
 - Arrow Street Arts white logo was inferred from Webflow's "Mask group-2" — confirm in Studio.
@@ -192,3 +193,69 @@ Follow-up: the speaker name index is removed from `/home2` at the owner's reques
 `/speakers` replaces it.
 
 The owner has since corrected the edition `number` fields in Studio (1/2/3).
+
+### 2026-09-25 — home 2 edits
+
+Motto now shows the whole mission statement: the first sentence as before, the
+second ("We exist to create those moments…") set smaller beneath it. Hero drops
+the red-square edition label; the edition line (number · venue · year) sits
+quietly in muted text beside the buttons. Past speakers is a section again:
+a count headline, the "Watch the talks" link, and a 4×2 contact sheet of the
+most recent portraits (B&W, red pixel hover). New Partners row with the three
+sponsor logos (`logoOnDark`, links out). Checked against local mock content
+(Sanity unreachable from the cloud sandbox): no overflow at 390 and 1440px, no
+console errors.
+
+**Studio edits the owner needs to make** (can't be done from the sandbox):
+Against Entropy → Venue: name "Arrow Street Arts", city "Cambridge"; and
+optionally drop the em dash from Site settings → Mission statement.
+
+Follow-up the same day: the header's glass pill is now a hard-edged solid box
+(links + a square menu toggle split by a rule), matching the square buttons.
+It is site-wide, so it shows on `/` too. `/home2` drops every eyebrow label
+(red square + small caps): the motto stands alone, "Flagship · Edition 03" is
+a row in the When/Where table, the speaker count headline says "past
+speakers", and the partners row opens with a plain line of text. Still to
+match: eyebrows on `/speakers`, `/faq`, the footer ("Stay in the room") and the
+footer's rounded button.
+
+Owner didn't like speaker portraits on home (read as the next lineup). Replaced
+with "Watch past talks": four recorded talks as rows (title, speaker, year,
+small B&W thumbnail), videos first, linking out to the video or `/speakers`.
+
+Menu and footer squared (PR #14). Menu: key pages are ruled full-width rows
+with an arrow (red on hover); the photo is desktop-only (phones gave it a
+cramped band); the footer's red halftone (`FooterGlow`, now with `className`
+and `active` props, paused while the menu is closed) rises from the panel's
+bottom edge. Footer: "Stay in the room." is the heading (no eyebrow), buttons
+are `SquareLink` (moved to `src/components/ui/`), and each column hangs from a
+hairline rule with a plain small heading. Glow animation unchanged.
+
+**Needs real content — talk stage photos.** Talks have a new optional Studio
+field, **Stage photo** (`still`). The home page's past-talks rows show it; until
+it is filled, each row shows the speaker's portrait instead. The owner has a
+photo for every talk: upload them in Studio → Talk → Stage photo (landscape,
+with alt text). Rows with a stage photo are listed first.
+
+Flagship section on `/home2` reworked: the ruled When/Where table and the
+dot-drawn "03" are gone. The facts are one sentence ("Flagship, edition 3. 2027
+at Arrow Street Arts, Cambridge. Date to be announced.") and the right side is a
+photo printed entirely in red halftone (`HalftonePhoto`), which settles in from
+the top and swells under the pointer. It uses the edition's **Poster** field
+if set, else the first home page photo. New `data-dot-clear="wide"` makes the
+page's dot field fade far out around it.
+
+Mobile "scroll past the footer" was iOS rubber-band overscroll revealing black
+under the footer glow; `overscroll-behavior-y: none` on `html` stops it (also
+disables pull-to-refresh in Android Chrome).
+
+### 2026-09-25 — home 2 on real content
+
+Checked `/home2` locally against live Sanity: every image loads, no console
+errors, no overflow. Sanity edits (published): Against Entropy venue set to
+Arrow Street Arts, 2 Arrow St, Cambridge MA; its placeholder date
+(2027-02-01) cleared, so the page says "Date to be announced". Owner confirmed
+no past sponsors on the site — the 3 live partners only, logos not linked.
+Still open: talk stage photos (Studio → Talk → Stage photo), optional edition
+Poster. Twelve unused past-sponsor logo assets were uploaded to Sanity by
+mistake and can be deleted from the media library.

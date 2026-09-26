@@ -5,9 +5,12 @@ import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home2/dot-field";
 import { FitHeadline } from "@/components/home2/fit-headline";
 import { Motto } from "@/components/home2/motto";
+import { PartnerLogos } from "@/components/home2/partner-logos";
 import { PhotoStrip } from "@/components/home2/photo-strip";
-import { SquareLink } from "@/components/home2/square-link";
-import { getCurrentEdition, getHomePage, getSiteSettings } from "@/content";
+import { HalftonePhoto } from "@/components/home2/halftone-photo";
+import { PastTalks } from "@/components/home2/past-talks";
+import { SquareLink } from "@/components/ui/square-link";
+import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
 
 /**
  * A second home page, built alongside the current one so the dot-system
@@ -21,41 +24,52 @@ export const metadata: Metadata = {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/** A small red square beside a label: the site's signal mark. */
-function Label({ children }: { children: string }) {
-  return (
-    <p className="flex items-center gap-2.5 text-label text-muted uppercase">
-      <span aria-hidden="true" className="size-2 bg-brand" />
-      {children}
-    </p>
-  );
+/**
+ * The motto is the mission statement. Its first sentence is the statement,
+ * broken into its clauses: the first three on their own lines, the outcome
+ * kept whole. The rest is the answer, set smaller beneath it.
+ */
+function motto(missionStatement: string) {
+  const [sentence = missionStatement, ...rest] = missionStatement.split(/(?<=\.)\s/);
+  const clauses = sentence.split(", ");
+  const lines =
+    clauses.length < 4 ? [sentence] : [...clauses.slice(0, 3).map((c) => `${c},`), clauses.slice(3).join(", ")];
+  return { lines, coda: rest.join(" ") || undefined };
 }
 
-/**
- * The motto is the first sentence of the mission statement, broken into its
- * clauses: the first three on their own lines, the outcome kept whole.
- */
-function mottoLines(missionStatement: string) {
-  const sentence = missionStatement.split(/(?<=\.)\s/)[0] ?? missionStatement;
-  const clauses = sentence.split(", ");
-  if (clauses.length < 4) return [sentence];
-  return [...clauses.slice(0, 3).map((c) => `${c},`), clauses.slice(3).join(", ")];
-}
+/** How many recorded talks the home page points to. */
+const FEATURED_TALKS = 4;
 
 export default async function Home2() {
-  const [site, home, edition] = await Promise.all([
+  const [site, home, edition, archive, partners] = await Promise.all([
     getSiteSettings(),
     getHomePage(),
     getCurrentEdition(),
+    getSpeakerArchive(),
+    getPartners(),
   ]);
 
   const headline = edition?.theme ?? site.tagline;
-  const editionLabel = edition
-    ? [`Edition ${pad(edition.number)}`, [edition.venue?.city, edition.year].filter(Boolean).join(" ")]
-        .filter(Boolean)
-        .join(" — ")
-    : undefined;
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
+  const editionLine = edition
+    ? [`Edition ${pad(edition.number)}`, venueKnown ? edition.venue?.name : edition.venue?.city, edition.year]
+        .filter(Boolean)
+        .join(" · ")
+    : undefined;
+  const { lines, coda } = motto(site.missionStatement);
+  // Talks with a stage photo and a published video first, so most rows show
+  // the talk itself and play something.
+  const talkRank = (speaker: (typeof archive)[number]) =>
+    Number(Boolean(speaker.talk?.still)) * 2 + Number(Boolean(speaker.talk?.videoUrl));
+  const featuredTalks = archive
+    .filter((speaker) => speaker.talk?.title)
+    .sort((a, b) => talkRank(b) - talkRank(a))
+    .slice(0, FEATURED_TALKS);
+  const talkCount = archive.filter((speaker) => speaker.talk).length;
+  const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
+  // The edition's own poster when Studio has one, else a photo from the last one.
+  const flagshipPhoto = edition?.poster ?? home.heroImages[0];
+  const logoPartners = partners.filter((partner) => partner.logoOnDark ?? partner.logo);
 
   return (
     <>
@@ -68,26 +82,29 @@ export default async function Home2() {
           <div>
             <FitHeadline>{headline}</FitHeadline>
           </div>
-          <div data-dot-clear className="mt-8 flex max-w-md flex-col gap-4 md:mt-10">
-            {editionLabel && <Label>{editionLabel}</Label>}
-            {edition?.themeStatement && (
-              <p className="text-heading font-medium text-balance">{edition.themeStatement}</p>
+          {edition?.themeStatement && (
+            <p data-dot-clear className="mt-8 max-w-md text-heading font-medium text-balance md:mt-10">
+              {edition.themeStatement}
+            </p>
+          )}
+          <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
+            <div data-dot-clear className="flex flex-wrap gap-2">
+              {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
+              <SquareLink href="/speakers" variant="secondary">
+                Past talks
+              </SquareLink>
+            </div>
+            {editionLine && (
+              <p data-dot-clear className="text-small text-muted">
+                {editionLine}
+              </p>
             )}
-          </div>
-          <div data-dot-clear className="mt-auto flex flex-wrap gap-2 pt-16">
-            {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
-            <SquareLink href="/speakers" variant="secondary">
-              Past talks
-            </SquareLink>
           </div>
         </section>
 
         {/* The motto, lit word by word as it scrolls through. */}
-        <section className="px-6 py-24 md:py-40">
-          <Reveal className="mb-10">
-            <Label>What we believe</Label>
-          </Reveal>
-          <Motto lines={mottoLines(site.missionStatement)} />
+        <section aria-label="What we believe" className="px-6 py-24 md:py-40">
+          <Motto lines={lines} coda={coda} />
         </section>
 
         {home.heroImages.length > 0 && (
@@ -96,61 +113,71 @@ export default async function Home2() {
           </section>
         )}
 
-        {/* Flagship: the dot field draws the edition number as it arrives. */}
+        {/* Flagship: a photograph from the last edition, printed in red dots. */}
         {edition && (
-          <section className="grid grid-cols-4 gap-x-6 px-6 py-24 md:grid-cols-12 md:py-40">
-            <div data-dot-clear className="col-span-4 flex flex-col gap-10 md:col-span-6 md:pt-16">
-              <Reveal>
-                <Label>{`Flagship — Edition ${pad(edition.number)}`}</Label>
-              </Reveal>
+          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
               {edition.theme && (
                 <Reveal as="h2" className="text-display font-medium text-balance">
                   {edition.theme}
                 </Reveal>
               )}
-              <Reveal as="dl" className="grid max-w-lg grid-cols-3 border-t border-rule text-small">
-                <dt className="border-b border-rule py-3 text-label text-muted uppercase">When</dt>
-                <dd className="col-span-2 border-b border-rule py-3 tabular-nums">
-                  {edition.date
-                    ? new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))
-                    : `${edition.year}, date to be announced`}
-                </dd>
-                <dt className="border-b border-rule py-3 text-label text-muted uppercase">Where</dt>
-                <dd className="col-span-2 border-b border-rule py-3">
-                  {venueKnown
-                    ? `${edition.venue?.name}, ${edition.venue?.city}`
-                    : `${edition.venue?.city ?? "Venue"}, venue to be announced`}
-                </dd>
+              {/* The facts as a sentence, not a table. */}
+              <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
+                <span className="text-foreground">{`Flagship, edition ${edition.number}.`}</span>{" "}
+                {[
+                  venueKnown
+                    ? `${edition.year} at ${edition.venue?.name}, ${edition.venue?.city}.`
+                    : `${edition.year} in ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
+                  edition.date
+                    ? `${new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))}.`
+                    : "Date to be announced.",
+                ].join(" ")}
               </Reveal>
-              <Reveal className="flex flex-wrap gap-2">
+              <Reveal className="mt-4 flex flex-wrap gap-2">
                 {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
                 <SquareLink href="/faq" variant="secondary">
                   Questions
                 </SquareLink>
               </Reveal>
             </div>
-            {/* Drawn by the dot field; the text itself is never painted. */}
-            <p
-              aria-hidden="true"
-              data-dot-glyph
-              className="col-span-4 self-center justify-self-end text-numeral font-medium text-transparent select-none md:col-span-6"
-            >
-              {pad(edition.number)}
-            </p>
+            {flagshipPhoto && (
+              <HalftonePhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-7" />
+            )}
           </section>
         )}
 
-        {/* Past editions get a pointer, not a showcase: the page leads with what is next. */}
-        <section className="flex flex-wrap items-center justify-between gap-6 px-6 py-24 md:py-40">
-          <Reveal>
-            <Label>Past speakers and talks</Label>
-          </Reveal>
-          <Reveal>
-            <SquareLink href="/speakers" variant="secondary">
-              Watch the talks
-            </SquareLink>
-          </Reveal>
-        </section>
+        {/* Past talks: an archive to watch, dated, so it never reads as the next lineup. */}
+        {featuredTalks.length > 0 && (
+          <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
+              <Reveal as="h2" className="text-display font-medium text-balance">
+                Watch past talks
+              </Reveal>
+              <Reveal as="p" className="text-lead text-muted">
+                {`${talkCount} talks from ${editionCount} ${editionCount === 1 ? "edition" : "editions"} so far.`}
+              </Reveal>
+              <Reveal className="mt-4">
+                <SquareLink href="/speakers" variant="secondary">
+                  All speakers and talks
+                </SquareLink>
+              </Reveal>
+            </div>
+            <div data-dot-clear className="col-span-4 md:col-span-7">
+              <Reveal>
+                <PastTalks speakers={featuredTalks} />
+              </Reveal>
+            </div>
+          </section>
+        )}
+
+        {logoPartners.length > 0 && (
+          <section aria-label="Partners" className="px-6 pb-24 md:pb-40">
+            <Reveal>
+              <PartnerLogos lead="With thanks to our partners" partners={logoPartners} />
+            </Reveal>
+          </section>
+        )}
       </main>
 
       <SiteFooter />

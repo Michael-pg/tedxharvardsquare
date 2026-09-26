@@ -35,10 +35,20 @@ const smoothstep = (edge0: number, edge1: number, x: number) => {
  *
  * Plain 2D canvas, not a three.js scene: a few thousand circles a frame is
  * cheap, and the footer should not pull the WebGL bundle onto pages that do
- * not otherwise need it. It only animates while on screen, and draws a single
- * still frame under reduced motion.
+ * not otherwise need it. It only animates while on screen and `active`, and
+ * draws a single still frame under reduced motion.
+ *
+ * The menu reuses it at the foot of its panel: `className` places the field,
+ * and `active` pauses it while the panel is closed (a hidden fixed panel still
+ * counts as on screen).
  */
-export function FooterGlow() {
+export function FooterGlow({
+  className = "absolute inset-x-0 -top-40 bottom-0 md:-top-64",
+  active = true,
+}: {
+  className?: string;
+  active?: boolean;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -144,7 +154,7 @@ export function FooterGlow() {
     };
 
     const start = () => {
-      if (running || reducedMotion || !visible) return;
+      if (running || reducedMotion || !visible || !active) return;
       running = true;
       gsap.ticker.add(tick);
     };
@@ -184,8 +194,8 @@ export function FooterGlow() {
     });
     intersection.observe(canvas);
 
-    // The canvas sits behind the footer's content, so listen on the footer.
-    const surface = canvas.closest("footer") ?? canvas.parentElement;
+    // The canvas sits behind its content, so listen on the footer or menu panel.
+    const surface = canvas.closest<HTMLElement>("footer, [role=dialog]") ?? canvas.parentElement;
     if (!reducedMotion && surface) {
       surface.addEventListener("pointermove", onMove);
       surface.addEventListener("pointerleave", onLeave);
@@ -198,15 +208,12 @@ export function FooterGlow() {
       surface?.removeEventListener("pointermove", onMove);
       surface?.removeEventListener("pointerleave", onLeave);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, active]);
 
   return (
     // A canvas will not stretch between `top` and `bottom` the way a div does,
     // so a wrapper takes the offsets and the canvas fills it.
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 -top-40 bottom-0 md:-top-64"
-    >
+    <div aria-hidden="true" className={`pointer-events-none ${className}`}>
       <canvas ref={canvasRef} className="size-full" />
     </div>
   );

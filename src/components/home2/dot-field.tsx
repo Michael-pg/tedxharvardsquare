@@ -6,6 +6,9 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 /** Grid pitch in CSS pixels — the same screen as the footer glow. */
 const CELL = 10;
+/** How far the black pocket around `data-dot-clear` elements fades, in px. */
+const TEXT_FEATHER = 48;
+const WIDE_FEATHER = 140;
 
 /** Brightness buckets, so a frame is a handful of filled paths. */
 const RED = [
@@ -79,6 +82,8 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  *
  * Page elements opt in with data attributes:
  * - `data-dot-clear` — text the field keeps a soft pocket of black around.
+ *   `data-dot-clear="wide"` feathers the pocket far out, for a large picture
+ *   that should sit in the field rather than be cut out of it.
  * - `data-dot-glyph` — text the field draws itself, in ordered red dots, as
  *   the element scrolls into view. The element's own text should be invisible.
  *
@@ -121,10 +126,14 @@ export function DotField() {
       for (const el of clears) {
         const box = el.getBoundingClientRect();
         if (box.bottom < -100 || box.top > height + 100) continue;
+        if (el.getAttribute("data-dot-clear") === "wide") {
+          rects.push([box.left, box.top, box.right, box.bottom, WIDE_FEATHER]);
+          continue;
+        }
         const range = document.createRange();
         range.selectNodeContents(el);
         for (const r of range.getClientRects()) {
-          if (r.width > 2) rects.push([r.left, r.top, r.right, r.bottom]);
+          if (r.width > 2) rects.push([r.left, r.top, r.right, r.bottom, TEXT_FEATHER]);
         }
       }
       return rects;
@@ -216,13 +225,11 @@ export function DotField() {
           }
           if (clear < 0.02) continue;
           if (rects.length) {
-            let nearest = Infinity;
-            for (const [l, top, r, b] of rects) {
-              const q = Math.hypot(Math.max(l - gx, 0, gx - r), Math.max(top - gy, 0, gy - b));
-              if (q < nearest) nearest = q;
-            }
             // Feathered and a little uneven, so the pocket never reads as a box.
-            clear *= smoothstep(2, 48, nearest + texture * 14);
+            for (const [l, top, r, b, feather] of rects) {
+              const q = Math.hypot(Math.max(l - gx, 0, gx - r), Math.max(top - gy, 0, gy - b));
+              clear *= smoothstep(2, feather, q + texture * feather * 0.3);
+            }
             if (clear < 0.02) continue;
           }
 
