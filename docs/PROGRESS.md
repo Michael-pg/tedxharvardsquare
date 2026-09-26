@@ -248,3 +248,14 @@ page's dot field fade far out around it.
 Mobile "scroll past the footer" was iOS rubber-band overscroll revealing black
 under the footer glow; `overscroll-behavior-y: none` on `html` stops it (also
 disables pull-to-refresh in Android Chrome).
+
+### 2026-09-25 — home 2 on real content
+
+Checked `/home2` locally against live Sanity: every image loads, no console
+errors, no overflow. Sanity edits (published): Against Entropy venue set to
+Arrow Street Arts, 2 Arrow St, Cambridge MA; its placeholder date
+(2027-02-01) cleared, so the page says "Date to be announced". Owner confirmed
+no past sponsors on the site — the 3 live partners only, logos not linked.
+Still open: talk stage photos (Studio → Talk → Stage photo), optional edition
+Poster. Twelve unused past-sponsor logo assets were uploaded to Sanity by
+mistake and can be deleted from the media library.
