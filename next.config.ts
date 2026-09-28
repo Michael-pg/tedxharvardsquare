@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/k0dqlqmb/**" },
     ],
   },
+  async redirects() {
+    // The dot-system home was previewed at /home2 before it replaced `/`.
+    return [{ source: "/home2", destination: "/", permanent: true }];
+  },
 };
 
 export default nextConfig;

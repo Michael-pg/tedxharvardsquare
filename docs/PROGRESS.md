@@ -80,7 +80,6 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [ ] Invite marketing editors: sanity.io/manage → Members → Editor.
 
 **Decisions**
-- [ ] Review `/home2` on production; approve swapping it into `/` (then delete the old hero and `pixel-blob`).
 - [ ] House naming and weight on `/home2` (vs CLAUDE.md / DESIGN.md).
 - [ ] TEDx rules vs. the Partner **"Presenting"** tier.
 - [ ] Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
@@ -279,3 +278,12 @@ no past sponsors on the site — the 3 live partners only, logos not linked.
 Still open: talk stage photos (Studio → Talk → Stage photo), optional edition
 Poster. Twelve unused past-sponsor logo assets were uploaded to Sanity by
 mistake and can be deleted from the media library.
+
+### 2026-09-28 — home 2 becomes the home page
+
+Owner approved. The `/home2` page is now `/` (indexed), `/home2` redirects
+permanently to `/`, and `src/components/home2/` is `src/components/home/`.
+Deleted the old hero, the `pixel-blob` three.js scene, `hero-motion`, the
+placeholder hero images and `GlassButton`. The topics list left the home page
+with the old hero (`getTopics` and the topics in Sanity are kept). three.js,
+R3F and the `canvas/scene.tsx` wrapper stay for future scenes.
