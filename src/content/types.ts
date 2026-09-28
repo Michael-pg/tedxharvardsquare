@@ -156,6 +156,8 @@ export type Partner = {
 export type HomePage = {
   /** The frames that fly through the hero. The choreography is timed for six. */
   heroImages: Image[];
+  /** The speaker beside the home page's Flagship section. */
+  flagshipPhoto?: Image;
 };
 
 export type SiteConfig = {

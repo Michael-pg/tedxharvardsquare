@@ -115,11 +115,13 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function getHomePage(): Promise<HomePage> {
   const home = await fetchContent<HomePage | null>(
-    `*[_id == "homePage"][0]{ ${imageList("heroImages")} }`,
+    `*[_id == "homePage"][0]{ ${imageList("heroImages")}, "flagshipPhoto": ${image("flagshipPhoto")} }`,
     {},
     ["homePage"],
   );
-  return home ?? { heroImages: [] };
+  if (!home) return { heroImages: [] };
+  // An empty image field projects as null or with no asset; drop it either way.
+  return { ...home, flagshipPhoto: home.flagshipPhoto?.src ? home.flagshipPhoto : undefined };
 }
 
 const menuImagesQuery = defineQuery(`*[_id == "siteSettings"][0].menuImages{

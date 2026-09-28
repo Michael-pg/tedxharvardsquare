@@ -178,6 +178,13 @@ export const homePage = defineType({
       validation: (r) => r.max(6),
     }),
     defineField({
+      name: "flagshipPhoto",
+      title: "Flagship photo",
+      type: "accessibleImage",
+      description:
+        "The speaker beside the Flagship section on the home page, layered over a red halftone copy of itself. Pick one speaker, lit, against a dark stage: the black melts into the page. If empty, the second hero image is used.",
+    }),
+    defineField({
       name: "photoLibrary",
       title: "Photo library",
       type: "array",
