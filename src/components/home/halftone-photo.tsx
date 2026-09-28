@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import type { Image as ImageContent } from "@/content";
 
@@ -14,6 +14,9 @@ const BUCKETS = [
   "rgb(235, 0, 40)",
   "rgb(255, 107, 127)",
 ];
+
+/** A scattered print never lines up completely: order, not stillness. */
+const SETTLED_DISORDER = 0.2;
 
 const smoothstep = (edge0: number, edge1: number, x: number) => {
   const t = Math.min(Math.max((x - edge0) / (edge1 - edge0), 0), 1);
@@ -29,16 +32,41 @@ const hash = (i: number, j: number) => {
 const sampleUrl = (src: string) =>
   src.startsWith("https://cdn.sanity.io/") ? `${src}?w=480&fm=jpg&q=70` : src;
 
+type Focus = { x: number; y: number };
+
 /**
  * A photograph printed entirely in red halftone — the footer glow's material,
  * with a picture in it. The photo itself is never shown: every dot's size is
  * the brightness of the photo beneath it. The dots settle in from the top as
  * the frame first scrolls into view, and swell under the pointer.
  *
+ * Options for a looser, more abstract print: `cell` sets the screen size,
+ * `blur` softens the picture (in cells) so only its masses remain, `focus` is
+ * the crop's centre (like `object-position`, 0–1), `ratio` overrides the
+ * photo's own aspect, and `scatter` slices the print into bands knocked
+ * sideways by up to that many pixels, which fall into line as the frame
+ * scrolls to the middle of the screen.
+ *
  * Under reduced motion it draws the finished print once. The element carries
  * the photo's alt text, since the canvas has none of its own.
  */
-export function HalftonePhoto({ image, className }: { image: ImageContent; className?: string }) {
+export function HalftonePhoto({
+  image,
+  className,
+  cell: cellSize,
+  blur = 0,
+  focus = { x: 0.5, y: 0.5 },
+  ratio: ratioOverride,
+  scatter = 0,
+}: {
+  image: ImageContent;
+  className?: string;
+  cell?: number;
+  blur?: number;
+  focus?: Focus;
+  ratio?: number;
+  scatter?: number;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
@@ -58,7 +86,7 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
     let running = false;
     let revealed = false;
     const photo = new Image();
-    const state = { progress: reducedMotion ? 1 : 0 };
+    const state = { progress: reducedMotion ? 1 : 0, disorder: scatter && !reducedMotion ? 1 : SETTLED_DISORDER };
     const pointer = { x: 0, y: 0, strength: 0, target: 0 };
 
     const sample = () => {
@@ -69,11 +97,12 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
         scratch.height = rows;
         const sctx = scratch.getContext("2d", { willReadFrequently: true });
         if (!sctx) return;
-        // Cover-fit, like `object-cover`.
+        if (blur > 0) sctx.filter = `blur(${blur}px)`;
+        // Cover-fit, like `object-cover` with `object-position` at the focus.
         const scale = Math.max(cols / photo.naturalWidth, rows / photo.naturalHeight);
         const w = photo.naturalWidth * scale;
         const h = photo.naturalHeight * scale;
-        sctx.drawImage(photo, (cols - w) / 2, (rows - h) / 2, w, h);
+        sctx.drawImage(photo, (cols - w) * focus.x, (rows - h) * focus.y, w, h);
         const data = sctx.getImageData(0, 0, cols, rows).data;
         luminance = new Float32Array(cols * rows);
         for (let i = 0; i < luminance.length; i++) {
@@ -91,7 +120,7 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cell = width < 500 ? 6 : 8;
+      cell = cellSize ? (width < 500 ? cellSize * 0.75 : cellSize) : width < 500 ? 6 : 8;
       cols = Math.ceil(width / cell);
       rows = Math.ceil(height / cell);
       sample();
@@ -102,7 +131,15 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
       if (!luminance) return;
       const paths = BUCKETS.map(() => new Path2D());
       const reach = Math.max(width, height) * 0.18;
+      // Rows travel in bands of one to five, each knocked its own way.
+      let band = 0;
+      let bandEnd = 0;
       for (let row = 0; row < rows; row++) {
+        if (row >= bandEnd) {
+          band++;
+          bandEnd = row + 1 + Math.floor(hash(band, 9) * 5);
+        }
+        const shift = scatter ? (hash(band, 17) - 0.5) * 2 * scatter * state.disorder : 0;
         for (let col = 0; col < cols; col++) {
           // Settle in from the top, each dot a little early or late.
           const delay = (row / rows) * 0.6 + hash(col, row) * 0.3;
@@ -110,7 +147,7 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
           if (shown <= 0) continue;
           // A touch of contrast so shadows fall away to black.
           let intensity = smoothstep(0.08, 0.92, luminance[row * cols + col]);
-          const x = col * cell + cell / 2 + (row % 2 ? cell / 4 : -cell / 4);
+          const x = col * cell + cell / 2 + (row % 2 ? cell / 4 : -cell / 4) + shift;
           const y = row * cell + cell / 2;
           // The print thins out toward its edges, so it has no frame.
           const edge = Math.min(x, width - x, y, height - y);
@@ -174,6 +211,20 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
       pointer.target = 0;
     };
 
+    // The bands fall into line as the frame reaches the middle of the screen.
+    const scroll =
+      scatter && !reducedMotion
+        ? ScrollTrigger.create({
+            trigger: wrap,
+            start: "top bottom",
+            end: "center center",
+            onUpdate: ({ progress }) => {
+              state.disorder = SETTLED_DISORDER + (1 - SETTLED_DISORDER) * (1 - smoothstep(0, 1, progress));
+              if (!running) draw();
+            },
+          })
+        : null;
+
     let visible = false;
     const intersection = new IntersectionObserver(
       ([entry]) => {
@@ -205,6 +256,7 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
 
     return () => {
       stop();
+      scroll?.kill();
       gsap.killTweensOf(state);
       photo.onload = null;
       resizeObserver.disconnect();
@@ -212,9 +264,9 @@ export function HalftonePhoto({ image, className }: { image: ImageContent; class
       wrap.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
     };
-  }, [image.src, reducedMotion]);
+  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter]);
 
-  const ratio = image.width && image.height ? image.width / image.height : 3 / 2;
+  const ratio = ratioOverride ?? (image.width && image.height ? image.width / image.height : 3 / 2);
   return (
     <div
       ref={wrapRef}

@@ -70,7 +70,7 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 **In Studio (`/studio`)**
 - [ ] **Talk stage photos**: Talk → Stage photo, one per talk (21), landscape, with alt text. Until filled, `/home2` past-talk rows show speaker portraits.
 - [ ] Against Entropy → **Date** once confirmed (left empty on purpose; the site says "Date to be announced").
-- [ ] Optional: Against Entropy → **Poster** (else `/home2` uses the first home photo in red halftone).
+- [ ] Optional: Home page → **Flagship photo**, one lit speaker on a dark stage (else the home page uses the second hero photo, the speaker in profile).
 - [ ] Optional: Site settings → Mission statement, drop the em dash.
 - [ ] Edition 1 date and theme; Edition 2 theme.
 - [ ] Job titles for the ten 2025 speakers (blank in Webflow too).

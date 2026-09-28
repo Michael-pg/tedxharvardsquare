@@ -18,6 +18,8 @@ export type Image = {
   alt: string;
   width?: number;
   height?: number;
+  /** The Studio hotspot's centre, 0–1 on each axis: where a crop should stay. */
+  focus?: { x: number; y: number };
 };
 
 export type Link = { label: string; href: string };
@@ -156,6 +158,8 @@ export type Partner = {
 export type HomePage = {
   /** The frames that fly through the hero. The choreography is timed for six. */
   heroImages: Image[];
+  /** The speaker beside the home page's Flagship section. */
+  flagshipPhoto?: Image;
 };
 
 export type SiteConfig = {

@@ -6,7 +6,7 @@ import { FitHeadline } from "@/components/home/fit-headline";
 import { Motto } from "@/components/home/motto";
 import { PartnerLogos } from "@/components/home/partner-logos";
 import { PhotoStrip } from "@/components/home/photo-strip";
-import { HalftonePhoto } from "@/components/home/halftone-photo";
+import { FlagshipPhoto } from "@/components/home/flagship-photo";
 import { PastTalks } from "@/components/home/past-talks";
 import { SquareLink } from "@/components/ui/square-link";
 import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
@@ -61,8 +61,8 @@ export default async function Home() {
     .slice(0, FEATURED_TALKS);
   const talkCount = archive.filter((speaker) => speaker.talk).length;
   const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
-  // The edition's own poster when Studio has one, else a photo from the last one.
-  const flagshipPhoto = edition?.poster ?? home.heroImages[0];
+  // A speaker lit on a dark stage; the second hero frame is one.
+  const flagshipPhoto = home.flagshipPhoto ?? home.heroImages[1];
   const logoPartners = partners.filter((partner) => partner.logoOnDark ?? partner.logo);
 
   return (
@@ -107,22 +107,22 @@ export default async function Home() {
           </section>
         )}
 
-        {/* Flagship: a photograph from the last edition, printed in red dots. */}
+        {/* Flagship: the year leads, since the hero already carries the theme. */}
         {edition && (
           <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
             <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
-              {edition.theme && (
-                <Reveal as="h2" className="text-display font-medium text-balance">
-                  {edition.theme}
-                </Reveal>
-              )}
+              <Reveal as="h2" className="text-display font-medium text-balance">
+                {`Flagship ${edition.year}`}
+              </Reveal>
               {/* The facts as a sentence, not a table. */}
               <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
-                <span className="text-foreground">{`Flagship, edition ${edition.number}.`}</span>{" "}
+                <span className="text-foreground">
+                  {edition.theme ? `Edition ${edition.number}: ${edition.theme}.` : `Edition ${edition.number}.`}
+                </span>{" "}
                 {[
                   venueKnown
-                    ? `${edition.year} at ${edition.venue?.name}, ${edition.venue?.city}.`
-                    : `${edition.year} in ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
+                    ? `At ${edition.venue?.name}, ${edition.venue?.city}.`
+                    : `In ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
                   edition.date
                     ? `${new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))}.`
                     : "Date to be announced.",
@@ -136,7 +136,7 @@ export default async function Home() {
               </Reveal>
             </div>
             {flagshipPhoto && (
-              <HalftonePhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-7" />
+              <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-6 md:col-start-7" />
             )}
           </section>
         )}
