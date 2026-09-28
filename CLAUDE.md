@@ -72,7 +72,7 @@ and TEDx red is the only chromatic value. **Figtree** is the site typeface;
 Helvetica Neue is reserved for the logo. Small red text fails contrast — see
 `DESIGN.md` §3.
 
-The home hero's 3D scene is `scenes/pixel-blob/`.
+The home page is 2D: one fixed red halftone dot field (`src/components/home/dot-field.tsx`) behind the page, no WebGL. `scenes/` is empty until a page needs three.js.
 
 ## Content status
 
