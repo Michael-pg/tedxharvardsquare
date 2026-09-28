@@ -8,24 +8,26 @@ import type { Image as ImageContent } from "@/content";
 import { HalftonePhoto } from "./halftone-photo";
 
 /** Where the red plate sits against the photograph, before and after scrolling past. */
-const PLATE_FROM = { xPercent: -14, yPercent: 6, scale: 1.1 };
-const PLATE_TO = { xPercent: -6, yPercent: -3, scale: 1.1 };
+const PLATE_FROM = { xPercent: -24, yPercent: 5, scale: 1.35 };
+const PLATE_TO = { xPercent: -14, yPercent: -2, scale: 1.35 };
 
 /**
- * A Flagship speaker, printed twice: the photograph in black and white, and
- * behind it the same frame in red halftone, larger and knocked out of
- * register. The photo is lightened onto the plate, so the red shows through
- * everywhere the photo is dark — the stage, the shadows, the speaker's echo
- * beside them. As the section scrolls past, the plate slides toward register
- * without ever quite reaching it.
+ * A Flagship speaker, printed twice: the photograph in black and white,
+ * cropped square around the Studio hotspot, and behind it the same frame as a
+ * coarse, blurred red halftone — larger, out of register, and sliced into
+ * bands that scatter sideways. The photo is lightened onto the plate, so the
+ * red shows through everywhere the photo is dark. As the section scrolls to
+ * the middle of the screen the bands fall into line: disorder resolving to
+ * order, the edition's theme, without quite reaching it.
  *
  * Works best with a lit speaker on a dark stage. Under reduced motion the
- * plate holds its offset still.
+ * plate holds still, nearly in line.
  */
 export function FlagshipPhoto({ image, className }: { image: ImageContent; className?: string }) {
   const root = useRef<HTMLDivElement>(null);
   const plate = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const focus = image.focus ?? { x: 0.5, y: 0.5 };
 
   useGSAP(
     () => {
@@ -45,18 +47,26 @@ export function FlagshipPhoto({ image, className }: { image: ImageContent; class
     { scope: root, dependencies: [reducedMotion] },
   );
 
-  const ratio = image.width && image.height ? image.width / image.height : 3 / 2;
   return (
-    <div ref={root} style={{ aspectRatio: String(ratio) }} className={`relative isolate ${className ?? ""}`}>
+    <div ref={root} className={`relative isolate aspect-square ${className ?? ""}`}>
       <div ref={plate} className="absolute inset-0">
-        <HalftonePhoto image={{ ...image, alt: "" }} className="w-full" />
+        <HalftonePhoto
+          image={{ ...image, alt: "" }}
+          className="w-full"
+          ratio={1}
+          focus={focus}
+          cell={13}
+          blur={1.6}
+          scatter={120}
+        />
       </div>
       <div className="mask-feather pointer-events-none absolute inset-0 mix-blend-lighten">
         <Image
           src={image.src}
           alt={image.alt}
           fill
-          sizes="(min-width: 768px) 58vw, 100vw"
+          sizes="(min-width: 768px) 50vw, 100vw"
+          style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
           className="object-cover contrast-125 grayscale"
         />
       </div>

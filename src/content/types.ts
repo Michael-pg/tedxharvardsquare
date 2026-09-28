@@ -18,6 +18,8 @@ export type Image = {
   alt: string;
   width?: number;
   height?: number;
+  /** The Studio hotspot's centre, 0–1 on each axis: where a crop should stay. */
+  focus?: { x: number; y: number };
 };
 
 export type Link = { label: string; href: string };

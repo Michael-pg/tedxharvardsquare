@@ -56,14 +56,16 @@ const image = (field: string) => `${field}{
   "src": asset->url,
   "alt": coalesce(alt, ""),
   "width": asset->metadata.dimensions.width,
-  "height": asset->metadata.dimensions.height
+  "height": asset->metadata.dimensions.height,
+  "focus": hotspot{ x, y }
 }`;
 
 const imageList = (field: string) => `"${field}": coalesce(${field}[]{
   "src": asset->url,
   "alt": coalesce(alt, ""),
   "width": asset->metadata.dimensions.width,
-  "height": asset->metadata.dimensions.height
+  "height": asset->metadata.dimensions.height,
+  "focus": hotspot{ x, y }
 }, [])`;
 
 const editionFields = `

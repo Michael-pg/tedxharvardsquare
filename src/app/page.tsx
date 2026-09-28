@@ -136,7 +136,7 @@ export default async function Home() {
               </Reveal>
             </div>
             {flagshipPhoto && (
-              <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-7" />
+              <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-6 md:col-start-7" />
             )}
           </section>
         )}
