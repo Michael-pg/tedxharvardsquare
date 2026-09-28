@@ -77,6 +77,9 @@ export function FooterGlow({
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
+      // Hidden (the closed menu, a collapsed pane): nothing to draw, and a zero
+      // height would turn every dot's position into NaN.
+      if (!width || !height) return;
       const paths = BUCKETS.map(() => new Path2D());
       const cols = Math.ceil(width / CELL) + 1;
       const rows = Math.ceil(height / CELL) + 1;

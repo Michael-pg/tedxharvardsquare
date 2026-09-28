@@ -141,6 +141,9 @@ export function DotField() {
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
+      // A zero-size viewport (a hidden or collapsed window) gives the mass a
+      // zero radius, and every dot a NaN size.
+      if (!width || !height) return;
       const t = time;
       const docHeight = document.documentElement.scrollHeight;
       const progress = smoothstep(0, 1, window.scrollY / Math.max(1, docHeight - height));
