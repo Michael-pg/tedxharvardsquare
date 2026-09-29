@@ -295,7 +295,7 @@ RSVPs on the event's Luma link) and **Past** (shown only once there is one).
 With nothing upcoming it says "More to be announced." and points to the Luma
 calendar. Events move to Past by themselves once their date passes. New Studio
 field **Luma calendar link** (Site settings → Contact & social), set to
-`https://lu.ma/tedxharvardsquare` (from Webflow); the footer's Follow column
+`https://luma.com/tedxhsq` (owner); the footer's Follow column
 links it too. Checked in the browser with local mock events (not saved to
 Sanity). Intro copy is Claude's, adapted from the Webflow home page; owner to
 review.
