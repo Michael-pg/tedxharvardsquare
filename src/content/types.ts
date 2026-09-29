@@ -122,6 +122,7 @@ export type HouseEvent = {
   date: string; // ISO 8601
   venue?: Venue;
   registrationUrl?: string;
+  /** Editors can mark an event past early; otherwise it becomes past when its date does. */
   status: "upcoming" | "past";
   coverImage?: Image;
   gallery: Image[];
@@ -172,6 +173,8 @@ export type SiteConfig = {
   newsletterUrl?: string;
   /** Sign-up list for first word on Flagship tickets. */
   earlyAccessUrl?: string;
+  /** The org's Luma calendar, where House events are listed and RSVPs taken. */
+  lumaUrl?: string;
   contactEmail: string;
 };
 

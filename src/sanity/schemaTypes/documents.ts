@@ -143,6 +143,14 @@ export const siteSettings = defineType({
         'The footer\'s "Get early access" button — the sign-up list for first word on the next Flagship\'s tickets. Leave empty to hide the button.',
     }),
     defineField({
+      name: "lumaUrl",
+      title: "Luma calendar link",
+      type: "url",
+      group: "contact",
+      description:
+        'The org\'s Luma calendar. The House page\'s "Follow on Luma" button and the footer\'s Luma link point here.',
+    }),
+    defineField({
       name: "menuImages",
       title: "Menu images",
       type: "object",
@@ -498,6 +506,8 @@ export const houseEvent = defineType({
         ],
         layout: "radio",
       },
+      description:
+        "Events move to Past on the House page by themselves once their date has gone by. Set Past only to take one off the Upcoming list early.",
       initialValue: "upcoming",
       validation: (r) => r.required(),
     }),
