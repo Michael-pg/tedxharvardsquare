@@ -24,7 +24,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 | --- | --- |
 | Pages | Home (3D hero with real photos, topics), `/home2` (new dot-system home, preview only, PR #13), `/speakers`, `/faq`, `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
-| Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Only Speakers/FAQ exist yet |
+| Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Speakers, FAQ and House exist |
 
 ### Infrastructure
 
@@ -287,3 +287,15 @@ Deleted the old hero, the `pixel-blob` three.js scene, `hero-motion`, the
 placeholder hero images and `GlassButton`. The topics list left the home page
 with the old hero (`getTopics` and the topics in Sanity are kept). three.js,
 R3F and the `canvas/scene.tsx` wrapper stay for future scenes.
+
+### 2026-09-29 — House page
+
+New `/house`: intro, **Upcoming** (Studio → House event, soonest first, each row
+RSVPs on the event's Luma link) and **Past** (shown only once there is one).
+With nothing upcoming it says "More to be announced." and points to the Luma
+calendar. Events move to Past by themselves once their date passes. New Studio
+field **Luma calendar link** (Site settings → Contact & social), set to
+`https://lu.ma/tedxharvardsquare` (from Webflow); the footer's Follow column
+links it too. Checked in the browser with local mock events (not saved to
+Sanity). Intro copy is Claude's, adapted from the Webflow home page; owner to
+review.

@@ -69,6 +69,7 @@ export async function SiteFooter() {
   const follow: NavItem[] = [
     ...site.social,
     ...(site.newsletterUrl ? [{ label: "Substack", href: site.newsletterUrl }] : []),
+    ...(site.lumaUrl ? [{ label: "Luma", href: site.lumaUrl }] : []),
   ];
   const columns = [
     footerNav[0],

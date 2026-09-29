@@ -100,7 +100,7 @@ const houseEventFields = `
 const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
   name, tagline, description, missionStatement, url, locale,
   "social": coalesce(social[]{ label, href }, []),
-  newsletterUrl, earlyAccessUrl, contactEmail
+  newsletterUrl, earlyAccessUrl, lumaUrl, contactEmail
 }`);
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -263,6 +263,24 @@ export async function getHouseEvents(
     `*[_type == "houseEvent" && (!defined($status) || status == $status)]
       | order(date desc){ ${houseEventFields} }`,
     { status: status ?? null },
+    ["houseEvent"],
+  );
+}
+
+/**
+ * The House page's two lists. An event is past once its date has gone by, or
+ * when an editor marks it so; editors never have to flip the status by hand.
+ * Upcoming runs soonest first, past most recent first.
+ */
+export async function getHouseCalendar(): Promise<{ upcoming: HouseEvent[]; past: HouseEvent[] }> {
+  return fetchContent(
+    `{
+      "upcoming": *[_type == "houseEvent" && status != "past" && dateTime(date) >= dateTime(now())]
+        | order(date asc){ ${houseEventFields} },
+      "past": *[_type == "houseEvent" && (status == "past" || dateTime(date) < dateTime(now()))]
+        | order(date desc){ ${houseEventFields} }
+    }`,
+    {},
     ["houseEvent"],
   );
 }
