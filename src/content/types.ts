@@ -184,7 +184,7 @@ export type TeamMember = {
 export type Partner = {
   slug: Slug;
   name: string;
-  tier?: "presenting" | "supporting" | "community" | "in-kind";
+  tier?: "supporting" | "community" | "in-kind";
   logo?: Image;
   /** Single-colour version for the dark site background. */
   logoOnDark?: Image;

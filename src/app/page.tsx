@@ -4,12 +4,12 @@ import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home/dot-field";
 import { FitHeadline } from "@/components/home/fit-headline";
 import { Motto } from "@/components/home/motto";
-import { PartnerLogos } from "@/components/home/partner-logos";
 import { PhotoStrip } from "@/components/home/photo-strip";
 import { FlagshipPhoto } from "@/components/home/flagship-photo";
 import { PastTalks } from "@/components/home/past-talks";
 import { SquareLink } from "@/components/ui/square-link";
-import { getCurrentEdition, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
+import { getCurrentEdition, getHomePage, getSiteSettings, getSpeakerArchive } from "@/content";
+import { TEDX_PROGRAM_URL, whatIsTedx } from "@/content/tedx";
 
 /**
  * The home page: the dot-system direction worked out at `/home2` (which now
@@ -35,12 +35,11 @@ function motto(missionStatement: string) {
 const FEATURED_TALKS = 4;
 
 export default async function Home() {
-  const [site, home, edition, archive, partners] = await Promise.all([
+  const [site, home, edition, archive] = await Promise.all([
     getSiteSettings(),
     getHomePage(),
     getCurrentEdition(),
     getSpeakerArchive(),
-    getPartners(),
   ]);
 
   const headline = edition?.theme ?? site.tagline;
@@ -68,7 +67,6 @@ export default async function Home() {
   const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
   // A speaker lit on a dark stage; the second hero frame is one.
   const flagshipPhoto = home.flagshipPhoto ?? home.heroImages[1];
-  const logoPartners = partners.filter((partner) => partner.logoOnDark ?? partner.logo);
 
   return (
     <>
@@ -173,13 +171,26 @@ export default async function Home() {
           </section>
         )}
 
-        {logoPartners.length > 0 && (
-          <section aria-label="Partners" className="px-6 pt-12 pb-24 md:pt-24 md:pb-40">
-            <Reveal>
-              <PartnerLogos lead="With thanks to our partners" partners={logoPartners} />
-            </Reveal>
-          </section>
-        )}
+        {/* What is TEDx: the TEDx licence requires this text and a visible
+            link to the TEDx program on the homepage. Partner logos may not
+            appear here; they live on /sponsor. */}
+        <section aria-labelledby="what-is-tedx" className="grid grid-cols-4 gap-x-6 gap-y-8 px-6 pt-12 pb-24 md:grid-cols-12 md:pt-24 md:pb-40">
+          <Reveal as="h2" className="col-span-4 text-title font-medium md:col-span-4">
+            <span id="what-is-tedx" data-dot-clear>
+              What is TEDx?
+            </span>
+          </Reveal>
+          <Reveal className="col-span-4 flex flex-col items-start gap-8 md:col-span-7 md:col-start-6">
+            <p data-dot-clear className="max-w-3xl text-body text-ink-300">
+              {whatIsTedx(site.name)}
+            </p>
+            <div data-dot-clear>
+              <SquareLink href={TEDX_PROGRAM_URL} variant="secondary">
+                About the TEDx program
+              </SquareLink>
+            </div>
+          </Reveal>
+        </section>
       </main>
 
       <SiteFooter />

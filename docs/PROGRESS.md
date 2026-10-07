@@ -82,7 +82,6 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 
 **Decisions**
 - [ ] House naming and weight on `/home2` (vs CLAUDE.md / DESIGN.md).
-- [ ] TEDx rules vs. the Partner **"Presenting"** tier.
 - [ ] Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
 - [ ] Logo: no SVG exists; PNGs in `public/brand/` stand in.
 - [ ] Legal review of `/privacy` and `/terms` before any domain switch.
@@ -359,3 +358,14 @@ page tab: first screen photo, Why attend (title/text/photo), Who's in the room
 getting there. Sanity (published): photos picked from the Feb 2026 shoot and
 **draft copy for owner review** (three reasons, the audience line, "A short walk
 from Harvard station on the Red Line").
+
+### 2026-10-07 — TEDx licence compliance
+
+Reviewed the site against the TEDx rules (Web + Social) and TED's organizer
+guide. Fixed: partner logos off the homepage (TEDx rules forbid sponsor logos or
+names there); new `/sponsor` ("Partners") page with logos at 40px, smaller than
+the 48px lockup, and a "Partner with us" email; homepage "What is TEDx?" section
+with the required text and a link to ted.com/tedx; new `/about` with the
+required "About TEDx" and "About TED" text (fixes the menu's dead About link);
+footer licence link now points to ted.com/tedx. Wording in `src/content/tedx.ts`.
+Removed the Partner "Presenting" tier (no partner used it).
