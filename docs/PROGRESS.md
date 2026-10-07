@@ -312,3 +312,16 @@ Young, Anya Dillard and Marinela Profi's talks, which are the featured four
 TEDx Talks channel (Abramson, Choe, Swan, Cordier, Bertrand, Neil). Nine talk
 titles changed to match their YouTube titles (owner's call); slugs left as
 they were so links don't break.
+
+### 2026-10-06 — home layout and menu polish
+
+Breaking up the run of left-aligned sections on the home page. Past talks
+(#25): no rules between rows, no background on hover (the photo colours in
+instead, and the icon brightens; keyboard focus too), thumbnails cropped to
+4:3 via a new `--aspect-photo` token. Flagship (#26): photo in the left column
+on desktop, text right; the red plate now drifts right, toward the text. The
+current Flagship photo faces left, away from the text: a right-facing speaker
+in Studio (Home page → Flagship photo) would sit better. Partners (#26):
+centred, logos 40px tall on mobile, 56px on desktop. Menu (#27): About, FAQ and
+Contact grouped flush left, `text-title`, ink-200, so they read over the
+halftone. All merged.
