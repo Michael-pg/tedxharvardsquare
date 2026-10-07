@@ -359,7 +359,3 @@ page tab: first screen photo, Why attend (title/text/photo), Who's in the room
 getting there. Sanity (published): photos picked from the Feb 2026 shoot and
 **draft copy for owner review** (three reasons, the audience line, "A short walk
 from Harvard station on the Red Line").
-
-**TEDx licence question (owner):** research cites the TEDx rules as putting
-sponsor logos on a separate partners page, not the homepage. Home has a partners
-row. Verify against ted.com before changing it.
