@@ -6,6 +6,7 @@ import {
   partner,
   siteSettings,
   speaker,
+  sponsorPage,
   talk,
   teamMember,
   topic,
@@ -15,6 +16,7 @@ import { accessibleImage, link, venue } from "./objects";
 export const schemaTypes = [
   siteSettings,
   homePage,
+  sponsorPage,
   edition,
   speaker,
   talk,
@@ -29,4 +31,4 @@ export const schemaTypes = [
 ];
 
 /** Document types that exist exactly once and are edited in place. */
-export const singletonTypes = new Set(["siteSettings", "homePage"]);
+export const singletonTypes = new Set(["siteSettings", "homePage", "sponsorPage"]);

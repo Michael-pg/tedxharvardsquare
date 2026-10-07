@@ -25,6 +25,7 @@ import type {
   Slug,
   Speaker,
   SpeakerWithTalk,
+  SponsorPage,
   Talk,
   TeamMember,
   Topic,
@@ -139,6 +140,16 @@ export async function getHomePage(): Promise<HomePage> {
   if (!home) return { heroImages: [], featuredTalkSlugs: [] };
   // An empty image field projects as null or with no asset; drop it either way.
   return { ...home, flagshipPhoto: home.flagshipPhoto?.src ? home.flagshipPhoto : undefined };
+}
+
+export async function getSponsorPage(): Promise<SponsorPage | undefined> {
+  const page = await fetchContent<SponsorPage | null>(
+    `*[_id == "sponsorPage"][0]{ headline, "photo": ${image("photo")}, "body": coalesce(body, []), ask, ctaLabel }`,
+    {},
+    ["sponsorPage"],
+  );
+  if (!page?.headline) return undefined;
+  return { ...page, photo: page.photo?.src ? page.photo : undefined };
 }
 
 const menuImagesQuery = defineQuery(`*[_id == "siteSettings"][0].menuImages{
