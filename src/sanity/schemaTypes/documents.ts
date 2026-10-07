@@ -602,9 +602,10 @@ export const partner = defineType({
     defineField({
       name: "tier",
       type: "string",
+      // No "Presenting" tier: TEDx rules forbid misrepresenting a sponsor's role,
+      // and a sponsor presenting the event is exactly that.
       options: {
         list: [
-          { title: "Presenting", value: "presenting" },
           { title: "Supporting", value: "supporting" },
           { title: "Community", value: "community" },
           { title: "In-kind", value: "in-kind" },

@@ -82,7 +82,6 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 
 **Decisions**
 - [ ] House naming and weight on `/home2` (vs CLAUDE.md / DESIGN.md).
-- [ ] TEDx rules vs. the Partner **"Presenting"** tier.
 - [ ] Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
 - [ ] Logo: no SVG exists; PNGs in `public/brand/` stand in.
 - [ ] Legal review of `/privacy` and `/terms` before any domain switch.
@@ -335,11 +334,4 @@ the 48px lockup, and a "Partner with us" email; homepage "What is TEDx?" section
 with the required text and a link to ted.com/tedx; new `/about` with the
 required "About TEDx" and "About TED" text (fixes the menu's dead About link);
 footer licence link now points to ted.com/tedx. Wording in `src/content/tedx.ts`.
-
-Owner to check (not fixable in code): social handles and the Luma URL
-(`tedxhsq`) should mirror the full licensed name; the email list may only carry
-TEDx event news; event photos go to Flickr under CC BY-NC-ND with the
-photographer credited; no panels or audience Q&A on stage (interviews and
-dialogues up to 30 min are fine); organizers and sponsors can't speak; House
-events and their naming should be checked against TEDx event-type rules; legal
-note that the event isn't affiliated with Harvard University is optional.
+Removed the Partner "Presenting" tier (no partner used it).
