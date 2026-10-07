@@ -7,6 +7,10 @@ import type { Image as ImageContent, Partner } from "@/content";
  * for it. Logos share one height and keep their own width, so no partner is
  * boxed into a tile.
  *
+ * TEDx rules: partner logos never appear on the homepage, and wherever they
+ * do appear they must be smaller than the event's own logo (the header lockup
+ * is 40px / 48px tall, so these stay at 32px / 40px).
+ *
  * Uses the white "on dark" logo; a partner with only a full-colour logo is
  * flattened to white so the row stays one colour.
  */
@@ -25,7 +29,7 @@ export function PartnerLogos({ lead, partners }: { lead: string; partners: Partn
               alt={logo.alt || `${partner.name} logo`}
               width={Math.round(128 * ratio)}
               height={128}
-              className={`h-12 w-auto opacity-70 transition-opacity duration-fast group-hover:opacity-100 md:h-16 ${
+              className={`h-8 w-auto opacity-70 transition-opacity duration-fast group-hover:opacity-100 md:h-10 ${
                 partner.logoOnDark ? "" : "brightness-0 invert"
               }`}
             />

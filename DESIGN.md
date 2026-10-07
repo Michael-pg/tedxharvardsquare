@@ -37,7 +37,12 @@ never re-typeset, recolour, stretch, or animate it. SVG preferred.
 **TEDx licence:** TED licenses the name and has strict rules on logo use,
 sponsor recognition, and event naming. Anything touching the logo, sponsors,
 or the event name must be checked against the current TEDx rules before it
-ships. Open question: the Partner schema's **"Presenting"** tier — TEDx rules
+ships. Rules already applied on the site (from ted.com/tedx/before-you-apply/tedx-rules,
+"Web + Social"): no partner logos or names on the homepage, only on `/sponsor`;
+partner logos smaller than the event lockup (32/40px vs 48px); the homepage
+carries the required "What is TEDx?" text and a visible link to ted.com/tedx;
+`/about` carries "About TEDx" and "About TED" word for word; the footer carries
+the licence line. The required wording lives in `src/content/tedx.ts`. Open question: the Partner schema's **"Presenting"** tier — TEDx rules
 are believed to prohibit "presented by" sponsorship; verify before any sponsor
 is labelled with it.
 
