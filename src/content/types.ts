@@ -201,6 +201,15 @@ export type HomePage = {
   featuredTalkSlugs: Slug[];
 };
 
+/** The pitch on /sponsor. */
+export type SponsorPage = {
+  headline: string;
+  photo?: Image;
+  body: string[];
+  ask?: string;
+  ctaLabel?: string;
+};
+
 export type SiteConfig = {
   name: string;
   tagline: string;

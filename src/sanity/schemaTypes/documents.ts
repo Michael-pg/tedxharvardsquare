@@ -213,6 +213,47 @@ export const homePage = defineType({
   preview: { prepare: () => ({ title: "Home page" }) },
 });
 
+export const sponsorPage = defineType({
+  name: "sponsorPage",
+  title: "Sponsor page",
+  type: "document",
+  icon: Handshake,
+  description: "The pitch on /sponsor. Partner logos come from Partners; the email from Site settings → Contact.",
+  fields: [
+    defineField({
+      name: "headline",
+      type: "string",
+      description: "The large opening line, e.g. \"Ideas worth spreading need people willing to back them.\"",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "photo",
+      type: "accessibleImage",
+      description: "A wide photo under the headline. If empty, the menu's Sponsor photo is used.",
+    }),
+    defineField({
+      name: "body",
+      title: "Pitch",
+      type: "array",
+      of: [{ type: "text", rows: 4 }],
+      description: "Who the audience is and what partnering offers. One paragraph each; the first is set larger.",
+    }),
+    defineField({
+      name: "ask",
+      title: "Closing question",
+      type: "string",
+      description: 'The heading above the button, e.g. "Interested in partnering with TEDxHarvardSquare?"',
+    }),
+    defineField({
+      name: "ctaLabel",
+      title: "Button label",
+      type: "string",
+      description: 'e.g. "Become a sponsor". The button opens an email to the contact address in Site settings.',
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Sponsor page" }) },
+});
+
 export const edition = defineType({
   name: "edition",
   title: "Edition",
