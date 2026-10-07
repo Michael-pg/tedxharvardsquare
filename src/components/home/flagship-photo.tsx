@@ -8,8 +8,9 @@ import type { Image as ImageContent } from "@/content";
 import { HalftonePhoto } from "./halftone-photo";
 
 /** Where the red plate sits against the photograph, before and after scrolling past. */
-const PLATE_FROM = { xPercent: -24, yPercent: 5, scale: 1.35 };
-const PLATE_TO = { xPercent: -14, yPercent: -2, scale: 1.35 };
+// The plate drifts right, toward the text: the photo sits at the page's left.
+const PLATE_FROM = { xPercent: 24, yPercent: 5, scale: 1.35 };
+const PLATE_TO = { xPercent: 14, yPercent: -2, scale: 1.35 };
 
 /**
  * A Flagship speaker, printed twice: the photograph in black and white,
