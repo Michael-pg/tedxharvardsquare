@@ -24,6 +24,7 @@ const structure: StructureResolver = (S) =>
     .items([
       singleton(S, "siteSettings", "Site settings"),
       singleton(S, "homePage", "Home page"),
+      singleton(S, "sponsorPage", "Sponsor page"),
       S.divider(),
       S.listItem()
         .title("Flagship")

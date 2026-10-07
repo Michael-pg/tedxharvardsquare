@@ -111,7 +111,7 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 ## Next up (suggested order)
 
 1. Fix the red-text contrast issue (small, visible to every visitor).
-2. Sponsor pitch on `/sponsor` (audience, packages); the page exists with logos and a contact link.
+2. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 3. Team section on `/about` once the organizers send names and bios.
 4. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
 5. Per-speaker pages + JSON-LD (Event, Person) + per-page OG images.
@@ -377,3 +377,13 @@ Both PRs merged 2026-10-07 (#33, then #31). Session tooling notes: two Claude
 sessions shared this checkout, so this one used the other's dev server on :3000
 (Next refuses a second `next dev` in the same folder); the Browser pane returns
 blank screenshots while hidden, so DOM checks stood in.
+
+### 2026-10-07 — Sponsor pitch
+
+`/sponsor` now carries Lorena's pitch from a new Studio singleton, **Sponsor
+page** (headline, wide photo, pitch paragraphs, closing question, button
+label). Layout: headline on black, wide B&W photo (menu's Sponsor photo until
+one is set), the pitch on paper, partner logos, then the ask with a "Become a
+sponsor" email button and the address (Site settings → contact email). A fixed
+line under the button says partners have no say in who speaks (TEDx rule).
+Content created and published in Sanity.
