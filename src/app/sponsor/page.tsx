@@ -6,12 +6,16 @@ import { Reveal } from "@/components/motion/reveal";
 import { PartnerLogos } from "@/components/home/partner-logos";
 import { SquareLink } from "@/components/ui/square-link";
 import { getPartners, getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Partners",
-  description:
-    "The partners who make TEDxHarvardSquare possible, and how to support an independently organized TEDx event in Cambridge.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Partners",
+    description:
+      "The partners who make TEDxHarvardSquare possible, and how to support an independently organized TEDx event in Cambridge.",
+    path: "/sponsor",
+  });
+}
 
 /**
  * Partners: the dedicated page the TEDx licence requires for sponsor logos,

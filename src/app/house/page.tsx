@@ -6,12 +6,16 @@ import { Reveal } from "@/components/motion/reveal";
 import { HouseEvents } from "@/components/house/house-events";
 import { SquareLink } from "@/components/ui/square-link";
 import { getHouseCalendar, getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "House",
-  description:
-    "House is TEDxHarvardSquare's year-round programming in Cambridge: salons, founder dinners, AMAs and workshops between Flagship editions.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "House",
+    description:
+      "House is TEDxHarvardSquare's year-round programming in Cambridge: salons, founder dinners, AMAs and workshops between Flagship editions.",
+    path: "/house",
+  });
+}
 
 /**
  * House: the year-round programme, with the same standing as Flagship. Events

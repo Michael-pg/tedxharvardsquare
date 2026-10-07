@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/site/legal-page";
 import { getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Code of Conduct",
-  description:
-    "The standard of behavior we expect from everyone at TEDxHarvardSquare events — attendees, speakers, partners, volunteers, and organizers — and how to report a problem.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Code of Conduct",
+    description:
+      "The standard of behavior we expect from everyone at TEDxHarvardSquare events — attendees, speakers, partners, volunteers, and organizers — and how to report a problem.",
+    path: "/code-of-conduct",
+  });
+}
 
 export default async function CodeOfConductPage() {
   const site = await getSiteSettings();

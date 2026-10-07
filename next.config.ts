@@ -8,8 +8,24 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    // The dot-system home was previewed at /home2 before it replaced `/`.
-    return [{ source: "/home2", destination: "/", permanent: true }];
+    return [
+      // The dot-system home was previewed at /home2 before it replaced `/`.
+      { source: "/home2", destination: "/", permanent: true },
+      // Webflow's password-protected run-of-show for the Feb 2026 edition.
+      { source: "/schedule", destination: "/flagship", permanent: true },
+    ];
+  },
+  async headers() {
+    // Only the real domain belongs in search results. The Vercel hosts (the
+    // production alias and every preview) serve the same pages, so they are
+    // marked noindex to keep them from competing with it.
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: ".*\\.vercel\\.app" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
+    ];
   },
 };
 

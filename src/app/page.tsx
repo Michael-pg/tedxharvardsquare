@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { SiteNav } from "@/components/site/site-nav";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Reveal } from "@/components/motion/reveal";
@@ -8,8 +9,13 @@ import { PhotoStrip } from "@/components/home/photo-strip";
 import { FlagshipPhoto } from "@/components/home/flagship-photo";
 import { PastTalks } from "@/components/home/past-talks";
 import { SquareLink } from "@/components/ui/square-link";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getCurrentEdition, getHomePage, getSiteSettings, getSpeakerArchive } from "@/content";
 import { TEDX_PROGRAM_URL, whatIsTedx } from "@/content/tedx";
+import { organizationJsonLd } from "@/lib/structured-data";
+
+/** Title, description and share card come from the root layout. */
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 /**
  * The home page: the dot-system direction worked out at `/home2` (which now
@@ -70,6 +76,7 @@ export default async function Home() {
 
   return (
     <>
+      <JsonLd data={organizationJsonLd(site)} />
       <SiteNav />
       <DotField />
 

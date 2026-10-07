@@ -14,6 +14,7 @@ import { Section } from "@/components/flagship/section";
 import { SpeakersPreview } from "@/components/flagship/speakers-preview";
 import { Venue } from "@/components/flagship/venue";
 import { SquareLink } from "@/components/ui/square-link";
+import { JsonLd } from "@/components/seo/json-ld";
 import {
   getCurrentEdition,
   getEditions,
@@ -23,15 +24,18 @@ import {
   getSpeakers,
   type Image as ImageContent,
 } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
+import { editionJsonLd } from "@/lib/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const edition = await getCurrentEdition();
-  return {
+  return pageMetadata({
     title: "Flagship",
     description: edition?.theme
       ? `TEDxHarvardSquare ${edition.year}: ${edition.theme}. A day of talks, Discovery Sessions and conversations in Cambridge, Massachusetts.`
       : "TEDxHarvardSquare's annual conference in Cambridge, Massachusetts: a day of talks, Discovery Sessions and conversations.",
-  };
+    path: "/flagship",
+  });
 }
 
 const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
@@ -81,9 +85,11 @@ export default async function FlagshipPage() {
   const reasonFallbacks = [hero[2], hero[4], hero[1]].filter(Boolean);
   // Past speakers' portraits, printed past recognition, stand in for the lineup.
   const placeholders = archive.flatMap((s) => (s.headshot?.src ? [s.headshot] : [])).slice(0, 4);
+  const eventJsonLd = edition && editionJsonLd(site, edition, heroImage);
 
   return (
     <>
+      {eventJsonLd && <JsonLd data={eventJsonLd} />}
       <SiteNav />
       <DotField strength={0.55} />
 

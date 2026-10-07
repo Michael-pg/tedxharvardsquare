@@ -5,12 +5,16 @@ import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { SpeakerArchive } from "@/components/speakers/speaker-archive";
 import { getSpeakerArchive, type SpeakerWithTalk } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Speakers",
-  description:
-    "Meet the innovators, scientists, founders, and leaders who have taken the TEDxHarvardSquare stage. Exploring AI, biotech, climate, equity, and human potential.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Speakers",
+    description:
+      "Meet the innovators, scientists, founders, and leaders who have taken the TEDxHarvardSquare stage. Exploring AI, biotech, climate, equity, and human potential.",
+    path: "/speakers",
+  });
+}
 
 export default async function SpeakersPage() {
   const speakers = await getSpeakerArchive();

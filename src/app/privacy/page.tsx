@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/site/legal-page";
 import { getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "How TEDxHarvardSquare collects, uses, and protects personal information across this website, our newsletter, and our events.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Privacy Policy",
+    description:
+      "How TEDxHarvardSquare collects, uses, and protects personal information across this website, our newsletter, and our events.",
+    path: "/privacy",
+  });
+}
 
 export default async function PrivacyPage() {
   const site = await getSiteSettings();

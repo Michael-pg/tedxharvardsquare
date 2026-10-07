@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { fontVariables } from "@/lib/fonts";
 import { getSiteSettings } from "@/content";
+import { ogLocale } from "@/lib/metadata";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: site.description,
     openGraph: {
       type: "website",
-      locale: site.locale,
+      locale: ogLocale(site.locale),
       url: site.url,
       siteName: site.name,
       title: `${site.name} — ${site.tagline}`,
@@ -27,6 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: site.description,
     },
     robots: { index: true, follow: true },
+    // Carried over from the Webflow site, where it verifies the Search Console
+    // property; dropping it at the domain switch would lock that property out.
+    verification: { google: "ESGuY1vqOJ0BYLEVdhJ_fRTrczsBsy3_9XKd2tUfzs" },
   };
 }
 

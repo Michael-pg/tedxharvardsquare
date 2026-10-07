@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/site/legal-page";
 import { getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Accessibility",
-  description:
-    "How TEDxHarvardSquare works to make this website and our events accessible, and how to request an accommodation or report a barrier.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Accessibility",
+    description:
+      "How TEDxHarvardSquare works to make this website and our events accessible, and how to request an accommodation or report a barrier.",
+    path: "/accessibility",
+  });
+}
 
 export default async function AccessibilityPage() {
   const site = await getSiteSettings();
