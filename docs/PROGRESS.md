@@ -325,3 +325,16 @@ in Studio (Home page → Flagship photo) would sit better. Partners (#26):
 centred, logos 40px tall on mobile, 56px on desktop. Menu (#27): About, FAQ and
 Contact grouped flush left, `text-title`, ink-200, so they read over the
 halftone. All merged.
+
+### 2026-10-06 — Flagship page
+
+New `/flagship`, led by the current edition (Against Entropy). Hero with the
+theme across the top; the theme statement lit line by line; the three
+questions stepping across the grid; When/Where beside the edition number drawn
+by the dot field; "Meet what's next" beside the Flagship photo; "Now what?"
+with the one ask (ticket link once set on the edition, else the early-access
+list); past editions; partners. Facts come from the edition in Studio; the
+narrative copy is the organizers' starter draft in `src/content/flagship.ts`,
+to move into edition fields in Sanity once it settles. "Explore the Program"
+has no target yet, so the section says "Program to be announced" and links to
+past talks.
