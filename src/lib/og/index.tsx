@@ -5,7 +5,7 @@ import { ImageResponse } from "next/og";
 /**
  * The share card every page's `opengraph-image.tsx` renders: the lockup, a
  * line of Figtree, and the home page's red halftone rising from the lower
- * right. The type is set from static TTFs kept beside this file, because the
+ * right. A speaker's card sets their portrait down the right-hand side. The type is set from static TTFs kept beside this file, because the
  * image renderer cannot read the WOFF2 that `next/font` serves the site.
  */
 
@@ -55,7 +55,19 @@ function halftone() {
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 }
 
-export async function ogImage({ title, eyebrow }: { title: string; eyebrow?: string }) {
+/** The portrait column on a speaker's card. */
+const PORTRAIT_WIDTH = 440;
+
+export async function ogImage({
+  title,
+  eyebrow,
+  portrait,
+}: {
+  title: string;
+  eyebrow?: string;
+  /** A Sanity image URL; cropped here to the card's height. */
+  portrait?: string;
+}) {
   const [bold, medium, logo] = await Promise.all([
     // Literal paths, so the deploy traces just these three files.
     readFile(join(process.cwd(), "src/lib/og/Figtree-Bold.ttf")),
@@ -80,13 +92,23 @@ export async function ogImage({ title, eyebrow }: { title: string; eyebrow?: str
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- rendered to PNG, not the DOM */}
         <img src={halftone()} width={ogSize.width} height={ogSize.height} style={{ position: "absolute", top: 0, left: 0 }} alt="" />
+        {portrait && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`${portrait}?w=${PORTRAIT_WIDTH}&h=${ogSize.height}&fit=crop&fm=jpg`}
+            width={PORTRAIT_WIDTH}
+            height={ogSize.height}
+            style={{ position: "absolute", top: 0, right: 0, objectFit: "cover" }}
+            alt=""
+          />
+        )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} width={250} height={70} alt="" />
-        <div style={{ display: "flex", flexDirection: "column", maxWidth: 820 }}>
+        <div style={{ display: "flex", flexDirection: "column", maxWidth: portrait ? 600 : 820 }}>
           {eyebrow && (
             <div style={{ fontSize: 30, fontWeight: 500, color: INK_400, marginBottom: 20 }}>{eyebrow}</div>
           )}
-          <div style={{ fontSize: 92, fontWeight: 700, lineHeight: 1.02, letterSpacing: -3, color: INK_50 }}>
+          <div style={{ fontSize: portrait ? 80 : 92, fontWeight: 700, lineHeight: 1.02, letterSpacing: -3, color: INK_50 }}>
             {title}
           </div>
         </div>
