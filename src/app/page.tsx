@@ -172,7 +172,7 @@ export default async function Home() {
         )}
 
         {logoPartners.length > 0 && (
-          <section aria-label="Partners" className="px-6 pb-24 md:pb-40">
+          <section aria-label="Partners" className="px-6 pt-12 pb-24 md:pt-24 md:pb-40">
             <Reveal>
               <PartnerLogos lead="With thanks to our partners" partners={logoPartners} />
             </Reveal>
