@@ -112,10 +112,11 @@ export default async function Home() {
           </section>
         )}
 
-        {/* Flagship: the year leads, since the hero already carries the theme. */}
+        {/* Flagship: the year leads, since the hero already carries the theme. The
+            photo sits left on desktop, breaking the run of left-aligned text. */}
         {edition && (
           <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
-            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
               <Reveal as="h2" className="text-display font-medium text-balance">
                 {`Flagship ${edition.year}`}
               </Reveal>
@@ -141,7 +142,7 @@ export default async function Home() {
               </Reveal>
             </div>
             {flagshipPhoto && (
-              <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-6 md:col-start-7" />
+              <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-6 md:col-start-1 md:row-start-1" />
             )}
           </section>
         )}

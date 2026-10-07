@@ -2,19 +2,19 @@ import Image from "next/image";
 import type { Image as ImageContent, Partner } from "@/content";
 
 /**
- * The partners' logos in one quiet row, white on black, led by a short line of
- * plain text in the same row rather than a label above it. Each links to the
- * partner's site when Studio has a URL for it. Logos share one height and keep
- * their own width, so no partner is boxed into a tile.
+ * The partners' logos in one quiet, centred row, white on black, under a short
+ * line of plain text. Each links to the partner's site when Studio has a URL
+ * for it. Logos share one height and keep their own width, so no partner is
+ * boxed into a tile.
  *
  * Uses the white "on dark" logo; a partner with only a full-colour logo is
  * flattened to white so the row stays one colour.
  */
 export function PartnerLogos({ lead, partners }: { lead: string; partners: Partner[] }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-16 gap-y-10">
-      <p className="w-full text-body text-muted md:w-auto">{lead}</p>
-      <ul className="flex flex-wrap items-center gap-x-16 gap-y-10">
+    <div className="flex flex-col items-center gap-10 text-center">
+      <p className="text-body text-muted">{lead}</p>
+      <ul className="flex flex-wrap items-center justify-center gap-x-16 gap-y-10">
         {partners.map((partner) => {
           const logo: ImageContent | undefined = partner.logoOnDark ?? partner.logo;
           if (!logo) return null;
@@ -23,9 +23,9 @@ export function PartnerLogos({ lead, partners }: { lead: string; partners: Partn
             <Image
               src={logo.src}
               alt={logo.alt || `${partner.name} logo`}
-              width={Math.round(80 * ratio)}
-              height={80}
-              className={`h-8 w-auto opacity-70 transition-opacity duration-fast group-hover:opacity-100 md:h-10 ${
+              width={Math.round(112 * ratio)}
+              height={112}
+              className={`h-10 w-auto opacity-70 transition-opacity duration-fast group-hover:opacity-100 md:h-14 ${
                 partner.logoOnDark ? "" : "brightness-0 invert"
               }`}
             />
