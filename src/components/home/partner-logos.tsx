@@ -13,7 +13,7 @@ import type { Image as ImageContent, Partner } from "@/content";
 export function PartnerLogos({ lead, partners }: { lead: string; partners: Partner[] }) {
   return (
     <div className="flex flex-col items-center gap-10 text-center">
-      <p className="text-body text-muted">{lead}</p>
+      <p data-dot-clear className="text-body text-muted">{lead}</p>
       <ul className="flex flex-wrap items-center justify-center gap-x-16 gap-y-10">
         {partners.map((partner) => {
           const logo: ImageContent | undefined = partner.logoOnDark ?? partner.logo;
@@ -23,9 +23,9 @@ export function PartnerLogos({ lead, partners }: { lead: string; partners: Partn
             <Image
               src={logo.src}
               alt={logo.alt || `${partner.name} logo`}
-              width={Math.round(112 * ratio)}
-              height={112}
-              className={`h-10 w-auto opacity-70 transition-opacity duration-fast group-hover:opacity-100 md:h-14 ${
+              width={Math.round(128 * ratio)}
+              height={128}
+              className={`h-12 w-auto opacity-70 transition-opacity duration-fast group-hover:opacity-100 md:h-16 ${
                 partner.logoOnDark ? "" : "brightness-0 invert"
               }`}
             />
