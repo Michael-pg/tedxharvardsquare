@@ -16,15 +16,15 @@ use down). Add a dated entry at the end of each session; keep entries short.
 
 ---
 
-## Current state (2026-09-24)
+## Current state (2026-10-07)
 
 **Live preview:** https://tedxharvardsquare.vercel.app — Studio at `/studio`.
 
 | Area | State |
 | --- | --- |
-| Pages | Home (3D hero with real photos, topics), `/home2` (new dot-system home, preview only, PR #13), `/speakers`, `/faq`, `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
+| Pages | Home (dot system), `/flagship`, `/house`, `/speakers`, `/faq`, `/about`, `/sponsor` (Partners), `/privacy`, `/terms`, `/code-of-conduct`, `/accessibility`, `/studio` |
 | Content | All in Sanity — see CLAUDE.md "Content status" |
-| Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Speakers, FAQ and House exist |
+| Nav | Bar: Flagship · House · Speakers + menu. Menu: Flagship · House · Speakers · Sponsor, then About · FAQ · Contact. Every menu link now has a page |
 
 ### Infrastructure
 
@@ -63,13 +63,16 @@ user-wide in `~/.claude/skills/`.
 
 ---
 
-## Owner to-do (as of 2026-09-25)
+## Owner to-do (as of 2026-10-07)
 
 Everything waiting on the owner, in one place. Tick items off here as they land.
 
 **In Studio (`/studio`)**
 - [ ] **Talk stage photos**: Talk → Stage photo, landscape, with alt text. 4 of 21 done (the featured four, 2026-10-06); the rest show the speaker portrait if featured.
 - [ ] **Talk videos still missing**: Carlos Gascón Alvarez, Ceren Koca, Alissa M. Kleinnijenhuis (not on YouTube as of 2026-10-06). Mariam Khayretdinova (2025) has no talk record at all.
+- [ ] **Review Claude's draft Flagship copy** (Against Entropy → Flagship page tab): the three "Why attend" reasons, the "Who's in the room" line, and the venue note ("A short walk from Harvard station on the Red Line").
+- [ ] Against Entropy → Flagship page: **What's included** (until filled, the page says details are on their way), **Speakers note** (e.g. "Lineup announced in December"), **Program link** once a program page exists, and real **Audience figures** if there are any.
+- [ ] Add 2027 speakers to the edition when announced: the Flagship page swaps its coming-soon tiles for their portraits by itself.
 - [ ] Against Entropy → **Date** once confirmed (left empty on purpose; the site says "Date to be announced").
 - [ ] Optional: Home page → **Flagship photo**, one lit speaker on a dark stage (else the home page uses the second hero photo, the speaker in profile).
 - [ ] Optional: Site settings → Mission statement, drop the em dash.
@@ -77,7 +80,7 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [ ] Job titles for the ten 2025 speakers (blank in Webflow too).
 - [ ] Confirm the Arrow Street Arts white logo (inferred from Webflow's "Mask group-2").
 - [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
-- [ ] Real content for House events, team, and past-edition themes (no placeholders).
+- [ ] Real content for House events, team, and past-edition themes (no placeholders). TED expects core team names and backgrounds on the site; an `/about` team section is ready to build once they exist.
 - [ ] Invite marketing editors: sanity.io/manage → Members → Editor.
 
 **Decisions**
@@ -108,9 +111,9 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 ## Next up (suggested order)
 
 1. Fix the red-text contrast issue (small, visible to every visitor).
-3. **Flagship page** — build it as the reference-quality "golden page";
-   everything after reuses its parts.
-4. House page, Sponsor page (sponsor pitch: audience, packages, past partners).
+2. Sponsor pitch on `/sponsor` (audience, packages); the page exists with logos and a contact link.
+3. Team section on `/about` once the organizers send names and bios.
+4. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
 5. Per-speaker pages + JSON-LD (Event, Person) + per-page OG images.
 6. CI: GitHub Actions running lint, typecheck, build on every PR.
 7. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
@@ -342,7 +345,7 @@ choose otherwise." (also shown on the home hero). With no Program link the
 section says "Program to be announced" and links to past talks. The home page's
 Flagship section now leads with "Explore Against Entropy" → `/flagship`.
 
-### 2026-10-06 — Flagship page, second pass
+### 2026-10-06 — Flagship page, second pass (PR #31, merged)
 
 Owner wanted the page to feel unlike home: more photos, calmer, alternating
 backgrounds, dots as an accent. Researched three inspiration sites and other
@@ -359,7 +362,7 @@ getting there. Sanity (published): photos picked from the Feb 2026 shoot and
 **draft copy for owner review** (three reasons, the audience line, "A short walk
 from Harvard station on the Red Line").
 
-### 2026-10-07 — TEDx licence compliance
+### 2026-10-07 — TEDx licence compliance (PR #33, merged)
 
 Reviewed the site against the TEDx rules (Web + Social) and TED's organizer
 guide. Fixed: partner logos off the homepage (TEDx rules forbid sponsor logos or
@@ -369,3 +372,8 @@ with the required text and a link to ted.com/tedx; new `/about` with the
 required "About TEDx" and "About TED" text (fixes the menu's dead About link);
 footer licence link now points to ted.com/tedx. Wording in `src/content/tedx.ts`.
 Removed the Partner "Presenting" tier (no partner used it).
+
+Both PRs merged 2026-10-07 (#33, then #31). Session tooling notes: two Claude
+sessions shared this checkout, so this one used the other's dev server on :3000
+(Next refuses a second `next dev` in the same folder); the Browser pane returns
+blank screenshots while hidden, so DOM checks stood in.
