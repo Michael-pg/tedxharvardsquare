@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { getSiteSettings } from "@/content";
 import { footerNav, policyNav, type NavItem } from "@/content/navigation";
+import { TEDX_PROGRAM_URL } from "@/content/tedx";
 import { SquareLink } from "@/components/ui/square-link";
 import { FooterGlow } from "./footer-glow";
 import { BackToTop, CambridgeTime } from "./footer-meta";
@@ -139,7 +140,7 @@ export async function SiteFooter() {
         <p className="relative mt-3 px-6 text-small text-muted">
           This independent{" "}
           <a
-            href="https://www.ted.com/about/programs-initiatives/tedx-program"
+            href={TEDX_PROGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="underline decoration-ink-600 underline-offset-4 transition-colors duration-fast hover:text-foreground hover:decoration-brand"
