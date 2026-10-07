@@ -342,3 +342,24 @@ its Theme statement changed to "Everything tends toward disorder. Unless we
 choose otherwise." (also shown on the home hero). With no Program link the
 section says "Program to be announced" and links to past talks. The home page's
 Flagship section now leads with "Explore Against Entropy" → `/flagship`.
+
+### 2026-10-06 — Flagship page, second pass
+
+Owner wanted the page to feel unlike home: more photos, calmer, alternating
+backgrounds, dots as an accent. Researched three inspiration sites and other
+conference pages, mocked three heroes; owner picked the full-bleed photo. Now:
+photo hero → theme (dark, dot field at 0.55) → Why attend + Who's in the room
+(paper) → Meet what's next → Speakers 2027 (portraits once speakers are added to
+the edition, else "Lineup coming soon" with halftone tiles) → What's included
+(paper, "details on their way" until filled) → venue split (photo + paper panel,
+Maps link) → Now what? → past editions. Dropped: the dot-drawn "03", the
+When/Where table, the partners row. New Studio fields on the edition's Flagship
+page tab: first screen photo, Why attend (title/text/photo), Who's in the room
+(+ optional real figures and photo), speakers note, what's included, venue photo,
+getting there. Sanity (published): photos picked from the Feb 2026 shoot and
+**draft copy for owner review** (three reasons, the audience line, "A short walk
+from Harvard station on the Red Line").
+
+**TEDx licence question (owner):** research cites the TEDx rules as putting
+sponsor logos on a separate partners page, not the homepage. Home has a partners
+row. Verify against ted.com before changing it.

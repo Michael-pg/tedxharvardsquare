@@ -309,6 +309,14 @@ export const edition = defineType({
       description: 'Shown wherever the date would be while the Date field is empty, e.g. "February 2027".',
     }),
     defineField({
+      name: "heroImage",
+      title: "First screen photo",
+      type: "accessibleImage",
+      group: "page",
+      description:
+        "Fills the Flagship page's first screen, in black and white and dimmed under the theme. Landscape, with the subject away from the bottom-left, where the text sits.",
+    }),
+    defineField({
       name: "statement",
       title: "Theme statement, line by line",
       type: "array",
@@ -333,6 +341,61 @@ export const edition = defineType({
       validation: (r) => r.max(3),
     }),
     defineField({
+      name: "reasons",
+      title: "Why attend",
+      type: "array",
+      group: "page",
+      description: "The reasons to come, each with a photo, on a light section. Three reads best.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "reason",
+          fields: [
+            defineField({ name: "title", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "body", type: "text", rows: 3 }),
+            defineField({ name: "image", title: "Photo", type: "accessibleImage", description: "Cropped to 4:3." }),
+          ],
+          preview: { select: { title: "title", subtitle: "body", media: "image" } },
+        }),
+      ],
+      validation: (r) => r.max(4),
+    }),
+    defineField({
+      name: "audience",
+      title: "Who's in the room",
+      type: "text",
+      rows: 2,
+      group: "page",
+      description:
+        'One running line naming who comes, set large, e.g. "Scientists, engineers, founders, artists…".',
+    }),
+    defineField({
+      name: "audienceStats",
+      title: "Audience figures",
+      type: "array",
+      group: "page",
+      description: 'Optional real figures shown under the line, e.g. "300" / "attendees". Leave empty rather than estimate.',
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "stat",
+          fields: [
+            defineField({ name: "value", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "label", type: "string", validation: (r) => r.required() }),
+          ],
+          preview: { select: { title: "value", subtitle: "label" } },
+        }),
+      ],
+      validation: (r) => r.max(4),
+    }),
+    defineField({
+      name: "audienceImage",
+      title: "Who's in the room photo",
+      type: "accessibleImage",
+      group: "page",
+      description: "A wide photo of the audience, under the line.",
+    }),
+    defineField({
       name: "programTitle",
       title: "Program heading",
       type: "string",
@@ -355,6 +418,37 @@ export const edition = defineType({
       description:
         'Where "Explore the program" goes, e.g. /program or a full web address. Until it is set the page says "Program to be announced" and links to past talks.',
       validation: (r) => r.uri({ allowRelative: true, scheme: ["http", "https"] }),
+    }),
+    defineField({
+      name: "speakersNote",
+      title: "Speakers note",
+      type: "string",
+      group: "page",
+      description:
+        'Shown while no speakers are added to this edition, e.g. "Lineup announced in December." Speakers added to the edition replace the coming-soon state by themselves.',
+    }),
+    defineField({
+      name: "included",
+      title: "What's included",
+      type: "array",
+      of: [{ type: "string" }],
+      group: "page",
+      description: "What a ticket includes, one item each. Until filled, the page says details are on their way.",
+    }),
+    defineField({
+      name: "venueImage",
+      title: "Venue photo",
+      type: "accessibleImage",
+      group: "page",
+      description: "The venue, inside or out. Fills half of the venue section.",
+    }),
+    defineField({
+      name: "venueNotes",
+      title: "Getting there",
+      type: "array",
+      of: [{ type: "text", rows: 2 }],
+      group: "page",
+      description: "Short notes beside the venue address: transit, parking, accessibility. One paragraph each.",
     }),
     defineField({
       name: "closeTitle",
