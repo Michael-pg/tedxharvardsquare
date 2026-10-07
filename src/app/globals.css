@@ -95,6 +95,11 @@
   --duration-fast: 300ms;
   --duration-base: 600ms;
   --duration-slow: 1200ms;
+
+  /* —— Aspect ratios ————————————————————————————————————————————————— */
+
+  /* Talk thumbnails: a 3:2 stage photo cropped in a little, toward square. */
+  --aspect-photo: 4 / 3;
 }
 
 @theme inline {

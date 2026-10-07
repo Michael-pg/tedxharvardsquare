@@ -11,7 +11,7 @@ import type { SpeakerWithTalk } from "@/content";
  */
 export function PastTalks({ speakers }: { speakers: SpeakerWithTalk[] }) {
   return (
-    <ul className="border-t border-rule">
+    <ul>
       {speakers.map((speaker) => {
         const talk = speaker.talk!;
         const external = Boolean(talk.videoUrl);
@@ -21,13 +21,13 @@ export function PastTalks({ speakers }: { speakers: SpeakerWithTalk[] }) {
         const content = (
           <>
             {photo && (
-              <span className="relative aspect-video w-32 shrink-0 overflow-hidden bg-ink-900 md:w-56">
+              <span className="relative aspect-photo w-32 shrink-0 overflow-hidden bg-ink-900 md:w-56">
                 <Image
                   src={photo.src}
                   alt=""
                   fill
                   sizes="(min-width: 768px) 224px, 128px"
-                  className="object-cover grayscale transition-[filter] duration-slow group-hover:grayscale-0"
+                  className="object-cover grayscale transition-[filter] duration-slow group-hover:grayscale-0 group-focus-visible:grayscale-0"
                 />
               </span>
             )}
@@ -38,15 +38,15 @@ export function PastTalks({ speakers }: { speakers: SpeakerWithTalk[] }) {
               </span>
             </span>
             {external ? (
-              <Play aria-hidden="true" className="size-4 shrink-0 text-muted transition-colors duration-fast group-hover:text-foreground" />
+              <Play aria-hidden="true" className="size-4 shrink-0 text-muted transition-colors duration-fast group-hover:text-foreground group-focus-visible:text-foreground" />
             ) : (
-              <ArrowUpRight aria-hidden="true" className="size-4 shrink-0 text-muted" />
+              <ArrowUpRight aria-hidden="true" className="size-4 shrink-0 text-muted transition-colors duration-fast group-hover:text-foreground group-focus-visible:text-foreground" />
             )}
           </>
         );
-        const className = "group flex items-center gap-5 py-6 transition-colors duration-fast hover:bg-ink-900";
+        const className = "group flex items-center gap-5 py-4";
         return (
-          <li key={speaker.slug} className="border-b border-rule">
+          <li key={speaker.slug}>
             {external ? (
               <a href={talk.videoUrl} target="_blank" rel="noopener noreferrer" className={className}>
                 {content}
