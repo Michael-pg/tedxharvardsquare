@@ -7,6 +7,9 @@ import { useLayoutEffect, useRef } from "react";
  * masthead. From `md` up the font size is scaled so the words run exactly
  * edge to edge; on phones one line would be unreadably small, so the text
  * falls back to `text-mega` and wraps.
+ *
+ * It does not clear the dot field: the letters are big enough to hold their
+ * own, and a pocket around a line box this tall reads as a hard horizontal cut.
  */
 export function FitHeadline({ children, className }: { children: string; className?: string }) {
   const ref = useRef<HTMLHeadingElement>(null);
@@ -43,7 +46,7 @@ export function FitHeadline({ children, className }: { children: string; classNa
   }, [children]);
 
   return (
-    <h1 ref={ref} data-dot-clear className={`text-mega font-medium md:whitespace-nowrap ${className ?? ""}`}>
+    <h1 ref={ref} className={`text-mega font-medium md:whitespace-nowrap ${className ?? ""}`}>
       {children}
     </h1>
   );
