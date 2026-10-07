@@ -333,8 +333,12 @@ theme across the top; the theme statement lit line by line; the three
 questions stepping across the grid; When/Where beside the edition number drawn
 by the dot field; "Meet what's next" beside the Flagship photo; "Now what?"
 with the one ask (ticket link once set on the edition, else the early-access
-list); past editions; partners. Facts come from the edition in Studio; the
-narrative copy is the organizers' starter draft in `src/content/flagship.ts`,
-to move into edition fields in Sanity once it settles. "Explore the Program"
-has no target yet, so the section says "Program to be announced" and links to
-past talks.
+list); past editions; partners. Everything comes from the edition in Studio:
+facts on its **Details** tab, the page copy on a new **Flagship page** tab
+(place, month until the date is set, statement lines, invitation, questions,
+program heading/text/link, closing heading/text). Empty parts are hidden. Sanity
+edit (published): the organizers' starter copy filled in on Against Entropy, and
+its Theme statement changed to "Everything tends toward disorder. Unless we
+choose otherwise." (also shown on the home hero). With no Program link the
+section says "Program to be announced" and links to past talks. The home page's
+Flagship section now leads with "Explore Against Entropy" → `/flagship`.

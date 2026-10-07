@@ -41,6 +41,26 @@ export type Edition = {
   status: "upcoming" | "past" | "announced";
   ticketUrl?: string;
   poster?: Image;
+  /** The Flagship page's copy, written for this edition. */
+  page?: FlagshipPageCopy;
+};
+
+/** Copy for the Flagship page. Every part is optional; empty parts render as absence. */
+export type FlagshipPageCopy = {
+  /** e.g. "Cambridge, Massachusetts". */
+  place?: string;
+  /** Stands in for the date while it is unset, e.g. "February 2027". */
+  month?: string;
+  /** The theme statement, one line per item. */
+  statement: string[];
+  invitation?: string;
+  questions: string[];
+  programTitle?: string;
+  programBody: string[];
+  /** Relative (/program) or absolute. */
+  programUrl?: string;
+  closeTitle?: string;
+  closeBody: string[];
 };
 
 export type Venue = {

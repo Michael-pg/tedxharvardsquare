@@ -218,9 +218,16 @@ export const edition = defineType({
   title: "Edition",
   type: "document",
   icon: Megaphone,
+  // The Flagship page's copy is written per edition, so it lives on the
+  // edition, in its own tab.
+  groups: [
+    { name: "details", title: "Details", default: true },
+    { name: "page", title: "Flagship page" },
+  ],
   fields: [
     defineField({
       name: "number",
+      group: "details",
       type: "number",
       description:
         'Sequential number as the org counts them — "Edition 3". The current edition\'s number and theme appear in red above the home page headline.',
@@ -228,31 +235,37 @@ export const edition = defineType({
     }),
     defineField({
       name: "year",
+      group: "details",
       type: "number",
       description: "The calendar year it took place. Speakers are grouped by this.",
       validation: (r) => r.required().integer().min(2020).max(2100),
     }),
     defineField({
       name: "theme",
+      group: "details",
       type: "string",
       description: 'The year-defining theme, e.g. "Against Entropy".',
     }),
-    slugField("theme"),
+    { ...slugField("theme"), group: "details" },
     defineField({
       name: "themeStatement",
+      group: "details",
       title: "Theme statement",
       type: "text",
       rows: 3,
-      description: "One-paragraph framing of what the theme asks of the audience.",
+      description:
+        "One or two short sentences under the theme on the home page and the Flagship page, e.g. \"Everything tends toward disorder. Unless we choose otherwise.\"",
     }),
     defineField({
       name: "date",
+      group: "details",
       type: "date",
       description: "Leave empty if only the month or year is on record.",
     }),
-    defineField({ name: "venue", type: "venue" }),
+    defineField({ name: "venue", type: "venue", group: "details" }),
     defineField({
       name: "status",
+      group: "details",
       type: "string",
       description:
         "The home page features the earliest edition that isn't Past. Mark an edition Past once it has happened.",
@@ -269,15 +282,94 @@ export const edition = defineType({
     }),
     defineField({
       name: "ticketUrl",
+      group: "details",
       title: "Ticket link",
       type: "url",
       description: "Where people buy tickets. Leave empty until sales open.",
     }),
     defineField({
       name: "poster",
+      group: "details",
       type: "accessibleImage",
       description:
         "Key art or a stage photo for this edition. The home page prints it in red dots beside the edition's theme; until one is added, the first home page photo is used.",
+    }),
+    defineField({
+      name: "place",
+      title: "Place",
+      type: "string",
+      group: "page",
+      description: 'Shown at the bottom of the Flagship page\'s first screen, beside the date, e.g. "Cambridge, Massachusetts".',
+    }),
+    defineField({
+      name: "month",
+      title: "Month, until the date is set",
+      type: "string",
+      group: "page",
+      description: 'Shown wherever the date would be while the Date field is empty, e.g. "February 2027".',
+    }),
+    defineField({
+      name: "statement",
+      title: "Theme statement, line by line",
+      type: "array",
+      of: [{ type: "string" }],
+      group: "page",
+      description:
+        "The large statement below the Flagship page's first screen. Each item is one line; the lines light up in turn as visitors scroll.",
+    }),
+    defineField({
+      name: "invitation",
+      type: "text",
+      rows: 3,
+      group: "page",
+      description: "A paragraph under the theme statement: who comes, and what the day is.",
+    }),
+    defineField({
+      name: "questions",
+      type: "array",
+      of: [{ type: "string" }],
+      group: "page",
+      description: "Set large after the invitation, each a little further right. Up to three.",
+      validation: (r) => r.max(3),
+    }),
+    defineField({
+      name: "programTitle",
+      title: "Program heading",
+      type: "string",
+      group: "page",
+      description: 'The heading beside the Flagship photo, e.g. "Meet what\'s next".',
+    }),
+    defineField({
+      name: "programBody",
+      title: "Program text",
+      type: "array",
+      of: [{ type: "text", rows: 3 }],
+      group: "page",
+      description: "Paragraphs under the program heading. The first is brighter than the rest.",
+    }),
+    defineField({
+      name: "programUrl",
+      title: "Program link",
+      type: "url",
+      group: "page",
+      description:
+        'Where "Explore the program" goes, e.g. /program or a full web address. Until it is set the page says "Program to be announced" and links to past talks.',
+      validation: (r) => r.uri({ allowRelative: true, scheme: ["http", "https"] }),
+    }),
+    defineField({
+      name: "closeTitle",
+      title: "Closing heading",
+      type: "string",
+      group: "page",
+      description: 'The large centred heading near the end of the page, e.g. "Now what?". The ticket button sits under it.',
+    }),
+    defineField({
+      name: "closeBody",
+      title: "Closing text",
+      type: "array",
+      of: [{ type: "text", rows: 3 }],
+      group: "page",
+      description: "Paragraphs under the closing heading. The first is brighter than the rest.",
     }),
   ],
   orderings: [

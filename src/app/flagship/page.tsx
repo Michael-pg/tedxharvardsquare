@@ -10,16 +10,22 @@ import { Motto } from "@/components/home/motto";
 import { FlagshipPhoto } from "@/components/home/flagship-photo";
 import { PartnerLogos } from "@/components/home/partner-logos";
 import { SquareLink } from "@/components/ui/square-link";
-import { getCurrentEdition, getEditions, getHomePage, getPartners, getSiteSettings, getSpeakerArchive } from "@/content";
-import { flagshipCopy as copy } from "@/content/flagship";
+import {
+  getCurrentEdition,
+  getEditions,
+  getHomePage,
+  getPartners,
+  getSiteSettings,
+  getSpeakerArchive,
+} from "@/content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const edition = await getCurrentEdition();
   return {
     title: "Flagship",
     description: edition?.theme
-      ? `TEDxHarvardSquare ${edition.year}: ${edition.theme}. A day of talks, Discovery Sessions and conversations in ${copy.place}.`
-      : `TEDxHarvardSquare's annual conference in ${copy.place}: a day of talks, Discovery Sessions and conversations.`,
+      ? `TEDxHarvardSquare ${edition.year}: ${edition.theme}. A day of talks, Discovery Sessions and conversations in Cambridge, Massachusetts.`
+      : "TEDxHarvardSquare's annual conference in Cambridge, Massachusetts: a day of talks, Discovery Sessions and conversations.",
   };
 }
 
@@ -30,10 +36,10 @@ const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZon
 const questionStart = ["md:col-start-1", "md:col-start-4", "md:col-start-7"];
 
 /**
- * Flagship: the annual conference, led by the current edition. Facts (theme,
- * year, venue, date, tickets) come from the edition in Studio; the narrative
- * copy is the organizers' draft in `@/content/flagship`. The page shares the
- * home page's dot field, and the field draws the edition number itself.
+ * Flagship: the annual conference, led by the current edition. Everything
+ * comes from that edition in Studio: the facts from its Details tab, the copy
+ * from its Flagship page tab, and any part left empty is simply not shown.
+ * The page shares the home page's dot field, which draws the edition number.
  */
 export default async function FlagshipPage() {
   const [site, edition, editions, archive, home, partners] = await Promise.all([
@@ -46,10 +52,12 @@ export default async function FlagshipPage() {
   ]);
 
   const title = edition ? `TEDxHarvardSquare ${edition.year}` : "TEDxHarvardSquare";
-  const when = edition?.date ? dateFormat.format(new Date(edition.date)) : copy.when;
+  const copy = edition?.page;
+  const when = edition?.date ? dateFormat.format(new Date(edition.date)) : copy?.month;
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
   // Tickets once they are on sale; until then, the early-access list.
   const joinHref = edition?.ticketUrl ?? site.earlyAccessUrl ?? site.newsletterUrl;
+  const hasTheme = Boolean(copy && (copy.statement.length || copy.invitation || copy.questions.length));
   const pastEditions = editions.filter((e) => e.slug !== edition?.slug && e.status === "past");
   const talksIn = (year: number) => archive.filter((s) => s.editionYear === year && s.talk).length;
   const photo = home.flagshipPhoto ?? home.heroImages[1];
@@ -69,42 +77,60 @@ export default async function FlagshipPage() {
           <div>
             <FitHeadline>{edition?.theme ?? "Flagship"}</FitHeadline>
           </div>
-          <p data-dot-clear className="mt-8 max-w-md text-heading font-medium text-balance md:mt-10">
-            {copy.hook.join(" ")}
-          </p>
+          {edition?.themeStatement && (
+            <p data-dot-clear className="mt-8 max-w-md text-heading font-medium text-balance md:mt-10">
+              {edition.themeStatement}
+            </p>
+          )}
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
             <div data-dot-clear className="flex flex-wrap gap-2">
-              <SquareLink href="#theme">{edition?.theme ? `Explore ${edition.theme}` : "Explore the theme"}</SquareLink>
+              {hasTheme && (
+                <SquareLink href="#theme">
+                  {edition?.theme ? `Explore ${edition.theme}` : "Explore the theme"}
+                </SquareLink>
+              )}
             </div>
             <p data-dot-clear className="text-small text-muted">
-              {[copy.place, when].join(" · ")}
+              {[copy?.place, when].filter(Boolean).join(" · ")}
             </p>
           </div>
         </section>
 
         {/* The theme: lit line by line, then the invitation and its questions. */}
-        <section id="theme" aria-label="The theme" className="scroll-mt-24 px-6 py-24 md:py-40">
-          <Motto lines={copy.statement} />
-          <Reveal as="p" className="mt-16 max-w-3xl text-lead text-ink-300 md:mt-24">
-            <span data-dot-clear>{copy.invitation}</span>
-          </Reveal>
-          <ul className="mt-20 grid grid-cols-4 gap-y-8 md:mt-32 md:grid-cols-12 md:gap-y-12">
-            {copy.questions.map((question, i) => (
+        {copy && hasTheme && (
+          <section id="theme" aria-label="The theme" className="scroll-mt-24 px-6 py-24 md:py-40">
+            {copy.statement.length > 0 && <Motto lines={copy.statement} />}
+            {copy.invitation && (
               <Reveal
-                key={question}
-                as="li"
-                delay={i * 0.1}
-                className={`col-span-4 text-title font-medium text-balance md:col-span-6 ${questionStart[i]}`}
+                as="p"
+                className={`max-w-3xl text-lead text-ink-300 ${copy.statement.length > 0 ? "mt-16 md:mt-24" : ""}`}
               >
-                <span data-dot-clear>{question}</span>
+                <span data-dot-clear>{copy.invitation}</span>
               </Reveal>
-            ))}
-          </ul>
-        </section>
+            )}
+            {copy.questions.length > 0 && (
+              <ul className="mt-20 grid grid-cols-4 gap-y-8 md:mt-32 md:grid-cols-12 md:gap-y-12">
+                {copy.questions.slice(0, questionStart.length).map((question, i) => (
+                  <Reveal
+                    key={question}
+                    as="li"
+                    delay={i * 0.1}
+                    className={`col-span-4 text-title font-medium text-balance md:col-span-6 ${questionStart[i]}`}
+                  >
+                    <span data-dot-clear>{question}</span>
+                  </Reveal>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
 
         {/* The facts, beside the edition number drawn in dots. */}
         {edition && (
-          <section aria-label="When and where" className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+          <section
+            aria-label="When and where"
+            className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40"
+          >
             <div className="col-span-4 md:col-span-5">
               <Reveal as="h2" className="mb-10 text-display font-medium">
                 <span data-dot-clear>{`Flagship ${edition.year}`}</span>
@@ -112,11 +138,13 @@ export default async function FlagshipPage() {
               <Reveal as="dl" className="border-t border-rule">
                 {[
                   ["Edition", `Edition ${edition.number}`],
-                  ["When", edition.date ? when : `${when}, date to be announced`],
+                  ["When", edition.date ? when : when ? `${when}, date to be announced` : "Date to be announced"],
                   [
                     "Where",
                     venueKnown
-                      ? [edition.venue?.name, edition.venue?.addressLine, edition.venue?.city].filter(Boolean).join(", ")
+                      ? [edition.venue?.name, edition.venue?.addressLine, edition.venue?.city]
+                          .filter(Boolean)
+                          .join(", ")
                       : `${edition.venue?.city ?? "Cambridge"}, venue to be announced`,
                   ],
                 ].map(([term, detail]) => (
@@ -140,38 +168,54 @@ export default async function FlagshipPage() {
 
         {/* The program: copy left, a speaker on stage right. The photo's red plate
             drifts right, past the page edge, so the section clips it. */}
-        <section className="grid overflow-x-clip grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
-          <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
-            <Reveal as="h2" className="text-display font-medium text-balance">
-              {copy.program.title}
-            </Reveal>
-            {copy.program.body.map((paragraph, i) => (
-              <Reveal key={i} as="p" className={`max-w-md text-lead text-balance ${i === 0 ? "text-ink-200" : "text-muted"}`}>
-                {paragraph}
+        {copy?.programTitle && (
+          <section className="grid overflow-x-clip grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
+              <Reveal as="h2" className="text-display font-medium text-balance">
+                {copy.programTitle}
               </Reveal>
-            ))}
-            <Reveal className="mt-4 flex flex-col items-start gap-4">
-              <p className="text-small text-muted">Program to be announced.</p>
-              <SquareLink href="/speakers" variant="secondary">
-                Watch past talks
-              </SquareLink>
-            </Reveal>
-          </div>
-          {photo && <FlagshipPhoto image={photo} className="col-span-4 w-full md:col-span-6 md:col-start-7" />}
-        </section>
+              {copy.programBody.map((paragraph, i) => (
+                <Reveal
+                  key={i}
+                  as="p"
+                  className={`max-w-md text-lead text-balance ${i === 0 ? "text-ink-200" : "text-muted"}`}
+                >
+                  {paragraph}
+                </Reveal>
+              ))}
+              <Reveal className="mt-4 flex flex-col items-start gap-4">
+                {copy.programUrl ? (
+                  <SquareLink href={copy.programUrl} variant="secondary">
+                    Explore the program
+                  </SquareLink>
+                ) : (
+                  <>
+                    <p className="text-small text-muted">Program to be announced.</p>
+                    <SquareLink href="/speakers" variant="secondary">
+                      Watch past talks
+                    </SquareLink>
+                  </>
+                )}
+              </Reveal>
+            </div>
+            {photo && <FlagshipPhoto image={photo} className="col-span-4 w-full md:col-span-6 md:col-start-7" />}
+          </section>
+        )}
 
         {/* Now what: the close, centred, and the one ask on the page. */}
         <section className="flex flex-col items-center px-6 py-24 text-center md:py-40">
           <Reveal as="h2" className="text-statement font-medium">
-            <span data-dot-clear>{copy.close.title}</span>
+            <span data-dot-clear>{copy?.closeTitle ?? title}</span>
           </Reveal>
-          <div data-dot-clear className="mt-10 flex max-w-2xl flex-col gap-4 md:mt-14">
-            {copy.close.body.map((paragraph, i) => (
-              <Reveal key={i} as="p" className={`text-lead text-balance ${i === 0 ? "text-ink-200" : "text-muted"}`}>
-                {paragraph}
-              </Reveal>
-            ))}
-          </div>
+          {copy && copy.closeBody.length > 0 && (
+            <div data-dot-clear className="mt-10 flex max-w-2xl flex-col gap-4 md:mt-14">
+              {copy.closeBody.map((paragraph, i) => (
+                <Reveal key={i} as="p" className={`text-lead text-balance ${i === 0 ? "text-ink-200" : "text-muted"}`}>
+                  {paragraph}
+                </Reveal>
+              ))}
+            </div>
+          )}
           <Reveal className="mt-12 flex flex-col items-center gap-4">
             <div data-dot-clear className="flex flex-wrap justify-center gap-2">
               {joinHref && <SquareLink href={joinHref}>{`Join ${title}`}</SquareLink>}
