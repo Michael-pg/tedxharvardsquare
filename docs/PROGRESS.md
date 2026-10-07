@@ -68,7 +68,8 @@ user-wide in `~/.claude/skills/`.
 Everything waiting on the owner, in one place. Tick items off here as they land.
 
 **In Studio (`/studio`)**
-- [ ] **Talk stage photos**: Talk → Stage photo, one per talk (21), landscape, with alt text. Until filled, `/home2` past-talk rows show speaker portraits.
+- [ ] **Talk stage photos**: Talk → Stage photo, landscape, with alt text. 4 of 21 done (the featured four, 2026-10-06); the rest show the speaker portrait if featured.
+- [ ] **Talk videos still missing**: Carlos Gascón Alvarez, Ceren Koca, Alissa M. Kleinnijenhuis (not on YouTube as of 2026-10-06). Mariam Khayretdinova (2025) has no talk record at all.
 - [ ] Against Entropy → **Date** once confirmed (left empty on purpose; the site says "Date to be announced").
 - [ ] Optional: Home page → **Flagship photo**, one lit speaker on a dark stage (else the home page uses the second hero photo, the speaker in profile).
 - [ ] Optional: Site settings → Mission statement, drop the em dash.
@@ -299,3 +300,15 @@ field **Luma calendar link** (Site settings → Contact & social), set to
 links it too. Checked in the browser with local mock events (not saved to
 Sanity). Intro copy is Claude's, adapted from the Webflow home page; owner to
 review.
+
+### 2026-10-06 — featured past talks, video links
+
+New Studio field **Home page → Featured talks** (up to 4 talk references, in
+order) drives the home page's "Watch past talks"; empty falls back to the old
+automatic pick. Rows are taller (thumbnails 224px wide on desktop). PR #23,
+merged. Sanity edits (published): owner's stage photos on Jeff Harmon, Shawna
+Young, Anya Dillard and Marinela Profi's talks, which are the featured four
+(Hanan Nagi dropped); Jeff's video added. Found and linked 6 more videos on the
+TEDx Talks channel (Abramson, Choe, Swan, Cordier, Bertrand, Neil). Nine talk
+titles changed to match their YouTube titles (owner's call); slugs left as
+they were so links don't break.
