@@ -161,6 +161,8 @@ export type HomePage = {
   heroImages: Image[];
   /** The speaker beside the home page's Flagship section. */
   flagshipPhoto?: Image;
+  /** The talks in the home page's "Watch past talks" list, in order. */
+  featuredTalkSlugs: Slug[];
 };
 
 export type SiteConfig = {
