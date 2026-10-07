@@ -444,13 +444,14 @@ export function Nav({
               ))}
             </ul>
 
-            <ul className="mt-8 grid grid-cols-3 md:mt-10">
+            {/* Set flush left under the rows, close together, so they read as one group. */}
+            <ul className="mt-8 flex flex-wrap gap-x-10 gap-y-2 md:mt-12 md:gap-x-14">
               {secondary.map((item) => (
                 <li key={item.href} data-menu-minor>
                   <Link
                     href={item.href}
                     onClick={close}
-                    className="block py-2 text-heading font-medium text-muted transition-colors duration-200 hover:text-foreground"
+                    className="block py-2 text-title font-medium text-ink-200 transition-colors duration-200 hover:text-foreground"
                   >
                     {item.label}
                   </Link>
