@@ -225,3 +225,11 @@ body {
     linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
   mask-composite: intersect;
 }
+
+/* The lockup's two halves: the red "TEDx" above, the "Harvard Square" wordmark below. */
+@utility clip-lockup-mark {
+  clip-path: inset(0 0 50% 0);
+}
+@utility clip-lockup-wordmark {
+  clip-path: inset(50% 0 0 0);
+}

@@ -82,8 +82,7 @@ export async function SiteFooter() {
   ];
 
   const signUps = [
-    site.earlyAccessUrl && { label: "Get early access", href: site.earlyAccessUrl, primary: true },
-    site.newsletterUrl && { label: "Subscribe", href: site.newsletterUrl, primary: false },
+    site.newsletterUrl && { label: "Subscribe", href: site.newsletterUrl, primary: true },
   ].filter((link): link is { label: string; href: string; primary: boolean } => Boolean(link));
 
   return (

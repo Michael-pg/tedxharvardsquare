@@ -140,7 +140,7 @@ export const siteSettings = defineType({
       type: "url",
       group: "contact",
       description:
-        'The footer\'s "Get early access" button — the sign-up list for first word on the next Flagship\'s tickets. Leave empty to hide the button.',
+        'The sign-up list for first word on the next Flagship\'s tickets. Not shown on the site right now: the home and footer buttons point to the newsletter until tickets are live.',
     }),
     defineField({
       name: "lumaUrl",
