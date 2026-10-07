@@ -123,7 +123,16 @@ export async function SiteFooter() {
           <CambridgeTime />
           <BackToTop />
           <p className="text-small text-muted">
-            © {new Date().getFullYear()} {site.name}
+            © {new Date().getFullYear()} {site.name} · Created by{" "}
+            <a
+              href="https://www.michaelperezgelinas.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-ink-600 underline-offset-4 transition-colors duration-fast hover:text-foreground hover:decoration-brand"
+            >
+              mpg.design
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
           </p>
         </div>
         {/* TEDx licence terms require this line, in this wording. */}
