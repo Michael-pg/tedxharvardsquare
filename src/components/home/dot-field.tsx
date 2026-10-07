@@ -87,9 +87,12 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * - `data-dot-glyph` — text the field draws itself, in ordered red dots, as
  *   the element scrolls into view. The element's own text should be invisible.
  *
+ * `strength` (0–1) fades the whole field, for pages where it should sit
+ * further back than on home. Opaque sections above it simply cover it.
+ *
  * Under reduced motion it draws single still frames on scroll and resize.
  */
-export function DotField() {
+export function DotField({ strength = 1 }: { strength?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -264,6 +267,7 @@ export function DotField() {
         }
       }
 
+      ctx.globalAlpha = strength;
       grey.forEach((path, i) => {
         ctx.fillStyle = GREY[i];
         ctx.fill(path);
@@ -321,7 +325,7 @@ export function DotField() {
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, strength]);
 
   return <canvas ref={canvasRef} aria-hidden="true" className="pointer-events-none fixed inset-0 size-full" />;
 }

@@ -41,6 +41,42 @@ export type Edition = {
   status: "upcoming" | "past" | "announced";
   ticketUrl?: string;
   poster?: Image;
+  /** The Flagship page's copy, written for this edition. */
+  page?: FlagshipPageCopy;
+};
+
+/** Copy for the Flagship page. Every part is optional; empty parts render as absence. */
+export type FlagshipPageCopy = {
+  /** e.g. "Cambridge, Massachusetts". */
+  place?: string;
+  /** Stands in for the date while it is unset, e.g. "February 2027". */
+  month?: string;
+  /** Fills the first screen. */
+  heroImage?: Image;
+  /** The theme statement, one line per item. */
+  statement: string[];
+  invitation?: string;
+  questions: string[];
+  /** "Why attend". */
+  reasons: { title: string; body?: string; image?: Image }[];
+  /** One running line naming who comes. */
+  audience?: string;
+  /** Real figures only; empty rather than estimated. */
+  audienceStats: { value: string; label: string }[];
+  audienceImage?: Image;
+  programTitle?: string;
+  programBody: string[];
+  /** Relative (/program) or absolute. */
+  programUrl?: string;
+  /** Shown while the edition has no speakers, e.g. "Lineup announced in December." */
+  speakersNote?: string;
+  /** What a ticket includes. Empty until decided. */
+  included: string[];
+  venueImage?: Image;
+  /** Transit, parking, accessibility: one paragraph each. */
+  venueNotes: string[];
+  closeTitle?: string;
+  closeBody: string[];
 };
 
 export type Venue = {

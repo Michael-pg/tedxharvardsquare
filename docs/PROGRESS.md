@@ -325,6 +325,40 @@ centred, logos 40px tall on mobile, 56px on desktop. Menu (#27): About, FAQ and
 Contact grouped flush left, `text-title`, ink-200, so they read over the
 halftone. All merged.
 
+### 2026-10-06 — Flagship page
+
+New `/flagship`, led by the current edition (Against Entropy). Hero with the
+theme across the top; the theme statement lit line by line; the three
+questions stepping across the grid; When/Where beside the edition number drawn
+by the dot field; "Meet what's next" beside the Flagship photo; "Now what?"
+with the one ask (ticket link once set on the edition, else the early-access
+list); past editions; partners. Everything comes from the edition in Studio:
+facts on its **Details** tab, the page copy on a new **Flagship page** tab
+(place, month until the date is set, statement lines, invitation, questions,
+program heading/text/link, closing heading/text). Empty parts are hidden. Sanity
+edit (published): the organizers' starter copy filled in on Against Entropy, and
+its Theme statement changed to "Everything tends toward disorder. Unless we
+choose otherwise." (also shown on the home hero). With no Program link the
+section says "Program to be announced" and links to past talks. The home page's
+Flagship section now leads with "Explore Against Entropy" → `/flagship`.
+
+### 2026-10-06 — Flagship page, second pass
+
+Owner wanted the page to feel unlike home: more photos, calmer, alternating
+backgrounds, dots as an accent. Researched three inspiration sites and other
+conference pages, mocked three heroes; owner picked the full-bleed photo. Now:
+photo hero → theme (dark, dot field at 0.55) → Why attend + Who's in the room
+(paper) → Meet what's next → Speakers 2027 (portraits once speakers are added to
+the edition, else "Lineup coming soon" with halftone tiles) → What's included
+(paper, "details on their way" until filled) → venue split (photo + paper panel,
+Maps link) → Now what? → past editions. Dropped: the dot-drawn "03", the
+When/Where table, the partners row. New Studio fields on the edition's Flagship
+page tab: first screen photo, Why attend (title/text/photo), Who's in the room
+(+ optional real figures and photo), speakers note, what's included, venue photo,
+getting there. Sanity (published): photos picked from the Feb 2026 shoot and
+**draft copy for owner review** (three reasons, the audience line, "A short walk
+from Harvard station on the Red Line").
+
 ### 2026-10-07 — TEDx licence compliance
 
 Reviewed the site against the TEDx rules (Web + Social) and TED's organizer

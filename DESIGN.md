@@ -81,6 +81,13 @@ ramp. Photography and the 3D scene are the only other sources of colour.
 - **One red moment per viewport.** If two things are red, neither is.
 - Hover/focus colour changes must also meet contrast; the focus ring is the
   2px `brand` outline from `globals.css` (non-text, 3:1 is sufficient).
+- **Paper sections.** Deep pages (Flagship first) alternate black with light
+  paper sections (`Section tone="paper"` in `components/flagship/section.tsx`:
+  `bg-ink-50 text-ink-950`, `data-nav-theme="light"`). Use paper for calm,
+  practical blocks (why attend, what's included, venue); keep black for the
+  theme and the big moments. On paper, secondary text is `ink-600` (`muted`
+  fails on light), rules are `ink-200`, and buttons use `SquareLink tone="light"`.
+  The red-text rule is the same on paper.
 - No other hues, no gradients in UI. Tints come only from opacity on the ink
   ramp (`bg-white/8` glass, `backdrop:bg-ink-950/85`).
 
@@ -149,6 +156,8 @@ for the logo only.
   panels) · `slow` 1.2s (hero moments). **Easing:** `power3.out` default,
   `expo.out` for arrivals, `power2.inOut` for open/close.
 - Motion should suggest, not shove: entrance travel ≤ 24px.
+- **Dots are home's loudest voice.** Other pages that use the page-wide
+  `DotField` pass `strength` below 1 (Flagship: 0.55); paper sections cover it.
 - **One scroll-driven set piece per page** (the home hero is the only pinned
   sequence today). Everything else reveals once and stays still.
 - Animate `transform` and `opacity`; height only for disclosure (accordion).

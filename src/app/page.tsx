@@ -133,10 +133,12 @@ export default async function Home() {
                 ].join(" ")}
               </Reveal>
               <Reveal className="mt-4 flex flex-wrap gap-2">
-                {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>Subscribe</SquareLink>}
-                <SquareLink href="/faq" variant="secondary">
-                  Questions
-                </SquareLink>
+                <SquareLink href="/flagship">{edition.theme ? `Explore ${edition.theme}` : `Flagship ${edition.year}`}</SquareLink>
+                {site.newsletterUrl && (
+                  <SquareLink href={site.newsletterUrl} variant="secondary">
+                    Subscribe
+                  </SquareLink>
+                )}
               </Reveal>
             </div>
             {flagshipPhoto && (
