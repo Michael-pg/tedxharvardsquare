@@ -83,7 +83,7 @@ export default async function Home() {
           )}
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
             <div data-dot-clear className="flex flex-wrap gap-2">
-              {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
+              {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>Subscribe</SquareLink>}
               <SquareLink href="/speakers" variant="secondary">
                 Past talks
               </SquareLink>
@@ -129,7 +129,7 @@ export default async function Home() {
                 ].join(" ")}
               </Reveal>
               <Reveal className="mt-4 flex flex-wrap gap-2">
-                {site.earlyAccessUrl && <SquareLink href={site.earlyAccessUrl}>Get early access</SquareLink>}
+                {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>Subscribe</SquareLink>}
                 <SquareLink href="/faq" variant="secondary">
                   Questions
                 </SquareLink>

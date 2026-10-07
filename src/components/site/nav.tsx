@@ -46,6 +46,7 @@ export function Nav({
   const root = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLElement>(null);
   const logo = useRef<HTMLAnchorElement>(null);
+  const wordmark = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const media = useRef<HTMLDivElement>(null);
@@ -63,11 +64,11 @@ export function Nav({
   useGSAP(
     () => {
       if (reducedMotion) {
-        gsap.set(bar.current, { autoAlpha: 1, y: 0 });
+        gsap.set([bar.current, wordmark.current], { autoAlpha: 1, y: 0 });
         return;
       }
       gsap.fromTo(
-        bar.current,
+        [bar.current, wordmark.current],
         { autoAlpha: 0, y: -24 },
         { autoAlpha: 1, y: 0, delay: 0.6, duration: timing.duration.slow, ease: timing.ease.expo },
       );
@@ -269,14 +270,37 @@ export function Nav({
 
   return (
     <div ref={root}>
+      {/*
+        The "Harvard Square" wordmark, in its own fixed layer so it can blend
+        with the page: difference turns the white letters black wherever they
+        cross white text or a light surface. It mirrors the header's layout
+        (the invisible box stands in for the nav) so the halves line up.
+      */}
+      <div
+        ref={wordmark}
+        data-animate
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-5 z-50 flex items-center justify-between px-6 mix-blend-difference md:top-6"
+      >
+        <Image
+          src="/brand/tedx-harvard-square-white.png"
+          alt=""
+          width={2072}
+          height={701}
+          priority
+          className="h-10 w-auto clip-lockup-wordmark md:h-12"
+        />
+        <div className="h-11" />
+      </div>
       <header
         ref={bar}
         data-animate
         className="pointer-events-none fixed inset-x-0 top-5 z-50 flex items-center justify-between px-6 md:top-6"
       >
         {/*
-          Official lockup — white on dark, black on light. PNGs stand in until
-          an SVG exists; the 2072px source keeps them sharp on 3x screens.
+          Official lockup. Only the red "TEDx" half is drawn here; the white
+          "Harvard Square" half lives in the blended layer below, so the link
+          keeps its full hit area. PNGs stand in until an SVG exists.
         */}
         <Link
           ref={logo}
@@ -291,20 +315,7 @@ export function Nav({
             width={2072}
             height={701}
             priority
-            className={cn(
-              "h-10 w-auto transition-opacity duration-300 md:h-12",
-              onLight ? "opacity-0" : "opacity-100",
-            )}
-          />
-          <Image
-            src="/brand/tedx-harvard-square-black.png"
-            alt=""
-            width={2072}
-            height={700}
-            className={cn(
-              "absolute inset-0 h-10 w-auto transition-opacity duration-300 md:h-12",
-              onLight ? "opacity-100" : "opacity-0",
-            )}
+            className="h-10 w-auto clip-lockup-mark md:h-12"
           />
         </Link>
 
