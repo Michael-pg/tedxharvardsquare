@@ -8,12 +8,16 @@ import { PartnerLogos } from "@/components/home/partner-logos";
 import { Section } from "@/components/flagship/section";
 import { SquareLink } from "@/components/ui/square-link";
 import { getMenuImages, getPartners, getSiteSettings, getSponsorPage } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Sponsor",
-  description:
-    "Partner with TEDxHarvardSquare: support an independently organized TEDx event and the community of founders, researchers, creators and leaders around it.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Sponsor",
+    description:
+      "Partner with TEDxHarvardSquare: support an independently organized TEDx event and the community of founders, researchers, creators and leaders around it.",
+    path: "/sponsor",
+  });
+}
 
 /**
  * Sponsor: the pitch, from Studio → Sponsor page. Also the dedicated page the

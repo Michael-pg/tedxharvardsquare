@@ -5,12 +5,16 @@ import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { FaqAccordion } from "@/components/faq/faq-accordion";
 import { getFaqs, getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description:
-    "Answers to your questions about TEDxHarvardSquare — from tickets and venue logistics to accessibility, food, photography, and how to stay connected after the event.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "FAQ",
+    description:
+      "Answers to your questions about TEDxHarvardSquare — from tickets and venue logistics to accessibility, food, photography, and how to stay connected after the event.",
+    path: "/faq",
+  });
+}
 
 export default async function FaqPage() {
   const [site, faqs] = await Promise.all([getSiteSettings(), getFaqs()]);

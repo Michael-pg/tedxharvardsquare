@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage } from "@/components/site/legal-page";
 import { getSiteSettings } from "@/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Terms of Use",
-  description:
-    "The terms that apply when you use the TEDxHarvardSquare website or attend one of our events.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "Terms of Use",
+    description:
+      "The terms that apply when you use the TEDxHarvardSquare website or attend one of our events.",
+    path: "/terms",
+  });
+}
 
 export default async function TermsPage() {
   const site = await getSiteSettings();

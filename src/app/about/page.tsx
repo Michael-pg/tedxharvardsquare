@@ -6,12 +6,16 @@ import { Reveal } from "@/components/motion/reveal";
 import { SquareLink } from "@/components/ui/square-link";
 import { getSiteSettings } from "@/content";
 import { TEDX_PROGRAM_URL, TED_PROGRAMS_URL, aboutTed, aboutTedx } from "@/content/tedx";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "TEDxHarvardSquare is an independently organized TEDx event in Cambridge, Massachusetts: an annual Flagship conference and House, our year-round programming.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    title: "About",
+    description:
+      "TEDxHarvardSquare is an independently organized TEDx event in Cambridge, Massachusetts: an annual Flagship conference and House, our year-round programming.",
+    path: "/about",
+  });
+}
 
 /**
  * About: who we are, then the "About TEDx" and "About TED" sections the TEDx
