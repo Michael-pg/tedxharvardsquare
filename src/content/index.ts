@@ -247,19 +247,32 @@ export async function getSpeaker(slug: Slug): Promise<Speaker | undefined> {
  * The speaker archive: every Flagship speaker (not performers) with their talk
  * and edition year, newest edition first, then in lineup order.
  */
+const archiveFilter = `_type == "speaker" && track == "flagship" && kind == "speaker"`;
+
+const speakerWithTalkFields = `
+  ${speakerFields},
+  "editionYear": edition->year,
+  "talk": *[_type == "talk" && references(^._id)][0]{
+    "slug": slug.current, title, premise, videoUrl, "still": ${image("still")}
+  }
+`;
+
 export async function getSpeakerArchive(): Promise<SpeakerWithTalk[]> {
   return fetchContent(
-    `*[_type == "speaker" && track == "flagship" && kind == "speaker"]
-      | order(edition->year desc, order asc, name asc){
-        ${speakerFields},
-        "editionYear": edition->year,
-        "talk": *[_type == "talk" && references(^._id)][0]{
-          "slug": slug.current, title, premise, videoUrl, "still": ${image("still")}
-        }
-      }`,
+    `*[${archiveFilter}] | order(edition->year desc, order asc, name asc){ ${speakerWithTalkFields} }`,
     {},
     ["speaker", "talk", "edition"],
   );
+}
+
+/** One archive speaker, for their own page under /speakers. */
+export async function getArchiveSpeaker(slug: Slug): Promise<SpeakerWithTalk | undefined> {
+  const speaker = await fetchContent<SpeakerWithTalk | null>(
+    `*[${archiveFilter} && slug.current == $slug][0]{ ${speakerWithTalkFields} }`,
+    { slug },
+    ["speaker", "talk", "edition"],
+  );
+  return speaker ?? undefined;
 }
 
 export async function getTalks(editionSlug?: Slug): Promise<Talk[]> {

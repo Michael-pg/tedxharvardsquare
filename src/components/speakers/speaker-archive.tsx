@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight, Play, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/motion/reveal";
 import { gsap, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { cn } from "@/lib/utils";
+import { youTubeId } from "@/lib/youtube";
 import type { SpeakerWithTalk } from "@/content/types";
 
 type SpeakerArchiveProps = {
@@ -14,31 +16,25 @@ type SpeakerArchiveProps = {
   years: { year: number; speakers: SpeakerWithTalk[] }[];
 };
 
-/** Pulls the video ID out of a canonical `youtube.com/watch?v=` URL. */
-function youTubeId(url: string | undefined): string | null {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1) || null;
-    return parsed.searchParams.get("v");
-  } catch {
-    return null;
-  }
-}
+const ARCHIVE_PATH = "/speakers";
+const speakerPath = (slug: string) => `${ARCHIVE_PATH}/${slug}`;
 
 /**
  * The speaker archive: a year switcher over a lineup, with each speaker opening
  * into a dialog holding the full bio and — once published — the talk itself.
  *
- * Names, titles, and talk titles are server-rendered; bios and videos only
- * render inside the dialog. Dedicated `/speakers/[slug]` pages are the right
- * home for indexable bios when the Flagship section is built. Opening a
- * speaker writes `#their-slug` to the URL, so any talk is shareable as a link.
+ * Each speaker is a real link to their own page (`/speakers/[slug]`), which is
+ * what crawlers, new tabs and shared links get. A plain click opens the dialog
+ * instead, for quick browsing, and pushes the page's URL: the address bar is
+ * always shareable, a reload lands on the full page, and Back closes the
+ * dialog. Old `#slug` links still open the dialog.
  */
 export function SpeakerArchive({ years }: SpeakerArchiveProps) {
   const [activeYear, setActiveYear] = useState(years[0]?.year);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
+  /** Whether opening the dialog added a history entry that closing should undo. */
+  const pushed = useRef(false);
   const panel = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -47,20 +43,30 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
   const lineup = years.find((group) => group.year === activeYear)?.speakers ?? [];
 
   const openSpeaker = useCallback(
-    (slug: string) => {
+    (slug: string, { push }: { push: boolean }) => {
       const speaker = all.find((s) => s.slug === slug);
       if (!speaker) return;
       if (speaker.editionYear) setActiveYear(speaker.editionYear);
       setOpenSlug(slug);
-      history.replaceState(null, "", `#${slug}`);
+      if (push) {
+        history.pushState(null, "", speakerPath(slug));
+        pushed.current = true;
+      } else {
+        history.replaceState(null, "", speakerPath(slug));
+      }
     },
     [all],
   );
 
-  /** Clears the open speaker and its hash. Safe to call more than once. */
+  /** Clears the open speaker and puts the archive's URL back. Safe to call more than once. */
   const handleClosed = useCallback(() => {
     setOpenSlug(null);
-    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    if (pushed.current) {
+      pushed.current = false;
+      history.back();
+    } else if (location.pathname !== ARCHIVE_PATH || location.hash) {
+      history.replaceState(null, "", ARCHIVE_PATH + location.search);
+    }
   }, []);
 
   // The dialog's `close` event is queued as a task, which browsers throttle in
@@ -71,17 +77,30 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
     handleClosed();
   }, [handleClosed]);
 
-  // Deep links: /speakers#jeff-harmon opens straight into that speaker.
+  // Old deep links: /speakers#jeff-harmon opens straight into that speaker.
   useEffect(() => {
     const fromHash = () => {
       const slug = decodeURIComponent(location.hash.slice(1));
-      if (slug) openSpeaker(slug);
+      if (slug) openSpeaker(slug, { push: false });
     };
     fromHash();
     window.addEventListener("hashchange", fromHash);
     return () => window.removeEventListener("hashchange", fromHash);
     // Runs once on mount; `openSpeaker` is stable enough for the hash listener.
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Back while the dialog is open has already left the speaker's URL, so the
+  // dialog just closes, without touching history again.
+  useEffect(() => {
+    const onPopState = () => {
+      if (location.pathname !== ARCHIVE_PATH) return;
+      pushed.current = false;
+      dialog.current?.close();
+      setOpenSlug(null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
   // Show the dialog once its content has rendered, then animate it in.
@@ -143,9 +162,15 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
       >
         {lineup.map((speaker) => (
           <li key={speaker.slug}>
-            <button
-              type="button"
-              onClick={() => openSpeaker(speaker.slug)}
+            <Link
+              href={speakerPath(speaker.slug)}
+              prefetch={false}
+              onClick={(event) => {
+                // Modified clicks (new tab, new window) follow the link.
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                openSpeaker(speaker.slug, { push: true });
+              }}
               className="group block w-full text-left"
               aria-haspopup="dialog"
             >
@@ -179,7 +204,7 @@ export function SpeakerArchive({ years }: SpeakerArchiveProps) {
                   {speaker.talk.title}
                 </p>
               ) : null}
-            </button>
+            </Link>
           </li>
         ))}
       </Reveal>

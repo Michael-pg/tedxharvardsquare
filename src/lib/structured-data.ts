@@ -1,4 +1,4 @@
-import type { Edition, Image, SiteConfig } from "@/content";
+import type { Edition, Image, SiteConfig, SpeakerWithTalk } from "@/content";
 
 /**
  * schema.org descriptions of the org and its editions, for search results.
@@ -71,5 +71,27 @@ export function editionJsonLd(site: SiteConfig, edition: Edition, image?: Image)
     }),
     ...(edition.ticketUrl && { offers: { "@type": "Offer", url: edition.ticketUrl } }),
     organizer: { "@type": "Organization", "@id": organizationId(site), name: site.name, url: site.url },
+  };
+}
+
+/**
+ * A speaker's page as a ProfilePage about them. Their talk video is left to
+ * Google's own detection of the YouTube embed: a VideoObject needs an upload
+ * date, which the Studio does not hold.
+ */
+export function speakerJsonLd(site: SiteConfig, speaker: SpeakerWithTalk) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: `${site.url}/speakers/${speaker.slug}`,
+    isPartOf: { "@id": `${site.url}/#website` },
+    mainEntity: {
+      "@type": "Person",
+      name: speaker.name,
+      ...(speaker.title && { jobTitle: speaker.title }),
+      ...(speaker.bio && { description: speaker.bio }),
+      ...(speaker.headshot?.src && { image: speaker.headshot.src }),
+      ...(speaker.links.length > 0 && { sameAs: speaker.links.map((link) => link.href) }),
+    },
   };
 }

@@ -53,7 +53,7 @@ export function PastTalks({ speakers }: { speakers: SpeakerWithTalk[] }) {
                 <span className="sr-only">(watch, opens in a new tab)</span>
               </a>
             ) : (
-              <Link href="/speakers" className={className}>
+              <Link href={`/speakers/${speaker.slug}`} className={className}>
                 {content}
               </Link>
             )}

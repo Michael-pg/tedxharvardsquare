@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HalftonePhoto } from "@/components/home/halftone-photo";
 import type { Image as ImageContent, Speaker } from "@/content";
 
@@ -13,22 +14,28 @@ export function SpeakersPreview({ speakers, placeholders }: { speakers: Speaker[
     return (
       <ul className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
         {speakers.map((speaker) => (
-          <li key={speaker.slug} className="flex flex-col gap-4">
-            <div className="relative aspect-4/5 overflow-hidden bg-ink-800">
-              {speaker.headshot && (
-                <Image
-                  src={speaker.headshot.src}
-                  alt={speaker.headshot.alt || `Portrait of ${speaker.name}`}
-                  fill
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-cover grayscale"
-                />
-              )}
-            </div>
-            <div>
-              <p className="text-heading font-medium">{speaker.name}</p>
-              {speaker.title && <p className="mt-1 text-small text-muted">{speaker.title}</p>}
-            </div>
+          <li key={speaker.slug}>
+            <Link href={`/speakers/${speaker.slug}`} className="group flex flex-col gap-4">
+              <div className="relative aspect-4/5 overflow-hidden bg-ink-800">
+                {speaker.headshot && (
+                  <Image
+                    src={speaker.headshot.src}
+                    alt={speaker.headshot.alt || `Portrait of ${speaker.name}`}
+                    fill
+                    sizes="(min-width: 768px) 25vw, 50vw"
+                    className="object-cover grayscale"
+                  />
+                )}
+              </div>
+              <div>
+                <p className="text-heading font-medium transition-colors duration-fast group-hover:text-ink-300">
+                  {speaker.name}
+                </p>
+                {speaker.title && (
+                  <p className="mt-1 text-small text-muted">{speaker.title}</p>
+                )}
+              </div>
+            </Link>
           </li>
         ))}
       </ul>

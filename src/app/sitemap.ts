@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getSiteSettings } from "@/content";
+import { getSiteSettings, getSpeakerArchive } from "@/content";
 
 /**
- * Every public page. There are no per-item pages yet; when speaker or House
- * event pages arrive, list them here from `@/content`.
+ * Every public page: the fixed ones below, then one per archive speaker. When
+ * House event pages arrive, list them here from `@/content` too.
  */
 const pages: { path: string; priority: number; changeFrequency: "weekly" | "monthly" | "yearly" }[] = [
   { path: "", priority: 1, changeFrequency: "weekly" },
@@ -20,10 +20,17 @@ const pages: { path: string; priority: number; changeFrequency: "weekly" | "mont
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const site = await getSiteSettings();
-  return pages.map(({ path, priority, changeFrequency }) => ({
-    url: `${site.url}${path}`,
-    priority,
-    changeFrequency,
-  }));
+  const [site, speakers] = await Promise.all([getSiteSettings(), getSpeakerArchive()]);
+  return [
+    ...pages.map(({ path, priority, changeFrequency }) => ({
+      url: `${site.url}${path}`,
+      priority,
+      changeFrequency,
+    })),
+    ...speakers.map((speaker) => ({
+      url: `${site.url}/speakers/${speaker.slug}`,
+      priority: 0.5,
+      changeFrequency: "yearly" as const,
+    })),
+  ];
 }
