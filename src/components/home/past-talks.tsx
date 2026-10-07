@@ -21,12 +21,12 @@ export function PastTalks({ speakers }: { speakers: SpeakerWithTalk[] }) {
         const content = (
           <>
             {photo && (
-              <span className="relative aspect-video w-24 shrink-0 overflow-hidden bg-ink-900 md:w-40">
+              <span className="relative aspect-video w-32 shrink-0 overflow-hidden bg-ink-900 md:w-56">
                 <Image
                   src={photo.src}
                   alt=""
                   fill
-                  sizes="(min-width: 768px) 160px, 96px"
+                  sizes="(min-width: 768px) 224px, 128px"
                   className="object-cover grayscale transition-[filter] duration-slow group-hover:grayscale-0"
                 />
               </span>
@@ -44,7 +44,7 @@ export function PastTalks({ speakers }: { speakers: SpeakerWithTalk[] }) {
             )}
           </>
         );
-        const className = "group flex items-center gap-5 py-5 transition-colors duration-fast hover:bg-ink-900";
+        const className = "group flex items-center gap-5 py-6 transition-colors duration-fast hover:bg-ink-900";
         return (
           <li key={speaker.slug} className="border-b border-rule">
             {external ? (

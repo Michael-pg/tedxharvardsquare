@@ -193,6 +193,15 @@ export const homePage = defineType({
         "The speaker beside the Flagship section on the home page, layered over a red halftone copy of itself. Pick one speaker, lit, against a dark stage: the black melts into the page. If empty, the second hero image is used.",
     }),
     defineField({
+      name: "featuredTalks",
+      title: "Featured talks",
+      type: "array",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "talk" }] })],
+      description:
+        "The talks listed under \"Watch past talks\" on the home page, in order. Each row shows the talk's stage photo (set on the talk itself), so pick talks that have one. If empty, talks with a stage photo and a video are picked automatically.",
+      validation: (r) => r.max(4).unique(),
+    }),
+    defineField({
       name: "photoLibrary",
       title: "Photo library",
       type: "array",

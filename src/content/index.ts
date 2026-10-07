@@ -117,11 +117,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function getHomePage(): Promise<HomePage> {
   const home = await fetchContent<HomePage | null>(
-    `*[_id == "homePage"][0]{ ${imageList("heroImages")}, "flagshipPhoto": ${image("flagshipPhoto")} }`,
+    `*[_id == "homePage"][0]{ ${imageList("heroImages")}, "flagshipPhoto": ${image("flagshipPhoto")},
+      "featuredTalkSlugs": coalesce(featuredTalks[]->slug.current, []) }`,
     {},
     ["homePage"],
   );
-  if (!home) return { heroImages: [] };
+  if (!home) return { heroImages: [], featuredTalkSlugs: [] };
   // An empty image field projects as null or with no asset; drop it either way.
   return { ...home, flagshipPhoto: home.flagshipPhoto?.src ? home.flagshipPhoto : undefined };
 }

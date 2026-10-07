@@ -51,14 +51,19 @@ export default async function Home() {
         .join(" · ")
     : undefined;
   const { lines, coda } = motto(site.missionStatement);
-  // Talks with a stage photo and a published video first, so most rows show
-  // the talk itself and play something.
+  // The talks picked in Studio, in their order; until some are picked, talks
+  // with a stage photo and a published video first, so most rows show the
+  // talk itself and play something.
   const talkRank = (speaker: (typeof archive)[number]) =>
     Number(Boolean(speaker.talk?.still)) * 2 + Number(Boolean(speaker.talk?.videoUrl));
-  const featuredTalks = archive
-    .filter((speaker) => speaker.talk?.title)
-    .sort((a, b) => talkRank(b) - talkRank(a))
-    .slice(0, FEATURED_TALKS);
+  const pickedTalks = home.featuredTalkSlugs
+    .map((slug) => archive.find((speaker) => speaker.talk?.slug === slug))
+    .filter((speaker) => speaker?.talk?.title) as typeof archive;
+  const featuredTalks = (
+    pickedTalks.length > 0
+      ? pickedTalks
+      : archive.filter((speaker) => speaker.talk?.title).sort((a, b) => talkRank(b) - talkRank(a))
+  ).slice(0, FEATURED_TALKS);
   const talkCount = archive.filter((speaker) => speaker.talk).length;
   const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
   // A speaker lit on a dark stage; the second hero frame is one.
