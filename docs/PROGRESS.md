@@ -68,6 +68,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-25 | Edition 3 venue is **Arrow Street Arts** (owner). Supersedes "Boston". |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
 | 2026-10-08 | **Domain switched from Webflow to Vercel**, `www` primary. Webflow's "Apply to speak" (Tally) and "Join our community" (Linktree) buttons dropped. Webflow `/schedule` unpublished; ours redirects to `/flagship`. Legal review of `/privacy` and `/terms` signed off. Stay on Vercel Hobby until tickets. |
+| 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
 
@@ -90,6 +91,10 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
 - [ ] Real content for House events, team, and past-edition themes (no placeholders). TED expects core team names and backgrounds on the site; an `/about` team section is ready to build once they exist.
 - [ ] Invite marketing editors: sanity.io/manage → Members → Editor.
+
+**Analytics**
+- [ ] Ask Nana to add you to the GA4 property (Admin → Property access management).
+- [ ] Legal reviewer to see the new analytics wording on `/privacy` (Oct 8).
 
 **Domain cutover follow-up**
 - [ ] **Search Console:** submit `https://www.tedxharvardsquare.org/sitemap.xml`.

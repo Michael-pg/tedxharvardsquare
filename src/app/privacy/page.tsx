@@ -21,7 +21,7 @@ export default async function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Policy"
-      updated="September 25, 2026"
+      updated="October 8, 2026"
       intro={
         <p>
           {site.name} is an independently organized TEDx event run by volunteers in
@@ -51,10 +51,18 @@ export default async function PrivacyPage() {
             browser type, and pages requested) kept by our hosting provider to operate
             and secure the site.
           </li>
+          <li>
+            <strong>Site analytics</strong> — which pages are visited, how people
+            arrive, and which links they follow, measured with Google Analytics. It
+            sets cookies to tell repeat visits apart, and the reports we see are in
+            aggregate, not about named individuals.
+          </li>
         </ul>
         <p>
           We don&apos;t sell personal information, and we don&apos;t use advertising
-          trackers on this site.
+          trackers on this site. To opt out of analytics, block cookies for this site
+          in your browser or install Google&apos;s{" "}
+          <a href="https://tools.google.com/dlpage/gaoptout">opt-out add-on</a>.
         </p>
       </section>
 
@@ -65,6 +73,7 @@ export default async function PrivacyPage() {
           <li>To send the newsletter and event announcements you signed up for.</li>
           <li>To reply to your messages and consider applications.</li>
           <li>To keep the site working, secure, and free of abuse.</li>
+          <li>To understand which pages and events people find useful, so we can improve them.</li>
         </ul>
       </section>
 
@@ -72,7 +81,8 @@ export default async function PrivacyPage() {
         <h2>Services we rely on</h2>
         <p>
           Some information is handled by third-party services, each under its own
-          privacy policy: our site host (Vercel), our content system (Sanity), our
+          privacy policy: our site host (Vercel), our content system (Sanity), our analytics (Google
+          Analytics), our
           newsletter (Substack), our early-access list (Mailchimp), and whichever
           ticketing platform an event uses. Talk videos are embedded from YouTube in
           privacy-enhanced mode, which doesn&apos;t set YouTube cookies until you press
