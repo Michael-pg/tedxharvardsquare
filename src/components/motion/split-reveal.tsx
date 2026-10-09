@@ -18,7 +18,9 @@ type SplitRevealProps = {
 };
 
 /**
- * Masked reveal of split text.
+ * Reveal of split text: each piece fades up a short way, in the open. No
+ * mask: sliding up through one cut off ascenders and descenders on tightly
+ * set display type until the text landed.
  *
  * The element carries `data-animate`, which `globals.css` hides until GSAP
  * takes over — that prevents a flash of unsplit text while fonts load. Under
@@ -57,7 +59,6 @@ export function SplitReveal({
 
       const split = SplitText.create(element, {
         type: by,
-        mask: by,
         autoSplit: true,
         aria: "auto",
         // Splitting to chars turns every glyph into its own box, so the browser
@@ -65,24 +66,13 @@ export function SplitReveal({
         // intact by wrapping them in nowrap spans. Only meaningful for chars.
         smartWrap: by === "chars",
         onSplit(self) {
-          // Each mask clips to its line box, which is shorter than the glyphs
-          // in tightly set display type. Stretch the clip past the box
-          // without moving anything, so ascenders and descenders show while
-          // the text slides in.
-          for (const mask of self.masks as HTMLElement[]) {
-            mask.style.padding = "0.15em 0";
-            mask.style.margin = "-0.15em 0";
-          }
           return gsap.from(self[by], {
-            yPercent: 110,
+            yPercent: 25,
             autoAlpha: 0,
-            duration: timing.duration.base,
+            duration: timing.duration.slow,
             ease: timing.ease.expo,
             stagger: by === "chars" ? timing.stagger.tight : timing.stagger.base,
             delay,
-            // Once the text has landed the masks have done their job; put the
-            // plain markup back.
-            onComplete: () => self.revert(),
             scrollTrigger: onScroll
               ? { trigger: element, start: "top 85%", once: true }
               : undefined,
