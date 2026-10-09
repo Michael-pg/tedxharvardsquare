@@ -75,6 +75,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-09 | **No eyebrows, anywhere** (owner): no small uppercase kicker above a heading, with or without a red dot. Reads as a generic-AI tell. Recorded in `DESIGN.md` §9. |
 | 2026-10-09 | **Dot field stays scarce** (owner: tasteful, not everywhere). `/speakers` uses it only in the opening, stopping above the archive; `/faq` has none. |
 | 2026-10-09 | **`/flagship` rebuilt in six beats** (after Digital Design Days Milano): poster hero, theme, colour photo collage, speakers as large names, venue full bleed, topics marquee, tickets. Photos on this page are in colour. Why attend / audience / program / close dropped; their Studio fields are hidden, not deleted. |
+| 2026-10-09 | **Split text fades up, never masked** (owner). `SplitReveal` has no mask: sliding up through one cut off ascenders and descenders until the text landed. The `js` class is set by an inline script in `<head>`, not `next/script`, so animated text never flashes before hiding. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -529,3 +530,20 @@ text lands (descenders were clipped); `HalftonePhoto` gained `exposure`.
 
 Checked at 390px and 1440px with headless Chrome screenshots: no horizontal
 overflow. Not yet seen on a real phone: the venue print and the collage drift.
+
+### 2026-10-09 — Flagship hero label, fade-up text site-wide (PR #54, merged)
+
+The Flagship hero headline reads "Flagship" (grey) over "Against Entropy",
+to set it apart from home, revealed by line. Owner found text "clipping then
+fixing" on load; a frame-by-frame recording of the load showed two causes,
+both fixed site-wide:
+
+- The full headline flashed before hiding and animating: the `js` class came
+  from `next/script` `beforeInteractive`, which can run after the server HTML
+  paints. Now an inline script in `<head>`.
+- The masked slide-up cut off descenders until the letters landed.
+  `SplitReveal` now always fades up a short way in the open (all page h1s and
+  leads: Flagship, Speakers, speaker pages, FAQ, House, About, Sponsor).
+
+Char-split headlines stay split after the fade, so kerning is slightly looser
+than unsplit text (as before today).
