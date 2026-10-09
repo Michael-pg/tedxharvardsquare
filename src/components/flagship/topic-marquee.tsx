@@ -45,7 +45,7 @@ export function TopicMarquee({ topics }: { topics: Topic[] }) {
           <li key={topic.slug}>{topic.label}</li>
         ))}
       </ul>
-      <div ref={ref} aria-hidden className="flex flex-col gap-2 overflow-hidden">
+      <div ref={ref} aria-hidden className="flex flex-col gap-2 overflow-x-clip py-2">
         {rows.map((row, i) => (
           <div
             key={i}

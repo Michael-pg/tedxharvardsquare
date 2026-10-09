@@ -65,6 +65,14 @@ export function SplitReveal({
         // intact by wrapping them in nowrap spans. Only meaningful for chars.
         smartWrap: by === "chars",
         onSplit(self) {
+          // Each mask clips to its line box, which is shorter than the glyphs
+          // in tightly set display type. Stretch the clip past the box
+          // without moving anything, so ascenders and descenders show while
+          // the text slides in.
+          for (const mask of self.masks as HTMLElement[]) {
+            mask.style.padding = "0.15em 0";
+            mask.style.margin = "-0.15em 0";
+          }
           return gsap.from(self[by], {
             yPercent: 110,
             autoAlpha: 0,
@@ -72,9 +80,8 @@ export function SplitReveal({
             ease: timing.ease.expo,
             stagger: by === "chars" ? timing.stagger.tight : timing.stagger.base,
             delay,
-            // The masks clip to the line box, which cuts off descenders in
-            // tightly set display type. Once the text has landed they have
-            // done their job, so put the plain markup back.
+            // Once the text has landed the masks have done their job; put the
+            // plain markup back.
             onComplete: () => self.revert(),
             scrollTrigger: onScroll
               ? { trigger: element, start: "top 85%", once: true }

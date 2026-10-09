@@ -1,11 +1,12 @@
-import Image from "next/image";
 import { Reveal } from "@/components/motion/reveal";
 import { SquareLink } from "@/components/ui/square-link";
+import { VenueBackdrop } from "./venue-backdrop";
 import type { Image as ImageContent, Venue as VenueContent } from "@/content";
 
 /**
- * The venue, full bleed and in colour, with the date and venue name set huge
- * over it: the second time the date appears, and the big one. The address,
+ * The venue, full bleed, with the date and venue name set huge over it: the
+ * second time the date appears, and the big one. The photo arrives as a
+ * scattered red print and develops into colour (see `VenueBackdrop`). The address,
  * how to get there and a Maps link sit opposite. Without a photo it is the
  * same type on black.
  */
@@ -23,7 +24,6 @@ export function Venue({
 }) {
   const address = [venue.addressLine, `${venue.city}, ${venue.state}`].filter(Boolean).join(", ");
   const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${address}`)}`;
-  const focus = image?.focus ?? { x: 0.5, y: 0.5 };
 
   return (
     <section
@@ -32,15 +32,8 @@ export function Venue({
     >
       {image && (
         <>
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            sizes="100vw"
-            style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
-            className="-z-10 object-cover"
-          />
-          {/* Darkens the lower half so the type reads; the room stays bright above. */}
+          <VenueBackdrop image={image} />
+          {/* Darkens the lower edge so the type reads; the room stays bright above. */}
           <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
         </>
       )}

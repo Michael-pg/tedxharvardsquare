@@ -4,7 +4,7 @@ import { SquareLink } from "@/components/ui/square-link";
 /**
  * The Flagship page's first screen, set as a poster: the date and venue in
  * the top corner from the first frame, a short pitch opposite, and the theme
- * stacked huge along the bottom, its second line stepped in. No photograph;
+ * stacked huge along the bottom. No photograph;
  * the dot field behind is the backdrop.
  */
 export function FlagshipHero({
@@ -26,7 +26,7 @@ export function FlagshipHero({
   edition?: string;
   action?: { label: string; href: string };
 }) {
-  // First word on its own line, the rest stepped in beneath it.
+  // First word on its own line, the rest beneath it.
   const [first, ...rest] = theme.split(" ");
 
   return (
@@ -48,7 +48,7 @@ export function FlagshipHero({
 
       <SplitReveal as="h1" by="chars" onScroll={false} className="mt-auto pt-16 text-mega font-medium">
         <span className="block">{first}</span>
-        {rest.length > 0 && <span className="block md:pl-32">{rest.join(" ")}</span>}
+        {rest.length > 0 && <span className="block">{rest.join(" ")}</span>}
       </SplitReveal>
 
       <div className="mt-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 md:mt-12">
