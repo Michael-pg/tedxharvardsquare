@@ -74,6 +74,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-09 | **`/speakers` is one page**, every edition as a numbered section (no year tabs or pills). Portraits develop from red halftone on scroll; faces are never hidden behind a hover. |
 | 2026-10-09 | **No eyebrows, anywhere** (owner): no small uppercase kicker above a heading, with or without a red dot. Reads as a generic-AI tell. Recorded in `DESIGN.md` §9. |
 | 2026-10-09 | **Dot field stays scarce** (owner: tasteful, not everywhere). `/speakers` uses it only in the opening, stopping above the archive; `/faq` has none. |
+| 2026-10-09 | **`/flagship` rebuilt in six beats** (after Digital Design Days Milano): poster hero, theme, colour photo collage, speakers as large names, venue full bleed, topics marquee, tickets. Photos on this page are in colour. Why attend / audience / program / close dropped; their Studio fields are hidden, not deleted. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -85,8 +86,9 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 **In Studio (`/studio`)**
 - [ ] **Talk stage photos**: Talk → Stage photo, landscape, with alt text. 4 of 21 done (the featured four, 2026-10-06); the rest show the speaker portrait if featured.
 - [ ] **Talk videos still missing**: Carlos Gascón Alvarez, Ceren Koca, Alissa M. Kleinnijenhuis (not on YouTube as of 2026-10-06). Mariam Khayretdinova (2025) has no talk record at all.
-- [ ] **Review Claude's draft Flagship copy** (Against Entropy → Flagship page tab): the three "Why attend" reasons, the "Who's in the room" line, and the venue note ("A short walk from Harvard station on the Red Line").
-- [ ] Against Entropy → Flagship page: **What's included** (until filled, the page says details are on their way), **Speakers note** (e.g. "Lineup announced in December"), **Program link** once a program page exists, and real **Audience figures** if there are any.
+- [ ] **Flagship collage photos**: Against Entropy → Flagship page → **Photos**, 8–10 from past editions, colour, mixed landscape and portrait. Until filled, the home page's photos and talk stills stand in.
+- [ ] Review Claude's Flagship copy: the venue note ("A short walk from Harvard station on the Red Line") and the Topics line ("The subjects we program around, year after year. Every Flagship draws its talks from across them.", in code at `src/app/flagship/page.tsx`).
+- [ ] Against Entropy → Flagship page: **What's included** (until filled, Tickets says they're not on sale yet) and **Speakers note** (e.g. "Lineup announced in December").
 - [ ] Add 2027 speakers to the edition when announced: the Flagship page swaps its coming-soon tiles for their portraits by itself.
 - [x] Against Entropy → **Date**: February 20, 2027 (set 2026-10-09).
 - [x] Home page → **Flagship photo**: the wide Feb 2026 stage shot (set 2026-10-09). Swap in Studio if a better one turns up; keep it out of the photo strip so it never appears twice.
@@ -502,3 +504,28 @@ corrected FAQ question confirmed on the live `/faq`. Still worth a look on a
 real phone: how the halftone portrait reveal feels, and whether its red is too
 much where a white studio backdrop prints as a solid block (the print starts at
 80% opacity to soften this).
+
+### 2026-10-09 — Flagship page rebuilt (PR #52, merged)
+
+Reworked after the owner found the page weak, using the Digital Design Days
+Milano home page as the structural reference. Two discarded passes on the way:
+a full-bleed photo hero (felt dated) and the date drawn in dots as the hero
+(PR #51, closed).
+
+Now: date, venue and city top-left with the theme line opposite, "Against
+Entropy" stacked huge over the dot field; the theme statement and questions; a
+colour collage that drifts and straightens on scroll (dot field stops here);
+"Speakers 2027" with halftone "To be announced" tiles, switching to a
+large-name list with a portrait beside it once the lineup is in Studio
+(previewed with the 2026 lineup); the venue as a scattered red print that
+falls into line and develops into the colour photo; the 15 topics as a slow
+marquee; tickets on paper.
+
+Content: new **Photos** field on the edition (collage). The owner's Arrow
+Street Arts photo was uploaded and published as the edition's venue photo.
+"First screen photo" is now "Search photo" (structured data only). Shared
+fixes: `SplitReveal` masks reach past the line box and are removed once the
+text lands (descenders were clipped); `HalftonePhoto` gained `exposure`.
+
+Checked at 390px and 1440px with headless Chrome screenshots: no horizontal
+overflow. Not yet seen on a real phone: the venue print and the collage drift.
