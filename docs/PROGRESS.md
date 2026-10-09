@@ -66,11 +66,14 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-24 | The 2027 edition is in **Boston**. Feb 21 2026 edition: Arrow Street Arts. The earlier edition: April 2025. |
 | 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Owner corrected the `number` fields in Studio the same day. |
 | 2026-09-25 | Edition 3 venue is **Arrow Street Arts** (owner). Supersedes "Boston". |
-| 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
+| 2026-09-24 | Performers are stored as speakers (`kind: performer`). Since 2026-10-09 `/speakers` credits them in one line under their edition ("Also on stage") rather than giving them portraits. |
 | 2026-10-08 | **Domain switched from Webflow to Vercel**, `www` primary. Webflow's "Apply to speak" (Tally) and "Join our community" (Linktree) buttons dropped. Webflow `/schedule` unpublished; ours redirects to `/flagship`. Legal review of `/privacy` and `/terms` signed off. Stay on Vercel Hobby until tickets. |
 | 2026-10-09 | **Edition 3 date: February 20, 2027** (owner). Set in Studio. |
 | 2026-10-09 | **Dot canvases never allocate per frame.** Draw through `createDotBatch` (`src/lib/dot-batch.ts`), never a fresh `Path2D`: per-frame `Path2D`s grew a Chrome tab to 9 GB and crashed it. Always-running fields redraw at most ~60 fps (`MIN_FRAME_MS`). |
 | 2026-10-09 | **Flagship photo plate is quiet:** oval fade, no hover; the scroll is its only motion. The home Flagship section is a pocket in the dot field, which returns behind the past talks (no labels or edition numbering between them). |
+| 2026-10-09 | **`/speakers` is one page**, every edition as a numbered section (no year tabs or pills). Portraits develop from red halftone on scroll; faces are never hidden behind a hover. |
+| 2026-10-09 | **No eyebrows, anywhere** (owner): no small uppercase kicker above a heading, with or without a red dot. Reads as a generic-AI tell. Recorded in `DESIGN.md` §9. |
+| 2026-10-09 | **Dot field stays scarce** (owner: tasteful, not everywhere). `/speakers` uses it only in the opening, stopping above the archive; `/faq` has none. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -118,8 +121,9 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 
 ## Known issues
 
-1. ~~Small red text fails WCAG AA~~ — fixed on `/speakers` and `/faq` in the
-   redesign (2026-10-09): the red labels are gone (eyebrows removed), and hovers go to `foreground`. No red text remains below 24px.
+None open. (Small red text failing WCAG AA was fixed in the `/speakers` and
+`/faq` redesign, PR #49: the red labels are gone and hovers go to
+`foreground`. No red text remains below 24px.)
 
 ---
 
@@ -471,7 +475,7 @@ Checked locally at 1280 and 375px: no overflow, no runtime errors. Not yet
 proven on the live site: memory staying flat over hours. Reload any tab opened
 before the deploy.
 
-### 2026-10-09 — `/speakers` and `/faq` redesign
+### 2026-10-09 — `/speakers` and `/faq` redesign (PR #49, merged)
 
 `/speakers` is one page: the next edition first (its number drawn by the dot
 field, as on home), then every past edition as a numbered section with its
@@ -492,3 +496,9 @@ console errors, dialog size identical across speakers.
 
 Follow-up (owner): eyebrows removed site-wide, dotted or not — they read as
 a generic-AI tell. FAQ 01 corrected in Studio to "What is TEDxHarvardSquare?".
+
+Merged and deployed to production the same day; Vercel check green, and the
+corrected FAQ question confirmed on the live `/faq`. Still worth a look on a
+real phone: how the halftone portrait reveal feels, and whether its red is too
+much where a white studio backdrop prints as a solid block (the print starts at
+80% opacity to soften this).
