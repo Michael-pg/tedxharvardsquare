@@ -16,7 +16,7 @@ use down). Add a dated entry at the end of each session; keep entries short.
 
 ---
 
-## Current state (2026-10-08)
+## Current state (2026-10-09)
 
 **Live:** https://www.tedxharvardsquare.org — Studio at `/studio`. The bare
 domain 308s to `www`. https://tedxharvardsquare.vercel.app still works but is
@@ -68,11 +68,14 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-25 | Edition 3 venue is **Arrow Street Arts** (owner). Supersedes "Boston". |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
 | 2026-10-08 | **Domain switched from Webflow to Vercel**, `www` primary. Webflow's "Apply to speak" (Tally) and "Join our community" (Linktree) buttons dropped. Webflow `/schedule` unpublished; ours redirects to `/flagship`. Legal review of `/privacy` and `/terms` signed off. Stay on Vercel Hobby until tickets. |
+| 2026-10-09 | **Edition 3 date: February 20, 2027** (owner). Set in Studio. |
+| 2026-10-09 | **Dot canvases never allocate per frame.** Draw through `createDotBatch` (`src/lib/dot-batch.ts`), never a fresh `Path2D`: per-frame `Path2D`s grew a Chrome tab to 9 GB and crashed it. Always-running fields redraw at most ~60 fps (`MIN_FRAME_MS`). |
+| 2026-10-09 | **Flagship photo plate is quiet:** oval fade, no hover; the scroll is its only motion. The home Flagship section is a pocket in the dot field, which returns behind the past talks (no labels or edition numbering between them). |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
 
-## Owner to-do (as of 2026-10-08)
+## Owner to-do (as of 2026-10-09)
 
 Everything waiting on the owner, in one place. Tick items off here as they land.
 
@@ -82,8 +85,8 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [ ] **Review Claude's draft Flagship copy** (Against Entropy → Flagship page tab): the three "Why attend" reasons, the "Who's in the room" line, and the venue note ("A short walk from Harvard station on the Red Line").
 - [ ] Against Entropy → Flagship page: **What's included** (until filled, the page says details are on their way), **Speakers note** (e.g. "Lineup announced in December"), **Program link** once a program page exists, and real **Audience figures** if there are any.
 - [ ] Add 2027 speakers to the edition when announced: the Flagship page swaps its coming-soon tiles for their portraits by itself.
-- [ ] Against Entropy → **Date** once confirmed (left empty on purpose; the site says "Date to be announced").
-- [ ] Optional: Home page → **Flagship photo**, one lit speaker on a dark stage (else the home page uses the second hero photo, the speaker in profile).
+- [x] Against Entropy → **Date**: February 20, 2027 (set 2026-10-09).
+- [x] Home page → **Flagship photo**: the wide Feb 2026 stage shot (set 2026-10-09). Swap in Studio if a better one turns up; keep it out of the photo strip so it never appears twice.
 - [ ] Optional: Site settings → Mission statement, drop the em dash.
 - [ ] Edition 1 date and theme; Edition 2 theme.
 - [ ] Job titles for the ten 2025 speakers (blank in Webflow too).
@@ -438,3 +441,35 @@ them in Studio (the agent does not hard-delete).
 Note: this Mac still resolved the domain to Webflow from a stale DNS cache after
 the cutover; public DNS was correct. Check the live site with
 `curl --resolve www.tedxharvardsquare.org:443:216.198.79.1` if in doubt.
+
+
+### 2026-10-09 — Tab crash fix, home Flagship section (PRs #45, #46, merged)
+
+**Crash ("Aw, Snap!", error code 5), PR #45.** The owner's Chrome tab on the
+site reached 9 GB after ~9 hours and crashed, on two laptops. Cause: every dot
+canvas (dot field, footer/menu glow, halftone prints, photo strip) built new
+`Path2D`s every frame; their native memory is nearly invisible to the GC. An
+isolated test of the pattern took a tab to ~2.3 GB in a minute. New
+`src/lib/dot-batch.ts` keeps each frame's dots in reused buffers and fills them
+on the context's own path. The dot field and footer glow also cap at ~60 fps
+(120 Hz screens were doing double work), and the dot field reuses one `Range`.
+Visuals unchanged.
+
+**Home Flagship section, PR #46.** The red plate's hover swell was added after
+its edge fade, so the pointer drew dots out to the plate's hidden rectangle
+and showed its corner. `HalftonePhoto` gained `quiet` (oval fade applied last,
+no pointer); `FlagshipPhoto` always uses it, so `/flagship` is fixed too. The
+section is now a `data-dot-clear="wide"` pocket in the dot field. Copy: the
+theme statement from Studio runs under "Flagship 2027" as the through-line,
+then edition, venue and date in one smaller line. A mock with an eyebrow line
+and the three theme questions was tried and dropped (owner: the eyebrow reads
+as AI; the questions weren't needed).
+
+Content (Studio, published): Against Entropy date 2027-02-20. Home Flagship
+photo is now the wide Feb 2026 stage shot (speaker beside the TEDx letters
+under a projection); the old one was also in the photo strip. Every other
+stage photo is already on the home page.
+
+Checked locally at 1280 and 375px: no overflow, no runtime errors. Not yet
+proven on the live site: memory staying flat over hours. Reload any tab opened
+before the deploy.

@@ -93,8 +93,8 @@ content from the organizers. Do not fill them with plausible-looking fakes;
 placeholder people survive to production. **Edition numbering (owner, 2026-09-25):**
 Edition 1 = April 2025, Edition 2 = Feb 21 2026 (Arrow Street Arts), Edition 3 =
 "Against Entropy" (2027, Arrow Street Arts, per the owner 2026-09-25). The import stored them as 2/3/4; the owner
-corrected the `number` fields in Studio (the slugs still carry the old numbers). Still unconfirmed: Edition 3's
-exact date, Edition 1's date and theme, and job titles for the 2025 speakers.
+corrected the `number` fields in Studio (the slugs still carry the old numbers). Edition 3 is on February 20,
+2027 (owner, 2026-10-09). Still unconfirmed: Edition 1's date and theme, and job titles for the 2025 speakers.
 
 Published content revalidates every 60 seconds, so Studio edits go live
 without a redeploy.
