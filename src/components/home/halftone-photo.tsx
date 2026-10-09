@@ -50,6 +50,10 @@ type Focus = { x: number; y: number };
  * sideways by up to that many pixels, which fall into line as the frame
  * scrolls to the middle of the screen.
  *
+ * `quiet` is for a print that sits alone in a section: it fades out in a soft
+ * oval rather than toward a frame, so no corner ever shows, and it ignores
+ * the pointer, leaving the scroll as its only motion.
+ *
  * Under reduced motion it draws the finished print once. The element carries
  * the photo's alt text, since the canvas has none of its own.
  */
@@ -61,6 +65,7 @@ export function HalftonePhoto({
   focus = { x: 0.5, y: 0.5 },
   ratio: ratioOverride,
   scatter = 0,
+  quiet = false,
 }: {
   image: ImageContent;
   className?: string;
@@ -69,6 +74,7 @@ export function HalftonePhoto({
   focus?: Focus;
   ratio?: number;
   scatter?: number;
+  quiet?: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -156,10 +162,17 @@ export function HalftonePhoto({
           // Where the trail passes, the print falls back into register.
           const x = baseX + shift * (1 - held);
           // The print thins out toward its edges, so it has no frame.
-          const edge = Math.min(x, width - x, y, height - y);
-          intensity *= smoothstep(0, Math.min(width, height) * 0.14, edge);
-          intensity += held * 0.45;
-          intensity = Math.min(intensity, 1) * shown;
+          if (quiet) {
+            // An oval, applied last, so nothing reaches the canvas's edge.
+            const ox = (x / width - 0.5) * 2;
+            const oy = (y / height - 0.5) * 2;
+            intensity = Math.min(intensity, 1) * smoothstep(1, 0.45, Math.hypot(ox, oy)) * shown;
+          } else {
+            const edge = Math.min(x, width - x, y, height - y);
+            intensity *= smoothstep(0, Math.min(width, height) * 0.14, edge);
+            intensity += held * 0.45;
+            intensity = Math.min(intensity, 1) * shown;
+          }
           if (intensity < 0.06) continue;
           const radius = cell * 0.5 * Math.pow(intensity, 0.8);
           const bucket =
@@ -246,7 +259,7 @@ export function HalftonePhoto({
     });
     resizeObserver.observe(wrap);
     intersection.observe(wrap);
-    if (!reducedMotion) {
+    if (!reducedMotion && !quiet) {
       wrap.addEventListener("pointermove", onMove);
       wrap.addEventListener("pointerleave", onLeave);
     }
@@ -261,7 +274,7 @@ export function HalftonePhoto({
       wrap.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
     };
-  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter]);
+  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, quiet]);
 
   const ratio = ratioOverride ?? (image.width && image.height ? image.width / image.height : 3 / 2);
   return (

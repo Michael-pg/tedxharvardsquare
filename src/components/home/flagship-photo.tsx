@@ -19,7 +19,8 @@ const PLATE_TO = { xPercent: 14, yPercent: -2, scale: 1.35 };
  * bands that scatter sideways. The photo is lightened onto the plate, so the
  * red shows through everywhere the photo is dark. As the section scrolls to
  * the middle of the screen the bands fall into line: disorder resolving to
- * order, the edition's theme, without quite reaching it.
+ * order, the edition's theme, without quite reaching it. The plate is quiet
+ * (see `HalftonePhoto`): an oval with no frame, moved only by the scroll.
  *
  * Works best with a lit speaker on a dark stage. Under reduced motion the
  * plate holds still, nearly in line.
@@ -62,6 +63,7 @@ export function FlagshipPhoto({ image, className }: { image: ImageContent; class
           cell={13}
           blur={1.6}
           scatter={120}
+          quiet
         />
       </div>
       <div className="mask-feather pointer-events-none absolute inset-0 mix-blend-lighten">
