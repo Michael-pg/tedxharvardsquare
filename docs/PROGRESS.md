@@ -412,3 +412,29 @@ Certificates issued within minutes; every page, both redirects, Studio,
 `robots.txt` and `sitemap.xml` checked on the real domain. Found the Google
 verification meta missing a character (PR #38).
 
+
+### 2026-10-08 — Home polish, mobile overflow, headshots (PR #41, merged)
+
+Owner feedback on home. Dot field: the mass now fades well past its old rim,
+red giving way to loose grey dot by dot (dithered) so there is no circular edge;
+the pointer drags a tapering trail instead of an orb. New `data-dot-stop`
+attribute fades the field out above a section: "What is TEDx?" now sits on plain
+black. Footer glow spans the whole footer, so its tail rises behind the links
+with no edge. Motto: `text-statement` a step smaller (also shrinks the Flagship
+page's statement), the answer at `text-title` in grey for a clear hierarchy,
+words blur-fade in once on scroll. Photo strip hover is now a soft tail of red
+halftone (the Flagship speaker-tile print) instead of square pixels.
+
+Mobile: the Flagship photo's red plate pushed the home page sideways at 375px
+(now `overflow-x-clip`); long FAQ questions overflowed (now wrap). Every page
+and three speaker pages measured 375px wide afterwards.
+
+Content: em dash removed from the mission statement ("We exist to create those
+moments, on stage and in every room we build year-round."). New headshots for
+Jayna Swan and Martine Bertrand (owner's files, already web-sized, uploaded
+as-is). The two old headshot assets are unreferenced; the owner is deleting
+them in Studio (the agent does not hard-delete).
+
+Note: this Mac still resolved the domain to Webflow from a stale DNS cache after
+the cutover; public DNS was correct. Check the live site with
+`curl --resolve www.tedxharvardsquare.org:443:216.198.79.1` if in doubt.
