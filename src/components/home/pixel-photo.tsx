@@ -5,6 +5,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
+import { createDotBatch } from "@/lib/dot-batch";
 import type { Image as ImageContent } from "@/content";
 
 /** Screen pitch of the trail, in CSS pixels. */
@@ -92,6 +93,7 @@ export function PixelPhoto({
     let luminance: Float32Array | null = null;
     let running = false;
     const trail = createPointerTrail();
+    const dots = createDotBatch(BUCKETS);
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -112,7 +114,6 @@ export function PixelPhoto({
       }
       trail.step(Math.min(deltaMs, 50) / 1000, CELL * 2);
       ctx.clearRect(0, 0, width, height);
-      const paths = BUCKETS.map(() => new Path2D());
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const i = row * cols + col;
@@ -130,14 +131,10 @@ export function PixelPhoto({
           const loose = (1 - e) * CELL * 0.5;
           const px = x + (hash(col, row, 5) - 0.5) * loose;
           const py = y + (hash(col, row, 6) - 0.5) * loose;
-          paths[bucket].moveTo(px + r, py);
-          paths[bucket].arc(px, py, r, 0, Math.PI * 2);
+          dots.add(bucket, px, py, r);
         }
       }
-      paths.forEach((path, i) => {
-        ctx.fillStyle = BUCKETS[i];
-        ctx.fill(path);
-      });
+      dots.flush(ctx);
       // Stop the loop once the trail has faded; the next hover restarts it.
       if (!trail.alive) stop();
     };
