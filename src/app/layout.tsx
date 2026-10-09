@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
     robots: { index: true, follow: true },
     // Carried over from the Webflow site, where it verifies the Search Console
     // property; dropping it at the domain switch would lock that property out.
-    verification: { google: "ESGuY1vqOJ0BYLEVdhJ_fRTrczsBsy3_9XKd2tUfzs" },
+    verification: { google: "ESGuY1mvqOJ0BYLEVdhJ_fRTrczsBsy3_9XKd2tUfzs" },
   };
 }
 
