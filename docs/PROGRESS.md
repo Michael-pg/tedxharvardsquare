@@ -118,23 +118,18 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 
 ## Known issues
 
-1. **Small red text fails WCAG AA** (brand red on black is 4.35:1, needs 4.5).
-   As of 2026-10-09: the red labels on `/speakers` and `/faq`, the year in
-   the speaker dialog, and red hover on talk titles and FAQ questions. Fix per
-   `DESIGN.md` §3 (red mark beside foreground text). **On hold (owner,
-   2026-10-09):** `/speakers` and `/faq` are due for a redesign anyway; fix it
-   as part of that, not separately.
+1. ~~Small red text fails WCAG AA~~ — fixed on `/speakers` and `/faq` in the
+   redesign (2026-10-09): the red labels are gone (eyebrows removed), and hovers go to `foreground`. No red text remains below 24px.
 
 ---
 
 ## Next up (suggested order)
 
-1. Redesign `/speakers` and `/faq` (owner, planned); fix the red-text contrast issue there.
-2. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
-3. Team section on `/about` once the organizers send names and bios.
-4. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-5. CI: GitHub Actions running lint, typecheck, build on every PR.
-6. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+1. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
+2. Team section on `/about` once the organizers send names and bios.
+3. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
+4. CI: GitHub Actions running lint, typecheck, build on every PR.
+5. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -475,3 +470,25 @@ stage photo is already on the home page.
 Checked locally at 1280 and 375px: no overflow, no runtime errors. Not yet
 proven on the live site: memory staying flat over hours. Reload any tab opened
 before the deploy.
+
+### 2026-10-09 — `/speakers` and `/faq` redesign
+
+`/speakers` is one page: the next edition first (its number drawn by the dot
+field, as on home), then every past edition as a numbered section with its
+date, venue and talk count sticky beside the lineup. Performers are credited
+under their edition ("Also on stage"). Portraits arrive as red halftone and
+develop into the photo as they scroll in (`PrintedPortrait`), so no face is
+hidden behind a hover. The dot field (strength 0.55) stops above the archive.
+
+The speaker dialog is one fixed size from `md` up (`max-h-dialog`, 44rem): the
+portrait stays put, only the text column scrolls, and the page behind is
+locked. Prev/next (and ← →) step through all 22 speakers without closing.
+
+`/faq`: numbered questions (the open one brightens), and the contact sits
+sticky beside the list. No dot field there, on purpose.
+
+Checked at 375px and desktop in the dev server: no horizontal overflow, no
+console errors, dialog size identical across speakers.
+
+Follow-up (owner): eyebrows removed site-wide, dotted or not — they read as
+a generic-AI tell. FAQ 01 corrected in Studio to "What is TEDxHarvardSquare?".

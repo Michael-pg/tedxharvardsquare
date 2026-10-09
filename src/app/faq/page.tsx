@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { FaqAccordion } from "@/components/faq/faq-accordion";
+import { SquareLink } from "@/components/ui/square-link";
 import { getFaqs, getSiteSettings } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 
@@ -16,17 +17,20 @@ export function generateMetadata(): Promise<Metadata> {
   });
 }
 
+/**
+ * The numbered questions carry the page; the contact stays pinned beside them,
+ * so anyone who doesn't find their answer never has to scroll for it. Plain
+ * black, no dot field: people come to this page for a fact.
+ */
 export default async function FaqPage() {
   const [site, faqs] = await Promise.all([getSiteSettings(), getFaqs()]);
+  const mailto = `mailto:${site.contactEmail}?subject=TEDxHarvardSquare`;
 
   return (
     <>
       <SiteNav />
       <main className="px-6 pt-40 pb-32 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
-          <Reveal as="p" className="mb-6 text-label text-brand uppercase">
-            Flagship
-          </Reveal>
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
             FAQ
           </SplitReveal>
@@ -37,20 +41,29 @@ export default async function FaqPage() {
           </SplitReveal>
         </header>
 
-        <Reveal className="max-w-5xl">
-          <FaqAccordion items={faqs} />
-        </Reveal>
+        <div className="grid grid-cols-4 gap-x-6 gap-y-16 md:grid-cols-12">
+          <Reveal className="col-span-4 md:col-span-8">
+            <FaqAccordion items={faqs} />
+          </Reveal>
 
-        <Reveal as="p" className="mt-20 text-body text-muted">
-          Still have a question? Email{" "}
-          <a
-            href={`mailto:${site.contactEmail}?subject=TEDxHarvardSquare`}
-            className="text-foreground underline decoration-rule underline-offset-4 transition-colors hover:decoration-brand"
-          >
-            {site.contactEmail}
-          </a>
-          .
-        </Reveal>
+          <aside aria-label="Contact" className="col-span-4 md:col-span-3 md:col-start-10">
+            <Reveal className="flex flex-col items-start gap-6 md:sticky md:top-32">
+              <p className="text-heading font-medium text-balance">Still have a question?</p>
+              <p className="text-body text-ink-300">
+                Write to us and a member of the team will get back to you.
+              </p>
+              <SquareLink href={mailto} variant="secondary">
+                Email us
+              </SquareLink>
+              <a
+                href={mailto}
+                className="text-small text-muted underline decoration-rule underline-offset-4 transition-colors hover:text-foreground hover:decoration-brand"
+              >
+                {site.contactEmail}
+              </a>
+            </Reveal>
+          </aside>
+        </div>
       </main>
       <SiteFooter />
     </>

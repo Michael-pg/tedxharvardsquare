@@ -52,7 +52,9 @@ type Focus = { x: number; y: number };
  *
  * `quiet` is for a print that sits alone in a section: it fades out in a soft
  * oval rather than toward a frame, so no corner ever shows, and it ignores
- * the pointer, leaving the scroll as its only motion.
+ * the pointer, leaving the scroll as its only motion. `pointer={false}` keeps
+ * the rectangular print but ignores the pointer too, for a print that sits
+ * under something else.
  *
  * Under reduced motion it draws the finished print once. The element carries
  * the photo's alt text, since the canvas has none of its own.
@@ -66,6 +68,7 @@ export function HalftonePhoto({
   ratio: ratioOverride,
   scatter = 0,
   quiet = false,
+  pointer = true,
 }: {
   image: ImageContent;
   className?: string;
@@ -75,6 +78,7 @@ export function HalftonePhoto({
   ratio?: number;
   scatter?: number;
   quiet?: boolean;
+  pointer?: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -259,7 +263,7 @@ export function HalftonePhoto({
     });
     resizeObserver.observe(wrap);
     intersection.observe(wrap);
-    if (!reducedMotion && !quiet) {
+    if (!reducedMotion && !quiet && pointer) {
       wrap.addEventListener("pointermove", onMove);
       wrap.addEventListener("pointerleave", onLeave);
     }
@@ -274,7 +278,7 @@ export function HalftonePhoto({
       wrap.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
     };
-  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, quiet]);
+  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, quiet, pointer]);
 
   const ratio = ratioOverride ?? (image.width && image.height ? image.width / image.height : 3 / 2);
   return (

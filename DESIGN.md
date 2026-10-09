@@ -107,7 +107,7 @@ for the logo only.
 | `text-lead` | 18 → 22px | Intros, talk titles in detail views. |
 | `text-body` | 16px | Body copy. |
 | `text-small` | 14px | Captions, secondary actions. |
-| `text-label` | 12px, +0.12em, uppercase | Eyebrows and metadata. |
+| `text-label` | 12px, +0.12em, uppercase | Metadata (job titles, small labels). |
 
 - Weights: `font-medium` for headings, regular for everything else. No bold
   body copy, no italics except in quoted titles.
@@ -120,7 +120,7 @@ for the logo only.
 ## 5. Layout & spacing
 
 - **Gutters:** `px-6` (24px) on every page, at every width. The header uses the same gutter so the lockup lines up with page content.
-- **Inner page header:** `pt-40 md:pt-56`, eyebrow → `h1` → lead, then
+- **Inner page header:** `pt-40 md:pt-56`, `h1` → lead (no eyebrow), then
   `mb-20 md:mb-28` before content.
 - **Sections:** `py-24 md:py-40`, separated by `border-t border-rule`.
 - **Widths:** headers `max-w-4xl`, lists `max-w-5xl`, prose `max-w-3xl`.
@@ -174,18 +174,27 @@ for the logo only.
 | `SiteFooter` | `components/site/site-footer.tsx` | One row: sign-up (early access + Substack) beside four link columns (Programs, Organization, Follow, Policies). Then Cambridge clock / back to top / ©, the TEDx licence line (required wording), and the lockup at 85% width over `FooterGlow` — a 2D-canvas red halftone that rises from the bottom, hints up toward the links, and swells under the pointer. No divider lines. Render on every page after `</main>`. |
 | `GlassButton` | `components/ui/glass-button.tsx` | Only over the WebGL layer. |
 | `Reveal` / `SplitReveal` | `components/motion/` | Default entrances. |
-| `SpeakerArchive` | `components/speakers/` | Year tabs, portrait cards, detail dialog with YouTube embed, `#slug` deep links. |
-| `FaqAccordion` | `components/faq/` | Independent items; closed answers are `inert`. |
+| `SpeakerArchive` | `components/speakers/` | Every edition on one page: numbered sections with the edition's facts sticky beside the lineup, performers credited under it. Detail dialog with YouTube embed, prev/next (and ← →) through the whole archive, `#slug` deep links. |
+| `PrintedPortrait` | `components/speakers/` | Speaker portrait that arrives as red halftone and develops into the photo, scrubbed by scroll. Faces are never hidden behind a hover. Not mounted under reduced motion. |
+| `FaqAccordion` | `components/faq/` | Numbered, independent items; an open item's number and question brighten. Closed answers are `inert`. |
 
 Shared patterns:
 
-- **Pill controls** (tabs, link chips): `rounded-full border`, selected state
+- **Numbered sections** (editions, questions): a two-digit number (`01`, `02`)
+  in place of tabs or pills. The archive's edition numbers are `text-statement`;
+  the next edition's number is drawn by the dot field (`data-dot-glyph`,
+  `text-numeral`).
+- **Pill controls** (link chips): `rounded-full border`, selected state
   inverts to `bg-foreground text-background`.
 - **Inline links:** `underline decoration-rule underline-offset-4`, decoration
   turns `brand` on hover.
 - **Dialogs:** native `<dialog>`, `ink-900` panel, `border-rule`, close on
-  button, Escape, and backdrop click. Below `md` they become a full-screen
-  sheet that slides up, with the close button fixed top-right.
+  button, Escape, and backdrop click. From `md` up the panel is one fixed size
+  (`max-w-5xl`, `max-h-dialog`): media pinned left, text scrolling inside its
+  own column (`overscroll-contain`), never the page. The page behind is locked
+  (`html:has(dialog[open])` in `globals.css`). Below `md` they become a
+  full-screen sheet that slides up; the sheet's body scrolls, the close button
+  and footer stay put.
 
 ---
 
@@ -193,8 +202,8 @@ Shared patterns:
 
 - Confident, plain, specific. Short sentences. No hype words ("revolutionary",
   "world-class"), no exclamation marks.
-- Eyebrows are nouns or short phrases ("The archive", "Flagship"), not
-  sentences.
+- **No eyebrows.** No small uppercase kicker above a heading, with or without
+  a red dot: the owner reads it as a generic-AI tell. Let the heading stand alone.
 - Numbers as figures: "Edition 3", "300+ founders".
 
 ---
