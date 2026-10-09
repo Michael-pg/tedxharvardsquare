@@ -66,12 +66,12 @@ export function SplitReveal({
         smartWrap: by === "chars",
         onSplit(self) {
           // Each mask clips to its line box, which is shorter than the glyphs
-          // in tightly set display type. Stretch the clip past the box
-          // without moving anything, so ascenders and descenders show while
-          // the text slides in.
+          // in tightly set display type, so ascenders and descenders were cut
+          // off mid-animation. Clip to a region past the box instead: a
+          // negative inset reaches outside it without moving anything.
           for (const mask of self.masks as HTMLElement[]) {
-            mask.style.padding = "0.15em 0";
-            mask.style.margin = "-0.15em 0";
+            mask.style.overflow = "visible";
+            mask.style.clipPath = "inset(-0.3em -0.15em)";
           }
           return gsap.from(self[by], {
             yPercent: 110,
