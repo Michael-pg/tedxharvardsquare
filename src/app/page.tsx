@@ -73,6 +73,8 @@ export default async function Home() {
   const editionCount = new Set(archive.map((speaker) => speaker.editionYear)).size;
   // A speaker lit on a dark stage; the second hero frame is one.
   const flagshipPhoto = home.flagshipPhoto ?? home.heroImages[1];
+  // The theme's statement, written as broken lines; here it runs as one sentence pair.
+  const statement = edition?.page?.statement ?? [];
 
   return (
     <>
@@ -117,22 +119,30 @@ export default async function Home() {
           </section>
         )}
 
-        {/* Flagship: the year leads, since the hero already carries the theme. The
-            photo sits left on desktop, breaking the run of left-aligned text. */}
+        {/* Flagship: the year leads, since the hero already carries the theme,
+            then the theme's statement as the through-line. The photo sits left
+            on desktop, breaking the run of left-aligned text. The whole section
+            is a pocket in the dot field, so the photo's red plate is the only
+            red here; the field returns behind the past talks below. */}
         {edition && (
           // The photo's red plate is scaled and knocked sideways past its frame;
           // on phones that ran off the right edge and the page scrolled sideways.
-          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 overflow-x-clip px-6 py-24 md:grid-cols-12 md:py-40">
-            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
+          <section
+            data-dot-clear="wide"
+            className="grid grid-cols-4 items-center gap-x-6 gap-y-12 overflow-x-clip px-6 py-24 md:grid-cols-12 md:py-40">
+            <div className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
               <Reveal as="h2" className="text-display font-medium text-balance">
                 {`Flagship ${edition.year}`}
               </Reveal>
+              {statement.length > 0 && (
+                <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
+                  <span className="text-foreground">{statement[0]}</span> {statement.slice(1).join(" ")}
+                </Reveal>
+              )}
               {/* The facts as a sentence, not a table. */}
-              <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
-                <span className="text-foreground">
-                  {edition.theme ? `Edition ${edition.number}: ${edition.theme}.` : `Edition ${edition.number}.`}
-                </span>{" "}
+              <Reveal as="p" className="max-w-md text-body text-balance text-muted">
                 {[
+                  edition.theme ? `Edition ${edition.number}: ${edition.theme}.` : `Edition ${edition.number}.`,
                   venueKnown
                     ? `At ${edition.venue?.name}, ${edition.venue?.city}.`
                     : `In ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
