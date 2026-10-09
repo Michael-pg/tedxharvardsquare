@@ -1,61 +1,60 @@
-import Image from "next/image";
 import { Reveal } from "@/components/motion/reveal";
 import { SquareLink } from "@/components/ui/square-link";
+import { VenueBackdrop } from "./venue-backdrop";
 import type { Image as ImageContent, Venue as VenueContent } from "@/content";
 
 /**
- * The venue as a split band: the room, full bleed, on one half; on the other
- * a paper panel with the address, a Maps link and how to get there.
+ * The venue, full bleed, with the date and venue name set huge over it: the
+ * second time the date appears, and the big one. The photo arrives as a
+ * scattered red print and develops into colour (see `VenueBackdrop`). The address,
+ * how to get there and a Maps link sit opposite. Without a photo it is the
+ * same type on black.
  */
 export function Venue({
   venue,
   image,
-  when,
+  day,
   notes,
 }: {
   venue: VenueContent;
   image?: ImageContent;
-  when?: string;
+  /** The date without the year, e.g. "February 20". */
+  day?: string;
   notes: string[];
 }) {
   const address = [venue.addressLine, `${venue.city}, ${venue.state}`].filter(Boolean).join(", ");
   const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${address}`)}`;
-  const focus = image?.focus ?? { x: 0.5, y: 0.5 };
 
   return (
-    <section aria-labelledby="venue-title" className="grid md:grid-cols-2">
+    <section
+      aria-labelledby="venue-title"
+      className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden px-6 pt-40 pb-12 md:pb-16"
+    >
       {image && (
-        <div className="relative aspect-4/3 overflow-hidden bg-ink-900 md:aspect-auto md:min-h-svh">
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            sizes="(min-width: 768px) 50vw, 100vw"
-            style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
-            className="object-cover grayscale"
-          />
-        </div>
+        <>
+          <VenueBackdrop image={image} />
+          {/* Darkens the lower edge so the type reads; the room stays bright above. */}
+          <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
+        </>
       )}
-      <div
-        data-nav-theme="light"
-        className={`flex flex-col justify-center gap-8 bg-ink-50 px-6 py-24 text-ink-950 md:px-12 md:py-40 ${image ? "" : "md:col-span-2"}`}
-      >
-        <Reveal as="h2" className="text-display font-medium text-balance">
-          <span id="venue-title">{venue.name}</span>
+
+      <div className="grid grid-cols-4 items-end gap-x-6 gap-y-10 md:grid-cols-12">
+        <Reveal as="h2" className="col-span-4 text-statement font-medium md:col-span-8">
+          <span id="venue-title">
+            {day && <span className="block">{day}</span>}
+            <span className="block">{venue.name}</span>
+          </span>
         </Reveal>
-        <Reveal className="flex flex-col gap-1 text-lead">
-          <p>{address}</p>
-          {when && <p className="text-ink-600">{when}</p>}
-        </Reveal>
-        {notes.length > 0 && (
-          <Reveal className="flex max-w-md flex-col gap-3 border-t border-ink-200 pt-6 text-body text-ink-600">
-            {notes.map((note, i) => (
-              <p key={i}>{note}</p>
-            ))}
-          </Reveal>
-        )}
-        <Reveal>
-          <SquareLink href={maps} variant="secondary" tone="light">
+        <Reveal className="col-span-4 flex flex-col items-start gap-6 md:col-span-4 md:col-start-9">
+          <p className="text-lead">{address}</p>
+          {notes.length > 0 && (
+            <div className="flex max-w-md flex-col gap-3 text-body text-ink-200">
+              {notes.map((note, i) => (
+                <p key={i}>{note}</p>
+              ))}
+            </div>
+          )}
+          <SquareLink href={maps} variant="secondary">
             Open in Maps
           </SquareLink>
         </Reveal>

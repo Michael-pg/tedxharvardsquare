@@ -351,11 +351,11 @@ export const edition = defineType({
     }),
     defineField({
       name: "heroImage",
-      title: "First screen photo",
+      title: "Search photo",
       type: "accessibleImage",
       group: "page",
       description:
-        "Fills the Flagship page's first screen, in black and white and dimmed under the theme. Landscape, with the subject away from the bottom-left, where the text sits.",
+        "Not shown on the page. Search engines use it as the event's image. Landscape. Until set, the first collage photo is used.",
     }),
     defineField({
       name: "statement",
@@ -383,6 +383,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "reasons",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Why attend",
       type: "array",
       group: "page",
@@ -403,6 +405,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "audience",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Who's in the room",
       type: "text",
       rows: 2,
@@ -412,6 +416,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "audienceStats",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Audience figures",
       type: "array",
       group: "page",
@@ -431,6 +437,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "audienceImage",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Who's in the room photo",
       type: "accessibleImage",
       group: "page",
@@ -438,6 +446,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "programTitle",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Program heading",
       type: "string",
       group: "page",
@@ -445,6 +455,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "programBody",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Program text",
       type: "array",
       of: [{ type: "text", rows: 3 }],
@@ -453,6 +465,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "programUrl",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Program link",
       type: "url",
       group: "page",
@@ -477,11 +491,21 @@ export const edition = defineType({
       description: "What a ticket includes, one item each. Until filled, the page says details are on their way.",
     }),
     defineField({
+      name: "photos",
+      title: "Photos",
+      type: "array",
+      of: [defineArrayMember({ type: "accessibleImage" })],
+      group: "page",
+      description:
+        "The collage under the theme statement: photos from past editions, in colour, scattered across the page. Eight to ten works best, a mix of stage, audience and conversation, landscape and portrait. Until filled, the home page's photos stand in.",
+      validation: (r) => r.max(12),
+    }),
+    defineField({
       name: "venueImage",
       title: "Venue photo",
       type: "accessibleImage",
       group: "page",
-      description: "The venue, inside or out. Fills half of the venue section.",
+      description: "The venue, inside or out, in colour. Fills the venue section edge to edge, with the date and venue name set over it.",
     }),
     defineField({
       name: "venueNotes",
@@ -493,6 +517,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "closeTitle",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Closing heading",
       type: "string",
       group: "page",
@@ -500,6 +526,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "closeBody",
+      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      hidden: true,
       title: "Closing text",
       type: "array",
       of: [{ type: "text", rows: 3 }],

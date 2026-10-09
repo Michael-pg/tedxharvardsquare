@@ -48,7 +48,8 @@ type Focus = { x: number; y: number };
  * the crop's centre (like `object-position`, 0–1), `ratio` overrides the
  * photo's own aspect, and `scatter` slices the print into bands knocked
  * sideways by up to that many pixels, which fall into line as the frame
- * scrolls to the middle of the screen.
+ * scrolls to the middle of the screen. `exposure` brightens the photo before
+ * it is printed, for a dark room that would otherwise print as a few dots.
  *
  * `quiet` is for a print that sits alone in a section: it fades out in a soft
  * oval rather than toward a frame, so no corner ever shows, and it ignores
@@ -67,6 +68,7 @@ export function HalftonePhoto({
   focus = { x: 0.5, y: 0.5 },
   ratio: ratioOverride,
   scatter = 0,
+  exposure = 1,
   quiet = false,
   pointer = true,
 }: {
@@ -77,6 +79,7 @@ export function HalftonePhoto({
   focus?: Focus;
   ratio?: number;
   scatter?: number;
+  exposure?: number;
   quiet?: boolean;
   pointer?: boolean;
 }) {
@@ -159,7 +162,7 @@ export function HalftonePhoto({
           const shown = smoothstep(delay, delay + 0.1, state.progress);
           if (shown <= 0) continue;
           // A touch of contrast so shadows fall away to black.
-          let intensity = smoothstep(0.08, 0.92, luminance[row * cols + col]);
+          let intensity = smoothstep(0.08, 0.92, luminance[row * cols + col] * exposure);
           const baseX = col * cell + cell / 2 + (row % 2 ? cell / 4 : -cell / 4);
           const y = row * cell + cell / 2;
           const held = trail.alive ? trail.sample(baseX, y, reach) : 0;
@@ -278,7 +281,7 @@ export function HalftonePhoto({
       wrap.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
     };
-  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, quiet, pointer]);
+  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, exposure, quiet, pointer]);
 
   const ratio = ratioOverride ?? (image.width && image.height ? image.width / image.height : 3 / 2);
   return (

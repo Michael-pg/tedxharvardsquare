@@ -77,6 +77,7 @@ const editionFields = `
     "heroImage": ${image("heroImage")},
     "audienceImage": ${image("audienceImage")},
     "venueImage": ${image("venueImage")},
+    ${imageList("photos")},
     "statement": coalesce(statement, []),
     "questions": coalesce(questions, []),
     "reasons": coalesce(reasons[]{ title, body, "image": ${image("image")} }, []),

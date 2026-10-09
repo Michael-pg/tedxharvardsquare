@@ -1,57 +1,63 @@
-import Image from "next/image";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { SquareLink } from "@/components/ui/square-link";
-import type { Image as ImageContent } from "@/content";
 
 /**
- * The Flagship page's first screen: one photograph from a past edition, full
- * bleed, in black and white and dimmed, with the theme set large across its
- * lower edge. Where home opens on type and dots, this opens on the room.
+ * The Flagship page's first screen, set as a poster: the date and venue in
+ * the top corner from the first frame, a short pitch opposite, and the theme
+ * stacked huge along the bottom. No photograph;
+ * the dot field behind is the backdrop.
  */
 export function FlagshipHero({
-  image,
-  kicker,
   theme,
-  statement,
-  facts,
+  pitch,
+  when,
+  venue,
+  city,
+  edition,
   action,
 }: {
-  image?: ImageContent;
-  kicker: string;
   theme: string;
-  statement?: string;
-  facts: string;
+  pitch?: string;
+  /** The date as it should read, e.g. "February 20, 2027". */
+  when?: string;
+  venue?: string;
+  city?: string;
+  /** e.g. "Edition 3". */
+  edition?: string;
   action?: { label: string; href: string };
 }) {
-  const focus = image?.focus ?? { x: 0.5, y: 0.5 };
-  return (
-    <section className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden bg-background px-6 pt-32 pb-7">
-      {image && (
-        <Image
-          src={image.src}
-          alt={image.alt}
-          fill
-          priority
-          sizes="100vw"
-          style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
-          className="-z-10 object-cover brightness-75 contrast-110 grayscale"
-        />
-      )}
-      {/* A flat wash, so the type reads anywhere on the photo. */}
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-ink-950/45" />
+  // First word on its own line, the rest beneath it.
+  const [first, ...rest] = theme.split(" ");
 
-      <p className="mb-4 text-heading font-medium text-ink-200">{kicker}</p>
-      <SplitReveal as="h1" by="chars" onScroll={false} className="text-hero font-medium">
-        {theme}
+  return (
+    <section className="flex min-h-svh flex-col px-6 pt-24 pb-7 md:pt-28">
+      <div className="grid grid-cols-4 gap-x-6 gap-y-8 md:grid-cols-12">
+        {(when || venue) && (
+          <p data-dot-clear className="col-span-4 flex flex-col text-heading font-medium md:col-span-5">
+            {when && <span>{when}</span>}
+            {venue && <span className="text-ink-300">{venue}</span>}
+            {city && <span className="text-ink-300">{city}</span>}
+          </p>
+        )}
+        {pitch && (
+          <p data-dot-clear className="col-span-4 max-w-sm text-heading text-balance text-ink-300 md:col-span-4 md:col-start-9">
+            {pitch}
+          </p>
+        )}
+      </div>
+
+      <SplitReveal as="h1" by="chars" onScroll={false} className="mt-auto pt-16 text-mega font-medium">
+        <span className="block">{first}</span>
+        {rest.length > 0 && <span className="block">{rest.join(" ")}</span>}
       </SplitReveal>
-      {statement && (
-        <SplitReveal as="p" delay={0.25} onScroll={false} className="mt-6 max-w-xl text-lead text-balance text-ink-100">
-          {statement}
-        </SplitReveal>
-      )}
-      <div className="mt-12 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 md:mt-16">
+
+      <div className="mt-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 md:mt-12">
         {action && <SquareLink href={action.href}>{action.label}</SquareLink>}
-        <p className="text-small text-ink-200">{facts}</p>
+        {edition && (
+          <p data-dot-clear className="text-small text-muted">
+            {`TEDxHarvardSquare · ${edition}`}
+          </p>
+        )}
       </div>
     </section>
   );
