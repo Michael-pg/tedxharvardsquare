@@ -3,14 +3,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { createPointerTrail } from "@/lib/pointer-trail";
 
 /** Grid pitch in CSS pixels — the same screen as the footer glow. */
 const CELL = 10;
 /** How far the black pocket around `data-dot-clear` elements fades, in px. */
 const TEXT_FEATHER = 48;
 const WIDE_FEATHER = 140;
-/** How long a point of the pointer's trail lasts, in seconds. */
-const TRAIL_LIFE = 0.9;
 
 /** Brightness buckets, so a frame is a handful of filled paths. */
 const RED = [
@@ -113,9 +112,7 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     let time = Math.random() * 100;
     let clears: Element[] = [];
     let glyphs: Glyph[] = [];
-    const pointer = { x: -1e4, y: -1e4, inside: false };
-    /** The pointer's recent path, newest last; `life` runs from 1 down to 0. */
-    let trail: { x: number; y: number; life: number }[] = [];
+    const trail = createPointerTrail();
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -251,16 +248,8 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             if (clear < 0.02) continue;
           }
 
-          // The trail: each point holds a disc that shrinks as the point ages,
-          // so the pull tapers off behind the pointer like a comet's tail.
-          let held = 0;
-          for (const p of trail) {
-            const r = reach * (0.3 + 0.7 * p.life);
-            const ax = Math.abs(gx - p.x);
-            const ay = Math.abs(gy - p.y);
-            if (ax > r || ay > r) continue;
-            held = Math.max(held, p.life * p.life * smoothstep(r, r * 0.2, Math.hypot(ax, ay)));
-          }
+          // The pointer's trail pulls strays back into line, tapering behind it.
+          const held = trail.sample(gx, gy, reach);
           const order = Math.max(smoothstep(1.18, 0.62, d), held);
 
           // Dithered: each dot has its own threshold, so red gives way to
@@ -304,33 +293,15 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     const tick = (_: number, deltaMs: number) => {
       const dt = Math.min(deltaMs, 50) / 1000;
       time += dt;
-      for (const p of trail) p.life -= dt / TRAIL_LIFE;
-      trail = trail.filter((p) => p.life > 0);
-      if (pointer.inside) {
-        // Fill in fast moves, so a flick leaves a stroke and not a row of beads.
-        const last = trail[trail.length - 1];
-        const step = Math.min(width, height) * 0.04;
-        const gap = last ? Math.hypot(pointer.x - last.x, pointer.y - last.y) : 0;
-        const fill = last ? Math.min(12, Math.floor(gap / step)) : 0;
-        for (let i = 1; i <= fill; i++) {
-          const f = i / (fill + 1);
-          trail.push({ x: lerp(last.x, pointer.x, f), y: lerp(last.y, pointer.y, f), life: lerp(last.life, 1, f) });
-        }
-        trail.push({ x: pointer.x, y: pointer.y, life: 1 });
-        if (trail.length > 80) trail = trail.slice(-80);
-      }
+      trail.step(dt, Math.min(width, height) * 0.04);
       draw();
     };
 
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      pointer.inside = true;
+      trail.move(event.clientX, event.clientY);
     };
-    const onLeave = () => {
-      pointer.inside = false;
-    };
+    const onLeave = () => trail.leave();
     const onResize = () => {
       resize();
       collect();

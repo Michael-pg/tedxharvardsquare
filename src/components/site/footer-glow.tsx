@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { createPointerTrail } from "@/lib/pointer-trail";
 
 /** Grid pitch in CSS pixels. Tight enough to read as a tone, not as dots. */
 const CELL = 9;
@@ -31,7 +32,7 @@ const smoothstep = (edge0: number, edge1: number, x: number) => {
  * field, flattened into print. A wavy horizon drifts across the bottom of the
  * footer; below it the dots swell toward full size, above it they thin out to
  * nothing, so the gradient is made entirely of dot size, like a newspaper
- * halftone. The pointer swells the dots it passes over.
+ * halftone. The pointer's trail swells the dots it passes over.
  *
  * Plain 2D canvas, not a three.js scene: a few thousand circles a frame is
  * cheap, and the footer should not pull the WebGL bundle onto pages that do
@@ -62,9 +63,8 @@ export function FooterGlow({
     let time = Math.random() * 100;
     let visible = false;
     let running = false;
-    // Pointer in canvas CSS pixels, eased; `strength` fades in and out so the
-    // swell never pops on or off.
-    const pointer = { x: 0, y: 0, tx: 0, ty: 0, strength: 0, target: 0 };
+    // In canvas CSS pixels.
+    const trail = createPointerTrail();
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -83,7 +83,9 @@ export function FooterGlow({
       const paths = BUCKETS.map(() => new Path2D());
       const cols = Math.ceil(width / CELL) + 1;
       const rows = Math.ceil(height / CELL) + 1;
-      const reach = Math.max(width, height) * 0.14;
+      // From the width, not the height: the canvas now spans the whole footer,
+      // which on a phone is far taller than it is wide.
+      const reach = Math.min(200, width * 0.14 + 60);
       const t = time;
 
       for (let col = 0; col < cols; col++) {
@@ -120,12 +122,7 @@ export function FooterGlow({
             0.32 * smoothstep(0.98, 0.35, fromBottom) * Math.max(0, 0.4 + 0.6 * texture),
           );
 
-          if (pointer.strength > 0.01) {
-            const dx = px - pointer.x;
-            const dy = py - pointer.y;
-            const falloff = 1 - Math.min(Math.sqrt(dx * dx + dy * dy) / reach, 1);
-            intensity += falloff * falloff * 0.55 * pointer.strength;
-          }
+          if (trail.alive) intensity += trail.sample(px, py, reach) * 0.55;
 
           if (intensity < 0.06) continue;
           intensity = Math.min(intensity, 1);
@@ -148,11 +145,9 @@ export function FooterGlow({
     };
 
     const tick = (_: number, deltaMs: number) => {
-      time += Math.min(deltaMs, 50) / 1000;
-      const follow = 1 - Math.pow(0.002, Math.min(deltaMs, 50) / 1000);
-      pointer.x += (pointer.tx - pointer.x) * follow;
-      pointer.y += (pointer.ty - pointer.y) * follow;
-      pointer.strength += (pointer.target - pointer.strength) * follow;
+      const dt = Math.min(deltaMs, 50) / 1000;
+      time += dt;
+      trail.step(dt, CELL * 3);
       draw();
     };
 
@@ -168,18 +163,11 @@ export function FooterGlow({
     };
 
     const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
       const rect = canvas.getBoundingClientRect();
-      pointer.tx = event.clientX - rect.left;
-      pointer.ty = event.clientY - rect.top;
-      if (pointer.target === 0) {
-        pointer.x = pointer.tx;
-        pointer.y = pointer.ty;
-      }
-      pointer.target = 1;
+      trail.move(event.clientX - rect.left, event.clientY - rect.top);
     };
-    const onLeave = () => {
-      pointer.target = 0;
-    };
+    const onLeave = () => trail.leave();
 
     resize();
     draw();
