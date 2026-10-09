@@ -88,6 +88,12 @@ export async function SiteFooter() {
 
   return (
     <footer className="relative z-10 overflow-hidden bg-background">
+      {/*
+        The glow covers the whole footer, so its faint tail can thin out above
+        the link columns instead of starting at a visible edge below them.
+      */}
+      <FooterGlow />
+
       {/* Sign-up and links */}
       <div className="relative z-10 grid grid-cols-2 gap-x-8 gap-y-14 px-6 pt-24 md:grid-cols-4 md:pt-40 lg:grid-cols-12">
         <div className="col-span-2 border-t border-rule pt-4 md:col-span-4 lg:col-span-4 lg:pr-12">
@@ -113,12 +119,7 @@ export async function SiteFooter() {
         </nav>
       </div>
 
-      {/*
-        The glow zone. The canvas reaches a little above its box so the
-        faintest dots hint up behind the bottom of the link columns.
-      */}
       <div className="relative mt-20 md:mt-28">
-        <FooterGlow />
 
         <div className="relative flex flex-col gap-3 px-6 md:flex-row md:items-center md:justify-between">
           <CambridgeTime />

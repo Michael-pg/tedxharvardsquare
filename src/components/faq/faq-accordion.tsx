@@ -59,7 +59,7 @@ function FaqItem({ item }: { item: Faq }) {
           onClick={() => setOpen((value) => !value)}
           className="group flex w-full items-start justify-between gap-8 py-8 text-left"
         >
-          <span className="text-heading font-medium transition-colors duration-300 group-hover:text-brand">
+          <span className="min-w-0 text-heading font-medium wrap-break-word transition-colors duration-300 group-hover:text-brand">
             {item.question}
           </span>
           <Plus

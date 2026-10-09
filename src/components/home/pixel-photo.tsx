@@ -6,9 +6,26 @@ import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import type { Image as ImageContent } from "@/content";
 
-/** Pixel size of the trail, in CSS pixels. */
-const CELL = 12;
-const RADIUS = 70;
+/** Screen pitch of the trail, in CSS pixels. */
+const CELL = 9;
+/** How far around the pointer the print appears, in CSS pixels. */
+const RADIUS = 80;
+/** Per-frame decay at 60fps: low enough that the trail hangs behind as a tail. */
+const DECAY = 0.955;
+
+/** Brightness buckets, as in the halftone prints: a frame is a few filled paths. */
+const BUCKETS = [
+  "rgba(235, 0, 40, 0.3)",
+  "rgba(235, 0, 40, 0.55)",
+  "rgba(235, 0, 40, 0.8)",
+  "rgb(235, 0, 40)",
+  "rgb(255, 107, 127)",
+];
+
+const smoothstep = (edge0: number, edge1: number, x: number) => {
+  const t = Math.min(Math.max((x - edge0) / (edge1 - edge0), 0), 1);
+  return t * t * (3 - 2 * t);
+};
 
 const hash = (i: number, j: number, k: number) => {
   const s = Math.sin(i * 127.1 + j * 311.7 + k * 74.7) * 43758.5453;
@@ -43,9 +60,10 @@ function sampleLuminance(img: HTMLImageElement, cols: number, rows: number) {
 
 /**
  * Event photography, black and white at rest. On hover the colour comes back
- * slowly and only part of the way, and a trail of red square pixels follows
- * the pointer across the frame and decays behind it — the dot system meeting
- * the photograph.
+ * slowly and only part of the way, and the pointer drags a soft tail of red
+ * halftone across the frame — the photo printed in the Flagship speakers' red
+ * dots wherever it has just passed, each dot sized by the brightness beneath
+ * it, swelling in and thinning out again with no hard edge.
  */
 export function PixelPhoto({
   image,
@@ -75,7 +93,7 @@ export function PixelPhoto({
     let energy = new Float32Array(0);
     let luminance: Float32Array | null = null;
     let running = false;
-    const pointer = { x: 0, y: 0, inside: false };
+    const pointer = { x: 0, y: 0, px: 0, py: 0, inside: false, fresh: true };
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -90,34 +108,57 @@ export function PixelPhoto({
       luminance = null;
     };
 
-    const tick = () => {
+    const tick = (_: number, deltaMs: number) => {
       if (!luminance) {
         const img = wrap.querySelector("img");
         if (img?.complete) luminance = sampleLuminance(img, cols, rows);
       }
+      const decay = Math.pow(DECAY, Math.min(deltaMs, 50) / (1000 / 60));
+      // The segment the pointer travelled this frame, so a quick move leaves
+      // a continuous stroke rather than a row of blobs.
+      const ax = pointer.fresh ? pointer.x : pointer.px;
+      const ay = pointer.fresh ? pointer.y : pointer.py;
+      const bx = pointer.x - ax;
+      const by = pointer.y - ay;
+      const len2 = bx * bx + by * by || 1;
+      pointer.px = pointer.x;
+      pointer.py = pointer.y;
+      pointer.fresh = false;
       let alive = false;
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "#eb0028";
+      const paths = BUCKETS.map(() => new Path2D());
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const i = row * cols + col;
+          // Alternate rows sit half a cell over — the halftone screen.
+          const x = col * CELL + CELL / 2 + (row % 2 ? CELL / 4 : -CELL / 4);
+          const y = row * CELL + CELL / 2;
           if (pointer.inside) {
-            const d = Math.hypot(col * CELL + CELL / 2 - pointer.x, row * CELL + CELL / 2 - pointer.y);
-            if (d < RADIUS) energy[i] = Math.max(energy[i], 1 - d / RADIUS);
+            const t = Math.min(1, Math.max(0, ((x - ax) * bx + (y - ay) * by) / len2));
+            const d = Math.hypot(x - ax - bx * t, y - ay - by * t);
+            if (d < RADIUS) energy[i] = Math.max(energy[i], smoothstep(RADIUS, RADIUS * 0.15, d));
           }
-          energy[i] *= 0.94;
+          energy[i] *= decay;
           const e = energy[i];
-          if (e < 0.04) continue;
+          if (e < 0.03) continue;
           alive = true;
-          const light = luminance ? luminance[i] : 0.6;
-          const size = CELL * (0.3 + 0.7 * light) * Math.min(1, e * 1.6);
-          const jx = (hash(col, row, 5) - 0.5) * CELL * 1.6 * e;
-          const jy = (hash(col, row, 6) - 0.5) * CELL * 0.8 * e;
-          ctx.globalAlpha = Math.min(1, e * 1.3);
-          ctx.fillRect(col * CELL + (CELL - size) / 2 + jx, row * CELL + (CELL - size) / 2 + jy, size, size);
+          const light = luminance ? smoothstep(0.06, 0.9, luminance[i]) : 0.6;
+          const v = light * Math.min(1, e * 1.4);
+          if (v < 0.05) continue;
+          const r = CELL * 0.5 * Math.pow(v, 0.8);
+          const bucket = v > 0.97 ? BUCKETS.length - 1 : Math.min(BUCKETS.length - 2, Math.floor(v * (BUCKETS.length - 1)));
+          // Older dots drift a touch loose, so the tail frays as it fades.
+          const loose = (1 - e) * CELL * 0.5;
+          const px = x + (hash(col, row, 5) - 0.5) * loose;
+          const py = y + (hash(col, row, 6) - 0.5) * loose;
+          paths[bucket].moveTo(px + r, py);
+          paths[bucket].arc(px, py, r, 0, Math.PI * 2);
         }
       }
-      ctx.globalAlpha = 1;
+      paths.forEach((path, i) => {
+        ctx.fillStyle = BUCKETS[i];
+        ctx.fill(path);
+      });
       // Stop the loop once the trail has faded; the next hover restarts it.
       if (!alive && !pointer.inside) stop();
     };
@@ -136,6 +177,7 @@ export function PixelPhoto({
       const rect = canvas.getBoundingClientRect();
       pointer.x = event.clientX - rect.left;
       pointer.y = event.clientY - rect.top;
+      if (!pointer.inside) pointer.fresh = true;
       pointer.inside = true;
       start();
     };

@@ -48,7 +48,7 @@
   --text-mega--letter-spacing: -0.055em;
 
   /* Home: large running statements, e.g. the motto. */
-  --text-statement: clamp(2.75rem, 7.2vw, 8.5rem);
+  --text-statement: clamp(2.5rem, 6.2vw, 7.25rem);
   --text-statement--line-height: 0.95;
   --text-statement--letter-spacing: -0.045em;
 

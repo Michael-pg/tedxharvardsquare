@@ -9,6 +9,8 @@ const CELL = 10;
 /** How far the black pocket around `data-dot-clear` elements fades, in px. */
 const TEXT_FEATHER = 48;
 const WIDE_FEATHER = 140;
+/** How long a point of the pointer's trail lasts, in seconds. */
+const TRAIL_LIFE = 0.9;
 
 /** Brightness buckets, so a frame is a handful of filled paths. */
 const RED = [
@@ -76,14 +78,19 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * material, with its gradient made only of dot size and plenty of black
  * around it. Its core is order: red, on the grid. Its edge keeps coming loose:
  * dots slip off the grid, go grey and drift outward. That is the Edition 3
- * theme, told without a word. The pointer pulls strays back into line, and as
- * the reader scrolls the mass grows and widens toward the footer's own glow,
- * then fades out above it so the two never meet at a hard edge.
+ * theme, told without a word. Nothing about the edge is a line: dot size,
+ * colour and order all fall off gradually, and the switch from red to loose
+ * grey is dithered dot by dot. The pointer drags a tapering trail that pulls
+ * strays back into line. As the reader scrolls the mass grows and widens, then
+ * fades out above the first `data-dot-stop` section (or the footer, whose own
+ * glow takes over), so the two never meet at a hard edge.
  *
  * Page elements opt in with data attributes:
  * - `data-dot-clear` — text the field keeps a soft pocket of black around.
  *   `data-dot-clear="wide"` feathers the pocket far out, for a large picture
  *   that should sit in the field rather than be cut out of it.
+ * - `data-dot-stop` — a section the field fades out above and stays out of,
+ *   for a passage that should sit on plain black down to the footer.
  * - `data-dot-glyph` — text the field draws itself, in ordered red dots, as
  *   the element scrolls into view. The element's own text should be invisible.
  *
@@ -106,7 +113,9 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     let time = Math.random() * 100;
     let clears: Element[] = [];
     let glyphs: Glyph[] = [];
-    const pointer = { x: -1e4, y: -1e4, strength: 0, target: 0 };
+    const pointer = { x: -1e4, y: -1e4, inside: false };
+    /** The pointer's recent path, newest last; `life` runs from 1 down to 0. */
+    let trail: { x: number; y: number; life: number }[] = [];
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -151,9 +160,10 @@ export function DotField({ strength = 1 }: { strength?: number }) {
       const docHeight = document.documentElement.scrollHeight;
       const progress = smoothstep(0, 1, window.scrollY / Math.max(1, docHeight - height));
 
-      // Fade out above the footer, whose own glow takes over from here.
-      const footerTop = document.querySelector("footer")?.getBoundingClientRect().top ?? Infinity;
-      if (footerTop <= 0) return;
+      // Fade out above the first plain-black section, or the footer, whose own
+      // glow takes over from here.
+      const stopTop = document.querySelector("[data-dot-stop], footer")?.getBoundingClientRect().top ?? Infinity;
+      if (stopTop <= 0) return;
 
       // The mass: anchored lower right, drifting toward a wide, low glow.
       const cx = lerp(width * 1.02, width * 0.55, progress);
@@ -186,7 +196,7 @@ export function DotField({ strength = 1 }: { strength?: number }) {
           // Alternate rows sit half a cell over — the classic halftone screen.
           const gx = col * CELL + (row % 2 ? CELL / 2 : 0);
           const gy = row * CELL;
-          const footerFade = smoothstep(footerTop, footerTop - height * 0.35, gy);
+          const footerFade = smoothstep(stopTop, stopTop - height * 0.4, gy);
           if (footerFade <= 0) continue;
 
           // Glyphs: letterforms drawn in ordered red, cell by cell.
@@ -216,8 +226,10 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             0.045 * Math.sin(angle * 7 - t * 0.4) +
             0.05 * Math.sin(gx * 0.004 + gy * 0.003 + t * 0.2);
           const texture = Math.sin(gx * 0.018 + gy * 0.011 + t * 0.9) * Math.sin(gy * 0.024 - t * 0.6);
-          const body = smoothstep(1.02, 0.3, d) * (0.8 + 0.2 * texture);
-          const dust = smoothstep(1.12, 0.95, d);
+          // Dots shrink well past where they used to stop, so the mass thins
+          // out into the black instead of ending at a rim.
+          const body = Math.pow(smoothstep(1.32, 0.32, d), 1.25) * (0.8 + 0.2 * texture);
+          const dust = smoothstep(1.45, 1.0, d);
           if (body < 0.04 && dust < 0.02) continue;
 
           let clear = footerFade;
@@ -239,19 +251,30 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             if (clear < 0.02) continue;
           }
 
-          const held = pointer.strength * smoothstep(reach, reach * 0.25, Math.hypot(gx - pointer.x, gy - pointer.y));
-          const order = Math.max(smoothstep(0.92, 0.62, d), held);
+          // The trail: each point holds a disc that shrinks as the point ages,
+          // so the pull tapers off behind the pointer like a comet's tail.
+          let held = 0;
+          for (const p of trail) {
+            const r = reach * (0.3 + 0.7 * p.life);
+            const ax = Math.abs(gx - p.x);
+            const ay = Math.abs(gy - p.y);
+            if (ax > r || ay > r) continue;
+            held = Math.max(held, p.life * p.life * smoothstep(r, r * 0.2, Math.hypot(ax, ay)));
+          }
+          const order = Math.max(smoothstep(1.18, 0.62, d), held);
 
-          if (order > 0.5) {
+          // Dithered: each dot has its own threshold, so red gives way to
+          // loose grey a dot at a time rather than along a line.
+          if (order > 0.15 + 0.7 * hash(col, row, 3)) {
             const v = Math.min(1, Math.max(body, held * 0.35)) * clear;
-            if (v < 0.06) continue;
-            const k = (order - 0.5) * 2;
+            if (v < 0.04) continue;
+            const k = Math.min(1, order * 1.4);
             const x = gx + (hash(col, row, 1) - 0.5) * CELL * (1 - k);
             const y = gy + (hash(col, row, 2) - 0.5) * CELL * (1 - k);
             put(red, redBucket(v * 0.92), x, y, CELL * 0.46 * Math.pow(v, 0.85));
           } else {
             // The fraying edge: dots come loose and drift outward, fading.
-            const loose = 1 - order * 2;
+            const loose = 1 - order;
             if (hash(col, row, 7) > 0.42 - loose * 0.2) continue;
             const cycle = (t * (0.05 + hash(col, row, 8) * 0.07) + hash(col, row, 9)) % 1;
             const push = cycle * CELL * 7 * loose;
@@ -281,7 +304,21 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     const tick = (_: number, deltaMs: number) => {
       const dt = Math.min(deltaMs, 50) / 1000;
       time += dt;
-      pointer.strength += (pointer.target - pointer.strength) * (1 - Math.pow(0.02, dt));
+      for (const p of trail) p.life -= dt / TRAIL_LIFE;
+      trail = trail.filter((p) => p.life > 0);
+      if (pointer.inside) {
+        // Fill in fast moves, so a flick leaves a stroke and not a row of beads.
+        const last = trail[trail.length - 1];
+        const step = Math.min(width, height) * 0.04;
+        const gap = last ? Math.hypot(pointer.x - last.x, pointer.y - last.y) : 0;
+        const fill = last ? Math.min(12, Math.floor(gap / step)) : 0;
+        for (let i = 1; i <= fill; i++) {
+          const f = i / (fill + 1);
+          trail.push({ x: lerp(last.x, pointer.x, f), y: lerp(last.y, pointer.y, f), life: lerp(last.life, 1, f) });
+        }
+        trail.push({ x: pointer.x, y: pointer.y, life: 1 });
+        if (trail.length > 80) trail = trail.slice(-80);
+      }
       draw();
     };
 
@@ -289,10 +326,10 @@ export function DotField({ strength = 1 }: { strength?: number }) {
       if (event.pointerType !== "mouse") return;
       pointer.x = event.clientX;
       pointer.y = event.clientY;
-      pointer.target = 1;
+      pointer.inside = true;
     };
     const onLeave = () => {
-      pointer.target = 0;
+      pointer.inside = false;
     };
     const onResize = () => {
       resize();

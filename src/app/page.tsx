@@ -120,7 +120,9 @@ export default async function Home() {
         {/* Flagship: the year leads, since the hero already carries the theme. The
             photo sits left on desktop, breaking the run of left-aligned text. */}
         {edition && (
-          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+          // The photo's red plate is scaled and knocked sideways past its frame;
+          // on phones that ran off the right edge and the page scrolled sideways.
+          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 overflow-x-clip px-6 py-24 md:grid-cols-12 md:py-40">
             <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
               <Reveal as="h2" className="text-display font-medium text-balance">
                 {`Flagship ${edition.year}`}
@@ -181,7 +183,11 @@ export default async function Home() {
         {/* What is TEDx: the TEDx licence requires this text and a visible
             link to the TEDx program on the homepage. Partner logos may not
             appear here; they live on /sponsor. */}
-        <section aria-labelledby="what-is-tedx" className="grid grid-cols-4 gap-x-6 gap-y-8 px-6 pt-12 pb-24 md:grid-cols-12 md:pt-24 md:pb-40">
+        <section
+          aria-labelledby="what-is-tedx"
+          // Plain black: the dot field fades out above it and the footer's glow picks up below.
+          data-dot-stop
+          className="grid grid-cols-4 gap-x-6 gap-y-8 px-6 pt-12 pb-24 md:grid-cols-12 md:pt-24 md:pb-40">
           <Reveal as="h2" className="col-span-4 text-title font-medium md:col-span-4">
             <span id="what-is-tedx" data-dot-clear>
               What is TEDx?
