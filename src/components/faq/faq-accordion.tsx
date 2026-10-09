@@ -11,18 +11,21 @@ import type { Faq } from "@/content/types";
  * FAQ accordion. Items open independently, as on the Webflow site. Answers stay
  * in the DOM when closed (height 0, `inert`), so they are server-rendered and
  * searchable, but hidden from keyboard and screen-reader focus until opened.
+ *
+ * Each question is numbered, like the archive's editions. An open item is
+ * marked by a red dot beside its number, never by red text.
  */
 export function FaqAccordion({ items }: { items: Faq[] }) {
   return (
     <ul className="border-t border-rule">
-      {items.map((item) => (
-        <FaqItem key={item.slug} item={item} />
+      {items.map((item, i) => (
+        <FaqItem key={item.slug} item={item} number={i + 1} />
       ))}
     </ul>
   );
 }
 
-function FaqItem({ item }: { item: Faq }) {
+function FaqItem({ item, number }: { item: Faq; number: number }) {
   const [open, setOpen] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
   const mounted = useRef(false);
@@ -57,15 +60,29 @@ function FaqItem({ item }: { item: Faq }) {
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
-          className="group flex w-full items-start justify-between gap-8 py-8 text-left"
+          className="group flex w-full items-start gap-5 py-7 text-left md:gap-8"
         >
-          <span className="min-w-0 text-heading font-medium wrap-break-word transition-colors duration-300 group-hover:text-brand">
+          <span aria-hidden className="mt-1 flex w-10 items-center gap-2 text-small text-muted tabular-nums md:w-12">
+            <span
+              className={cn(
+                "size-1.5 shrink-0 rounded-full bg-brand transition-opacity duration-fast",
+                open ? "opacity-100" : "opacity-0",
+              )}
+            />
+            {String(number).padStart(2, "0")}
+          </span>
+          <span
+            className={cn(
+              "min-w-0 flex-1 text-heading font-medium text-balance wrap-break-word transition-colors duration-fast",
+              open ? "text-foreground" : "text-ink-200 group-hover:text-foreground",
+            )}
+          >
             {item.question}
           </span>
           <Plus
             aria-hidden
             className={cn(
-              "mt-1 size-6 shrink-0 text-muted transition-transform duration-500 ease-out-expo",
+              "mt-1 size-6 shrink-0 text-muted transition-[color,transform] duration-500 ease-out-expo group-hover:text-foreground",
               open && "rotate-45 text-foreground",
             )}
           />
@@ -79,7 +96,7 @@ function FaqItem({ item }: { item: Faq }) {
         inert={!open}
         className="h-0 overflow-hidden"
       >
-        <p className="max-w-3xl pb-8 text-body text-ink-300 whitespace-pre-line">{item.answer}</p>
+        <p className="max-w-2xl pb-8 pl-15 text-body text-ink-300 whitespace-pre-line md:pl-20">{item.answer}</p>
       </div>
     </li>
   );

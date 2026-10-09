@@ -76,7 +76,8 @@ ramp. Photography and the 3D scene are the only other sources of colour.
 
 - **Red text only at large sizes.** `text-brand` on `text-label`, `text-small`,
   or `text-body` fails AA. For small signals use a red *mark* (dot, rule,
-  underline) beside `foreground` text instead. (Known violations — see
+  underline) beside `foreground` text instead — `Eyebrow`
+  (`components/ui/eyebrow.tsx`) does this for eyebrows. (Known violations — see
   `docs/PROGRESS.md`.)
 - **One red moment per viewport.** If two things are red, neither is.
 - Hover/focus colour changes must also meet contrast; the focus ring is the
@@ -174,18 +175,28 @@ for the logo only.
 | `SiteFooter` | `components/site/site-footer.tsx` | One row: sign-up (early access + Substack) beside four link columns (Programs, Organization, Follow, Policies). Then Cambridge clock / back to top / ©, the TEDx licence line (required wording), and the lockup at 85% width over `FooterGlow` — a 2D-canvas red halftone that rises from the bottom, hints up toward the links, and swells under the pointer. No divider lines. Render on every page after `</main>`. |
 | `GlassButton` | `components/ui/glass-button.tsx` | Only over the WebGL layer. |
 | `Reveal` / `SplitReveal` | `components/motion/` | Default entrances. |
-| `SpeakerArchive` | `components/speakers/` | Year tabs, portrait cards, detail dialog with YouTube embed, `#slug` deep links. |
-| `FaqAccordion` | `components/faq/` | Independent items; closed answers are `inert`. |
+| `SpeakerArchive` | `components/speakers/` | Every edition on one page: numbered sections with the edition's facts sticky beside the lineup, performers credited under it. Detail dialog with YouTube embed, prev/next (and ← →) through the whole archive, `#slug` deep links. |
+| `PrintedPortrait` | `components/speakers/` | Speaker portrait that arrives as red halftone and develops into the photo, scrubbed by scroll. Faces are never hidden behind a hover. Not mounted under reduced motion. |
+| `Eyebrow` | `components/ui/` | Small uppercase muted label beside a red dot. Use it instead of red label text. |
+| `FaqAccordion` | `components/faq/` | Numbered, independent items; an open item gets a red dot by its number. Closed answers are `inert`. |
 
 Shared patterns:
 
-- **Pill controls** (tabs, link chips): `rounded-full border`, selected state
+- **Numbered sections** (editions, questions): a two-digit number (`01`, `02`)
+  in place of tabs or pills. The archive's edition numbers are `text-statement`;
+  the next edition's number is drawn by the dot field (`data-dot-glyph`,
+  `text-numeral`).
+- **Pill controls** (link chips): `rounded-full border`, selected state
   inverts to `bg-foreground text-background`.
 - **Inline links:** `underline decoration-rule underline-offset-4`, decoration
   turns `brand` on hover.
 - **Dialogs:** native `<dialog>`, `ink-900` panel, `border-rule`, close on
-  button, Escape, and backdrop click. Below `md` they become a full-screen
-  sheet that slides up, with the close button fixed top-right.
+  button, Escape, and backdrop click. From `md` up the panel is one fixed size
+  (`max-w-5xl`, `max-h-dialog`): media pinned left, text scrolling inside its
+  own column (`overscroll-contain`), never the page. The page behind is locked
+  (`html:has(dialog[open])` in `globals.css`). Below `md` they become a
+  full-screen sheet that slides up; the sheet's body scrolls, the close button
+  and footer stay put.
 
 ---
 
