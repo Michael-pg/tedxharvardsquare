@@ -72,6 +72,8 @@ export type FlagshipPageCopy = {
   speakersNote?: string;
   /** What a ticket includes. Empty until decided. */
   included: string[];
+  /** The collage under the theme statement. Empty until filled in Studio. */
+  photos: Image[];
   venueImage?: Image;
   /** Transit, parking, accessibility: one paragraph each. */
   venueNotes: string[];

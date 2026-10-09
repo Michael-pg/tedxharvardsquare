@@ -477,11 +477,21 @@ export const edition = defineType({
       description: "What a ticket includes, one item each. Until filled, the page says details are on their way.",
     }),
     defineField({
+      name: "photos",
+      title: "Photos",
+      type: "array",
+      of: [defineArrayMember({ type: "accessibleImage" })],
+      group: "page",
+      description:
+        "The collage under the theme statement: photos from past editions, in colour, scattered across the page. Eight to ten works best, a mix of stage, audience and conversation, landscape and portrait. Until filled, the home page's photos stand in.",
+      validation: (r) => r.max(12),
+    }),
+    defineField({
       name: "venueImage",
       title: "Venue photo",
       type: "accessibleImage",
       group: "page",
-      description: "The venue, inside or out. Fills half of the venue section.",
+      description: "The venue, inside or out, in colour. Fills the venue section edge to edge, with the date and venue name set over it.",
     }),
     defineField({
       name: "venueNotes",
