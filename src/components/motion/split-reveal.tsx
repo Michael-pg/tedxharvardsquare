@@ -15,16 +15,12 @@ type SplitRevealProps = {
   delay?: number;
   /** Wait until the element scrolls into view. Off for above-the-fold copy. */
   onScroll?: boolean;
-  /**
-   * Slide each piece up from behind a mask (the default), or, when false,
-   * fade it up in the open. The mask reads as clipping on large display type
-   * with descenders, since the letters rise through an invisible floor.
-   */
-  mask?: boolean;
 };
 
 /**
- * Masked reveal of split text.
+ * Reveal of split text: each piece fades up a short way, in the open. No
+ * mask: sliding up through one cut off ascenders and descenders on tightly
+ * set display type until the text landed.
  *
  * The element carries `data-animate`, which `globals.css` hides until GSAP
  * takes over — that prevents a flash of unsplit text while fonts load. Under
@@ -37,7 +33,6 @@ export function SplitReveal({
   by = "lines",
   delay = 0,
   onScroll = true,
-  mask = true,
 }: SplitRevealProps) {
   const container = useRef<HTMLElement>(null);
   const pristineMarkup = useRef<string | null>(null);
@@ -64,7 +59,6 @@ export function SplitReveal({
 
       const split = SplitText.create(element, {
         type: by,
-        mask: mask ? by : undefined,
         autoSplit: true,
         aria: "auto",
         // Splitting to chars turns every glyph into its own box, so the browser
@@ -72,24 +66,13 @@ export function SplitReveal({
         // intact by wrapping them in nowrap spans. Only meaningful for chars.
         smartWrap: by === "chars",
         onSplit(self) {
-          // Each mask clips to its line box, which is shorter than the glyphs
-          // in tightly set display type, so ascenders and descenders were cut
-          // off mid-animation. Clip to a region past the box instead: a
-          // negative inset reaches outside it without moving anything.
-          for (const mask of self.masks as HTMLElement[]) {
-            mask.style.overflow = "visible";
-            mask.style.clipPath = "inset(-0.3em -0.15em)";
-          }
           return gsap.from(self[by], {
-            yPercent: mask ? 110 : 25,
+            yPercent: 25,
             autoAlpha: 0,
-            duration: mask ? timing.duration.base : timing.duration.slow,
+            duration: timing.duration.slow,
             ease: timing.ease.expo,
             stagger: by === "chars" ? timing.stagger.tight : timing.stagger.base,
             delay,
-            // Once the text has landed the masks have done their job; put the
-            // plain markup back.
-            onComplete: () => self.revert(),
             scrollTrigger: onScroll
               ? { trigger: element, start: "top 85%", once: true }
               : undefined,
@@ -104,7 +87,7 @@ export function SplitReveal({
         }
       };
     },
-    { scope: container, dependencies: [reducedMotion, by, onScroll, delay, mask] },
+    { scope: container, dependencies: [reducedMotion, by, onScroll, delay] },
   );
 
   // See the note on the same cast in `reveal.tsx`.
