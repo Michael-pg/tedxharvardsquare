@@ -72,6 +72,10 @@ export function SplitReveal({
             ease: timing.ease.expo,
             stagger: by === "chars" ? timing.stagger.tight : timing.stagger.base,
             delay,
+            // The masks clip to the line box, which cuts off descenders in
+            // tightly set display type. Once the text has landed they have
+            // done their job, so put the plain markup back.
+            onComplete: () => self.revert(),
             scrollTrigger: onScroll
               ? { trigger: element, start: "top 85%", once: true }
               : undefined,

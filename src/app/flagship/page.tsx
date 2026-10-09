@@ -36,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-const fullDate = new Intl.DateTimeFormat("en-US", { dateStyle: "full", timeZone: "UTC" });
+const longDate = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
 const dayMonth = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
 
 /** The three questions step across the grid, so the list reads as a sequence. */
@@ -98,9 +98,9 @@ export default async function FlagshipPage() {
         <FlagshipHero
           theme={edition?.theme ?? "Flagship"}
           pitch={edition?.themeStatement}
-          when={date ? fullDate.format(date) : copy?.month}
+          when={date ? longDate.format(date) : copy?.month}
           venue={venueKnown ? edition?.venue?.name : undefined}
-          city={copy?.place ?? edition?.venue?.city}
+          city={edition?.venue ? `${edition.venue.city}, ${edition.venue.state}` : copy?.place}
           edition={edition ? `Edition ${edition.number}` : undefined}
           action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
         />
@@ -144,7 +144,7 @@ export default async function FlagshipPage() {
         {/* The lineup as names, or the shape of one until it is announced. */}
         {edition && (
           <section aria-labelledby="speakers-title" className="px-6 py-24 md:py-40">
-            <Reveal as="h2" className="mb-12 flex items-baseline justify-between gap-6 text-mega font-medium md:mb-20">
+            <Reveal as="h2" className="mb-12 flex flex-wrap items-baseline justify-between gap-x-6 text-statement font-medium md:mb-20 md:text-mega">
               <span id="speakers-title">Speakers</span>
               <span className="text-muted">{edition.year}</span>
             </Reveal>

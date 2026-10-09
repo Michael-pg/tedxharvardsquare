@@ -18,7 +18,7 @@ export function FlagshipHero({
 }: {
   theme: string;
   pitch?: string;
-  /** The date as it should read, e.g. "Saturday, February 20, 2027". */
+  /** The date as it should read, e.g. "February 20, 2027". */
   when?: string;
   venue?: string;
   city?: string;
@@ -33,14 +33,14 @@ export function FlagshipHero({
     <section className="flex min-h-svh flex-col px-6 pt-24 pb-7 md:pt-28">
       <div className="grid grid-cols-4 gap-x-6 gap-y-8 md:grid-cols-12">
         {(when || venue) && (
-          <p data-dot-clear className="col-span-4 flex flex-col md:col-span-5">
-            {when && <span className="text-title font-medium">{when}</span>}
-            {venue && <span className="mt-2 text-heading text-ink-300">{venue}</span>}
-            {city && <span className="text-heading text-ink-300">{city}</span>}
+          <p data-dot-clear className="col-span-4 flex flex-col text-heading font-medium md:col-span-5">
+            {when && <span>{when}</span>}
+            {venue && <span className="text-ink-300">{venue}</span>}
+            {city && <span className="text-ink-300">{city}</span>}
           </p>
         )}
         {pitch && (
-          <p data-dot-clear className="col-span-4 max-w-md text-lead text-balance text-ink-200 md:col-span-4 md:col-start-9">
+          <p data-dot-clear className="col-span-4 max-w-sm text-heading text-balance text-ink-300 md:col-span-4 md:col-start-9">
             {pitch}
           </p>
         )}
