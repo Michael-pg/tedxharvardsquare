@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { fontVariables } from "@/lib/fonts";
 import { getSiteSettings } from "@/content";
+import { Analytics } from "@/components/site/analytics";
 import { ogLocale } from "@/lib/metadata";
 import "./globals.css";
 
@@ -39,7 +40,8 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const site = await getSiteSettings();
   return (
     <html
       lang="en"
@@ -59,6 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {`document.documentElement.classList.add('js')`}
         </Script>
         {children}
+        <Analytics siteUrl={site.url} />
       </body>
     </html>
   );
