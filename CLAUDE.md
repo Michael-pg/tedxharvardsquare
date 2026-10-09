@@ -8,8 +8,8 @@ Cambridge, MA community organization. The org runs a flagship annual conference
 never "Community"); the site must give the year-round work real weight, not
 treat it as a footnote to the main event.
 
-Deploys to Vercel. **The live domain stays on Webflow until the owner says
-otherwise** — build on the Vercel site only. Start each session with
+Deploys to Vercel, which serves the live domain (www.tedxharvardsquare.org)
+since 2026-10-08 — every merge to `main` is public. Start each session with
 `docs/PROGRESS.md` (state, decisions, open questions, next up).
 
 ## Stack

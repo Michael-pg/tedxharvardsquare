@@ -8,17 +8,19 @@ use down). Add a dated entry at the end of each session; keep entries short.
 
 ## Standing rules
 
-- **Webflow stays live.** `tedxharvardsquare.org` remains on Webflow until the
-  owner explicitly says to switch. Do not touch DNS, domains, redirects on the
-  live site, or Webflow content. Build on the Vercel site only.
+- **The live domain is on Vercel** (switched 2026-10-08). `main` deploys
+  straight to https://www.tedxharvardsquare.org, so every merge is public.
+  DNS lives in Squarespace Domains; only the owner edits it.
 - Every change goes through a branch + PR; the owner approves merges.
 - Design rules live in `DESIGN.md`; project/code rules in `CLAUDE.md`.
 
 ---
 
-## Current state (2026-10-07)
+## Current state (2026-10-08)
 
-**Live preview:** https://tedxharvardsquare.vercel.app — Studio at `/studio`.
+**Live:** https://www.tedxharvardsquare.org — Studio at `/studio`. The bare
+domain 308s to `www`. https://tedxharvardsquare.vercel.app still works but is
+noindexed.
 
 | Area | State |
 | --- | --- |
@@ -31,8 +33,13 @@ use down). Add a dated entry at the end of each session; keep entries short.
 - **GitHub:** `Michael-pg/tedxharvardsquare`, `main` is production.
 - **Vercel:** one project, `tedxharvardsquare` (duplicate deleted). Framework
   pinned in `vercel.json`. Every PR gets a preview (behind Vercel login).
+- **Domain:** registered at Squarespace Domains (Google Cloud nameservers).
+  `A @ 216.198.79.1`, `CNAME www 4ae0d81435edaa9c.vercel-dns-017.com`. MX is
+  Google Workspace; leave it alone. Vercel plan: Hobby until ticket sales are
+  added, then Pro.
 - **Sanity:** project `k0dqlqmb`, dataset `production`. CORS allows
-  `localhost:3000` and the Vercel production URL (credentials). Wildcard for
+  `localhost:3000`, `localhost:3333`, the Vercel production URL, and both
+  `tedxharvardsquare.org` origins (credentials). Wildcard for
   preview URLs deliberately **not** added (security).
 - **MCP servers** (`.mcp.json`): next-devtools, vercel, sanity, motion. Vercel
   and Sanity need a one-time OAuth sign-in per machine.
@@ -60,10 +67,11 @@ user-wide in `~/.claude/skills/`.
 | 2026-09-25 | **Edition numbering corrected by the owner:** 1 = April 2025, 2 = Feb 21 2026, 3 = Against Entropy (2027). Owner corrected the `number` fields in Studio the same day. |
 | 2026-09-25 | Edition 3 venue is **Arrow Street Arts** (owner). Supersedes "Boston". |
 | 2026-09-24 | Performers are stored as speakers (`kind: performer`) and hidden from `/speakers`, matching Webflow. |
+| 2026-10-08 | **Domain switched from Webflow to Vercel**, `www` primary. Webflow's "Apply to speak" (Tally) and "Join our community" (Linktree) buttons dropped. Webflow `/schedule` unpublished; ours redirects to `/flagship`. Legal review of `/privacy` and `/terms` signed off. Stay on Vercel Hobby until tickets. |
 
 ---
 
-## Owner to-do (as of 2026-10-07)
+## Owner to-do (as of 2026-10-08)
 
 Everything waiting on the owner, in one place. Tick items off here as they land.
 
@@ -83,11 +91,14 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [ ] Real content for House events, team, and past-edition themes (no placeholders). TED expects core team names and backgrounds on the site; an `/about` team section is ready to build once they exist.
 - [ ] Invite marketing editors: sanity.io/manage → Members → Editor.
 
+**Domain cutover follow-up**
+- [ ] **Search Console:** submit `https://www.tedxharvardsquare.org/sitemap.xml`.
+- [ ] **Oct 13:** delete the `_webflow` TXT record in Squarespace and cancel Webflow hosting (renews Oct 14). Until then, rollback = put back `A @ 198.202.211.1` and `CNAME www cdn.webflow.com`.
+- [ ] Merge PR #38 (site-verification token typo).
+
 **Decisions**
 - [ ] House naming and weight on `/home2` (vs CLAUDE.md / DESIGN.md).
-- [ ] Webflow `/schedule` page (Feb 2026 run-of-show): archive or drop?
 - [ ] Logo: no SVG exists; PNGs in `public/brand/` stand in.
-- [ ] Legal review of `/privacy` and `/terms` before any domain switch.
 
 **Tooling (one-time, per machine)**
 - [ ] Vercel MCP sign-in (`/mcp` in an interactive `claude` session).
@@ -103,8 +114,6 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
    Eyebrow labels on `/speakers`, `/faq`, the hero edition label, and the
    year in the speaker dialog; red hover on talk titles and FAQ questions.
    Fix per `DESIGN.md` §3 (red mark beside foreground text). **Do first.**
-2. Speaker bios render only inside the dialog — not indexable. Per-speaker
-   pages (`/speakers/[slug]`) fix this.
 
 ---
 
@@ -114,10 +123,8 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 2. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 3. Team section on `/about` once the organizers send names and bios.
 4. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-5. Per-speaker pages + JSON-LD (Event, Person) + per-page OG images.
-6. CI: GitHub Actions running lint, typecheck, build on every PR.
-7. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
-8. Before any domain switch: Webflow redirect map, check Webflow custom code (analytics), then DNS — **only when the owner says so**.
+5. CI: GitHub Actions running lint, typecheck, build on every PR.
+6. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -387,3 +394,16 @@ one is set), the pitch on paper, partner logos, then the ask with a "Become a
 sponsor" email button and the address (Site settings → contact email). A fixed
 line under the button says partners have no say in who speaks (TEDx rule).
 Content created and published in Sanity.
+
+### 2026-10-08 — Domain cutover
+
+Moved `tedxharvardsquare.org` from Webflow to Vercel. Audit first: the live
+Webflow site had only six published URLs (`/`, `/faq`, `/flagship`, `/house`,
+`/speakers`, `/sponsor`), no sitemap, no CMS detail pages, no analytics or
+forms (inline scripts were UI only), so no new redirects were needed. Added both
+domains to Sanity CORS; owner added them in Vercel (`www` primary, apex 308)
+and swapped the A and CNAME records in Squarespace, leaving MX and TXT alone.
+Certificates issued within minutes; every page, both redirects, Studio,
+`robots.txt` and `sitemap.xml` checked on the real domain. Found the Google
+verification meta missing a character (PR #38).
+
