@@ -45,12 +45,13 @@ export function FlagshipHero({
 
       {/* "Flagship" names the page, so it never reads as the home page; the
           theme is the title. Lines, not chars: split chars lose their kerning
-          and shift when the split is undone. */}
+          and shift when the split is undone. No mask: at this size the
+          slide-up through a mask reads as the letters being cut off. */}
       <h1 className="mt-auto pt-16 text-mega font-medium">
-        <SplitReveal as="span" by="lines" onScroll={false} className="block text-muted">
+        <SplitReveal as="span" by="lines" mask={false} onScroll={false} className="block text-muted">
           {"Flagship"}
         </SplitReveal>
-        <SplitReveal as="span" by="lines" delay={0.1} onScroll={false} className="block">
+        <SplitReveal as="span" by="lines" mask={false} delay={0.15} onScroll={false} className="block">
           {theme}
         </SplitReveal>
       </h1>

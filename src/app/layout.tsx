@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { fontVariables } from "@/lib/fonts";
 import { getSiteSettings } from "@/content";
 import { Analytics } from "@/components/site/analytics";
@@ -50,16 +49,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       // hydrates, which React would otherwise flag as a server/client mismatch.
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
+      <head>
         {/*
           Marks the document as JS-capable before first paint, which is what
           arms the `.js [data-animate]` hide rule in globals.css. Without JS the
           class never lands, nothing is hidden, and the site degrades to plain
-          unanimated content instead of a blank page.
+          unanimated content instead of a blank page. A plain inline script in
+          the head, not next/script: `beforeInteractive` queues it for Next's
+          runtime, which can run after the server HTML has painted, so animated
+          text flashed in full before hiding and animating.
         */}
-        <Script id="js-capable" strategy="beforeInteractive">
-          {`document.documentElement.classList.add('js')`}
-        </Script>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
+      <body className="flex min-h-full flex-col">
         {children}
         <Analytics siteUrl={site.url} />
       </body>

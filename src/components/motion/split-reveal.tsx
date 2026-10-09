@@ -15,6 +15,12 @@ type SplitRevealProps = {
   delay?: number;
   /** Wait until the element scrolls into view. Off for above-the-fold copy. */
   onScroll?: boolean;
+  /**
+   * Slide each piece up from behind a mask (the default), or, when false,
+   * fade it up in the open. The mask reads as clipping on large display type
+   * with descenders, since the letters rise through an invisible floor.
+   */
+  mask?: boolean;
 };
 
 /**
@@ -31,6 +37,7 @@ export function SplitReveal({
   by = "lines",
   delay = 0,
   onScroll = true,
+  mask = true,
 }: SplitRevealProps) {
   const container = useRef<HTMLElement>(null);
   const pristineMarkup = useRef<string | null>(null);
@@ -57,7 +64,7 @@ export function SplitReveal({
 
       const split = SplitText.create(element, {
         type: by,
-        mask: by,
+        mask: mask ? by : undefined,
         autoSplit: true,
         aria: "auto",
         // Splitting to chars turns every glyph into its own box, so the browser
@@ -74,9 +81,9 @@ export function SplitReveal({
             mask.style.clipPath = "inset(-0.3em -0.15em)";
           }
           return gsap.from(self[by], {
-            yPercent: 110,
+            yPercent: mask ? 110 : 25,
             autoAlpha: 0,
-            duration: timing.duration.base,
+            duration: mask ? timing.duration.base : timing.duration.slow,
             ease: timing.ease.expo,
             stagger: by === "chars" ? timing.stagger.tight : timing.stagger.base,
             delay,
@@ -97,7 +104,7 @@ export function SplitReveal({
         }
       };
     },
-    { scope: container, dependencies: [reducedMotion, by, onScroll, delay] },
+    { scope: container, dependencies: [reducedMotion, by, onScroll, delay, mask] },
   );
 
   // See the note on the same cast in `reveal.tsx`.
