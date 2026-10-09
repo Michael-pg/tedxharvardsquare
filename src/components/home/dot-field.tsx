@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
+import { createDotBatch, MIN_FRAME_MS } from "@/lib/dot-batch";
 
 /** Grid pitch in CSS pixels — the same screen as the footer glow. */
 const CELL = 10;
@@ -113,6 +114,10 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     let clears: Element[] = [];
     let glyphs: Glyph[] = [];
     const trail = createPointerTrail();
+    // One range, re-pointed at each clearing element every frame.
+    const range = document.createRange();
+    const red = createDotBatch(RED);
+    const grey = createDotBatch(GREY);
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -139,7 +144,6 @@ export function DotField({ strength = 1 }: { strength?: number }) {
           rects.push([box.left, box.top, box.right, box.bottom, WIDE_FEATHER]);
           continue;
         }
-        const range = document.createRange();
         range.selectNodeContents(el);
         for (const r of range.getClientRects()) {
           if (r.width > 2) rects.push([r.left, r.top, r.right, r.bottom, TEXT_FEATHER]);
@@ -179,13 +183,6 @@ export function DotField({ strength = 1 }: { strength?: number }) {
         })
         .filter((g) => g.strength > 0 && g.top < height && g.top + g.height > 0);
 
-      const red = RED.map(() => new Path2D());
-      const grey = GREY.map(() => new Path2D());
-      const put = (paths: Path2D[], i: number, x: number, y: number, r: number) => {
-        paths[i].moveTo(x + r, y);
-        paths[i].arc(x, y, r, 0, Math.PI * 2);
-      };
-
       const cols = Math.ceil(width / CELL) + 1;
       const rows = Math.ceil(height / CELL) + 1;
       for (let row = 0; row < rows; row++) {
@@ -206,7 +203,7 @@ export function DotField({ strength = 1 }: { strength?: number }) {
               inGlyph = true;
               if (hash(col, row, 11) < g.strength) {
                 const v = 0.9 * footerFade;
-                put(red, redBucket(v), gx, gy, CELL * 0.44 * Math.pow(v, 0.85));
+                red.add(redBucket(v), gx, gy, CELL * 0.44 * Math.pow(v, 0.85));
               }
             }
             break;
@@ -260,7 +257,7 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             const k = Math.min(1, order * 1.4);
             const x = gx + (hash(col, row, 1) - 0.5) * CELL * (1 - k);
             const y = gy + (hash(col, row, 2) - 0.5) * CELL * (1 - k);
-            put(red, redBucket(v * 0.92), x, y, CELL * 0.46 * Math.pow(v, 0.85));
+            red.add(redBucket(v * 0.92), x, y, CELL * 0.46 * Math.pow(v, 0.85));
           } else {
             // The fraying edge: dots come loose and drift outward, fading.
             const loose = 1 - order;
@@ -274,24 +271,24 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             const y = gy + (uy / n) * push + (hash(col, row, 2) - 0.5) * CELL * 2.4 * loose;
             const v = Math.max(body, dust * 0.35) * (1 - cycle * 0.8) * clear;
             if (v < 0.05) continue;
-            put(grey, Math.min(GREY.length - 1, Math.floor(v * GREY.length)), x, y, CELL * (0.1 + 0.25 * v));
+            grey.add(Math.min(GREY.length - 1, Math.floor(v * GREY.length)), x, y, CELL * (0.1 + 0.25 * v));
           }
         }
       }
 
       ctx.globalAlpha = strength;
-      grey.forEach((path, i) => {
-        ctx.fillStyle = GREY[i];
-        ctx.fill(path);
-      });
-      red.forEach((path, i) => {
-        ctx.fillStyle = RED[i];
-        ctx.fill(path);
-      });
+      grey.flush(ctx);
+      red.flush(ctx);
     };
 
+    let elapsed = 0;
     const tick = (_: number, deltaMs: number) => {
-      const dt = Math.min(deltaMs, 50) / 1000;
+      // Full-screen redraws are the costly part, so a 120 Hz display draws
+      // every other frame; the motion is slow enough not to show it.
+      elapsed += deltaMs;
+      if (elapsed < MIN_FRAME_MS) return;
+      const dt = Math.min(elapsed, 50) / 1000;
+      elapsed = 0;
       time += dt;
       trail.step(dt, Math.min(width, height) * 0.04);
       draw();

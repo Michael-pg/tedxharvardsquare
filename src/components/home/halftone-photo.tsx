@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
+import { createDotBatch } from "@/lib/dot-batch";
 import type { Image as ImageContent } from "@/content";
 
 /** Brightness buckets, as in the footer glow: a frame is a few filled paths. */
@@ -96,6 +97,7 @@ export function HalftonePhoto({
     const photo = new Image();
     const state = { progress: reducedMotion ? 1 : 0, disorder: scatter && !reducedMotion ? 1 : SETTLED_DISORDER };
     const trail = createPointerTrail();
+    const dots = createDotBatch(BUCKETS);
 
     const sample = () => {
       if (!photo.naturalWidth || !cols) return;
@@ -137,7 +139,6 @@ export function HalftonePhoto({
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
       if (!luminance) return;
-      const paths = BUCKETS.map(() => new Path2D());
       const reach = Math.max(width, height) * 0.18;
       // Rows travel in bands of one to five, each knocked its own way.
       let band = 0;
@@ -178,14 +179,10 @@ export function HalftonePhoto({
             intensity > 0.97
               ? BUCKETS.length - 1
               : Math.min(BUCKETS.length - 2, Math.floor(intensity * (BUCKETS.length - 1)));
-          paths[bucket].moveTo(x + radius, y);
-          paths[bucket].arc(x, y, radius, 0, Math.PI * 2);
+          dots.add(bucket, x, y, radius);
         }
       }
-      paths.forEach((path, i) => {
-        ctx.fillStyle = BUCKETS[i];
-        ctx.fill(path);
-      });
+      dots.flush(ctx);
     };
 
     // Runs only while the reveal plays or the pointer's trail is fading.
