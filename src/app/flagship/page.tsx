@@ -95,11 +95,10 @@ export default async function FlagshipPage() {
 
       <main className="relative">
         <FlagshipHero
-          image={heroImage}
-          kicker={title}
           theme={edition?.theme ?? "Flagship"}
           statement={edition?.themeStatement}
-          facts={[copy?.place, when, venueKnown ? edition?.venue?.name : undefined].filter(Boolean).join(" · ")}
+          date={edition?.date}
+          place={venueKnown && edition?.venue ? `${edition.venue.name}, ${edition.venue.city}` : copy?.place}
           action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
         />
 
@@ -289,35 +288,6 @@ export default async function FlagshipPage() {
           <Venue venue={edition.venue} image={venueImage} when={when} notes={copy?.venueNotes ?? []} />
         )}
 
-        {/* Now what: the close, centred, and the one ask on the page. */}
-        <Section className="flex flex-col items-center px-6 py-24 text-center md:py-40">
-          <Reveal as="h2" className="text-statement font-medium">
-            <span data-dot-clear>{copy?.closeTitle ?? title}</span>
-          </Reveal>
-          {copy && copy.closeBody.length > 0 && (
-            <div data-dot-clear className="mt-10 flex max-w-2xl flex-col gap-4 md:mt-14">
-              {copy.closeBody.map((paragraph, i) => (
-                <Reveal key={i} as="p" className={`text-lead text-balance ${i === 0 ? "text-ink-200" : "text-muted"}`}>
-                  {paragraph}
-                </Reveal>
-              ))}
-            </div>
-          )}
-          <Reveal className="mt-12 flex flex-col items-center gap-4">
-            <div data-dot-clear className="flex flex-wrap justify-center gap-2">
-              {joinHref && <SquareLink href={joinHref}>{`Join ${title}`}</SquareLink>}
-              <SquareLink href="/faq" variant="secondary">
-                Questions
-              </SquareLink>
-            </div>
-            {!edition?.ticketUrl && joinHref && (
-              <p data-dot-clear className="text-small text-muted">
-                Tickets are not on sale yet. Join the list to hear first.
-              </p>
-            )}
-          </Reveal>
-        </Section>
-
         {/* Past editions: the record, each pointing to its talks. */}
         {pastEditions.length > 0 && (
           <Section aria-label="Past editions" className="px-6 pt-12 pb-24 md:pb-40">
@@ -351,6 +321,35 @@ export default async function FlagshipPage() {
             </div>
           </Section>
         )}
+        {/* Now what: the close, centred, and the one ask on the page. */}
+        <Section className="flex flex-col items-center px-6 py-24 text-center md:py-40">
+          <Reveal as="h2" className="text-statement font-medium">
+            <span data-dot-clear>{copy?.closeTitle ?? title}</span>
+          </Reveal>
+          {copy && copy.closeBody.length > 0 && (
+            <div data-dot-clear className="mt-10 flex max-w-2xl flex-col gap-4 md:mt-14">
+              {copy.closeBody.map((paragraph, i) => (
+                <Reveal key={i} as="p" className={`text-lead text-balance ${i === 0 ? "text-ink-200" : "text-muted"}`}>
+                  {paragraph}
+                </Reveal>
+              ))}
+            </div>
+          )}
+          <Reveal className="mt-12 flex flex-col items-center gap-4">
+            <div data-dot-clear className="flex flex-wrap justify-center gap-2">
+              {joinHref && <SquareLink href={joinHref}>{`Join ${title}`}</SquareLink>}
+              <SquareLink href="/faq" variant="secondary">
+                Questions
+              </SquareLink>
+            </div>
+            {!edition?.ticketUrl && joinHref && (
+              <p data-dot-clear className="text-small text-muted">
+                Tickets are not on sale yet. Join the list to hear first.
+              </p>
+            )}
+          </Reveal>
+        </Section>
+
       </main>
 
       <SiteFooter />

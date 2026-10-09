@@ -3,11 +3,15 @@ import Link from "next/link";
 import { HalftonePhoto } from "@/components/home/halftone-photo";
 import type { Image as ImageContent, Speaker } from "@/content";
 
+/** Names of different lengths, so the redacted row doesn't read as a pattern. */
+const nameWidths = ["w-40", "w-28", "w-36", "w-32"];
+const titleWidths = ["w-24", "w-32", "w-20", "w-28"];
+
 /**
  * This edition's speakers. Once any are added to the edition in Studio they
  * show as portraits; until then, four tiles printed in coarse, blurred red
- * halftone from past stage photos, so the shape of a lineup is there without
- * pretending to name anyone.
+ * halftone from past stage photos, each captioned with a redacted name in
+ * dots, so the shape of a lineup is there without pretending to name anyone.
  */
 export function SpeakersPreview({ speakers, placeholders }: { speakers: Speaker[]; placeholders: ImageContent[] }) {
   if (speakers.length > 0) {
@@ -56,7 +60,10 @@ export function SpeakersPreview({ speakers, placeholders }: { speakers: Speaker[
               className="w-full"
             />
           </div>
-          <p className="text-small text-muted">{`Speaker ${String(i + 1).padStart(2, "0")}`}</p>
+          <div className="flex flex-col gap-2">
+            <span className={`redacted h-5 text-brand ${nameWidths[i]}`} />
+            <span className={`redacted h-2.5 text-ink-500 ${titleWidths[i]}`} />
+          </div>
         </li>
       ))}
     </ul>

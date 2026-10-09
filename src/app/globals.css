@@ -58,6 +58,16 @@
   --text-numeral--line-height: 0.8;
   --text-numeral--letter-spacing: -0.06em;
 
+  /* Flagship: the edition's date, drawn by the dot field across the full
+     width of the hero. Sized so "12.30.27" fits the grid at any width; on
+     phones it stacks ("2.20." over "27") at the larger `date-stack` size. */
+  --text-date-stack: 35vw;
+  --text-date-stack--line-height: 0.85;
+  --text-date-stack--letter-spacing: -0.06em;
+  --text-date: clamp(5rem, 29vw, 34rem);
+  --text-date--line-height: 0.8;
+  --text-date--letter-spacing: -0.06em;
+
   --text-display: clamp(2.25rem, 6vw, 4.5rem);
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.03em;
@@ -249,4 +259,11 @@ body {
 }
 @utility clip-lockup-wordmark {
   clip-path: inset(50% 0 0 0);
+}
+
+/* A name not yet announced: a line of halftone dots where the text will go,
+   on the same 10px screen as the dot field. Colour comes from `text-*`. */
+@utility redacted {
+  background-image: radial-gradient(circle, currentColor 32%, transparent 36%);
+  background-size: 10px 10px;
 }

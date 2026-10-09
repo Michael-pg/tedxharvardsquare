@@ -92,7 +92,8 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * - `data-dot-stop` — a section the field fades out above and stays out of,
  *   for a passage that should sit on plain black down to the footer.
  * - `data-dot-glyph` — text the field draws itself, in ordered red dots, as
- *   the element scrolls into view. The element's own text should be invisible.
+ *   the page opens and as the element scrolls into view. The element's own
+ *   text should be invisible.
  *
  * `strength` (0–1) fades the whole field, for pages where it should sit
  * further back than on home. Opaque sections above it simply cover it.
@@ -111,6 +112,8 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     let width = 0;
     let height = 0;
     let time = Math.random() * 100;
+    // Glyphs on screen at load assemble over the first couple of seconds.
+    const start = time;
     let clears: Element[] = [];
     let glyphs: Glyph[] = [];
     const trail = createPointerTrail();
@@ -177,8 +180,11 @@ export function DotField({ strength = 1 }: { strength?: number }) {
       const activeGlyphs = glyphs
         .map((glyph) => {
           const box = glyph.el.getBoundingClientRect();
-          // Assembles as the element rises from the bottom of the screen.
-          const strength = reducedMotion ? 1 : smoothstep(height * 0.98, height * 0.4, box.top);
+          // Assembles as the element rises from the bottom of the screen, and
+          // out of the field when the page opens.
+          const strength = reducedMotion
+            ? 1
+            : smoothstep(height * 0.98, height * 0.4, box.top) * smoothstep(0.2, 2.2, t - start);
           return { ...glyph, left: box.left, top: box.top, strength };
         })
         .filter((g) => g.strength > 0 && g.top < height && g.top + g.height > 0);
