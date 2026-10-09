@@ -12,8 +12,8 @@ import type { Faq } from "@/content/types";
  * in the DOM when closed (height 0, `inert`), so they are server-rendered and
  * searchable, but hidden from keyboard and screen-reader focus until opened.
  *
- * Each question is numbered, like the archive's editions. An open item is
- * marked by a red dot beside its number, never by red text.
+ * Each question is numbered, like the archive's editions. An open item's
+ * number and question brighten to `foreground`.
  */
 export function FaqAccordion({ items }: { items: Faq[] }) {
   return (
@@ -60,15 +60,15 @@ function FaqItem({ item, number }: { item: Faq; number: number }) {
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
-          className="group flex w-full items-start gap-5 py-7 text-left md:gap-8"
+          className="group flex w-full items-start gap-4 py-7 text-left md:gap-8"
         >
-          <span aria-hidden className="mt-1 flex w-10 items-center gap-2 text-small text-muted tabular-nums md:w-12">
-            <span
-              className={cn(
-                "size-1.5 shrink-0 rounded-full bg-brand transition-opacity duration-fast",
-                open ? "opacity-100" : "opacity-0",
-              )}
-            />
+          <span
+            aria-hidden
+            className={cn(
+              "mt-1 w-8 shrink-0 text-small tabular-nums transition-colors duration-fast md:w-12",
+              open ? "text-foreground" : "text-muted",
+            )}
+          >
             {String(number).padStart(2, "0")}
           </span>
           <span
@@ -96,7 +96,7 @@ function FaqItem({ item, number }: { item: Faq; number: number }) {
         inert={!open}
         className="h-0 overflow-hidden"
       >
-        <p className="max-w-2xl pb-8 pl-15 text-body text-ink-300 whitespace-pre-line md:pl-20">{item.answer}</p>
+        <p className="max-w-2xl pb-8 pl-12 text-body text-ink-300 whitespace-pre-line md:pl-20">{item.answer}</p>
       </div>
     </li>
   );

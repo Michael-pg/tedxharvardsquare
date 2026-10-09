@@ -4,7 +4,6 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { FaqAccordion } from "@/components/faq/faq-accordion";
-import { Eyebrow } from "@/components/ui/eyebrow";
 import { SquareLink } from "@/components/ui/square-link";
 import { getFaqs, getSiteSettings } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
@@ -32,9 +31,6 @@ export default async function FaqPage() {
       <SiteNav />
       <main className="px-6 pt-40 pb-32 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
-          <Reveal className="mb-6">
-            <Eyebrow>Flagship</Eyebrow>
-          </Reveal>
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
             FAQ
           </SplitReveal>

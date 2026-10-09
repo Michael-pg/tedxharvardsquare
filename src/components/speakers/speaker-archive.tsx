@@ -238,17 +238,16 @@ export function SpeakerArchive({ editions }: { editions: ArchiveEdition[] }) {
                   </div>
                 ) : null}
 
-                {openEdition ? (
-                  <p className="mb-4 flex items-center gap-3 text-label text-muted uppercase">
-                    <span aria-hidden className="size-1.5 rounded-full bg-brand" />
-                    {`Edition ${openEdition.number} · ${openEdition.year}`}
-                  </p>
-                ) : null}
                 <h2 id="speaker-dialog-name" className="pr-12 text-title font-medium text-balance">
                   {open.name}
                 </h2>
                 {open.title ? (
                   <p className="mt-3 text-label text-muted uppercase">{open.title}</p>
+                ) : null}
+                {openEdition ? (
+                  <p className="mt-2 text-small text-muted">
+                    {`Edition ${openEdition.number}, ${openEdition.year}`}
+                  </p>
                 ) : null}
                 {open.talk ? (
                   <p className="mt-8 text-lead font-medium text-balance">{open.talk.title}</p>
@@ -318,15 +317,11 @@ function EditionSection({ edition, onOpen }: { edition: ArchiveEdition; onOpen: 
     >
       <Reveal className="col-span-4 md:col-span-3">
         <div className="flex flex-col gap-6 md:sticky md:top-32">
-          <h2 id={titleId} className="flex flex-col gap-3">
-            <span className="flex items-center gap-3 text-label text-muted uppercase">
-              <span aria-hidden className="size-1.5 rounded-full bg-brand" />
-              Edition
+          <h2 id={titleId} className="flex flex-col gap-2">
+            <span aria-hidden className="text-statement font-medium tabular-nums">
+              {pad(edition.number)}
             </span>
-            <span className="text-statement font-medium tabular-nums">
-              <span className="sr-only">{`${edition.number}, ${edition.year}`}</span>
-              <span aria-hidden>{pad(edition.number)}</span>
-            </span>
+            <span className="text-heading font-medium">{`Edition ${edition.number}`}</span>
           </h2>
           <div className="flex flex-col gap-1">
             {edition.theme ? <p className="mb-2 text-heading font-medium text-balance">{edition.theme}</p> : null}

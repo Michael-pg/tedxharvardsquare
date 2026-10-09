@@ -4,7 +4,6 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home/dot-field";
-import { Eyebrow } from "@/components/ui/eyebrow";
 import { SquareLink } from "@/components/ui/square-link";
 import { SpeakerArchive, type ArchiveEdition } from "@/components/speakers/speaker-archive";
 import { getEditions, getSpeakerArchive, getSpeakers } from "@/content";
@@ -60,9 +59,6 @@ export default async function SpeakersPage() {
       <DotField strength={0.55} />
       <main className="relative px-6 pt-40 pb-32 md:pt-56">
         <header data-dot-clear className="mb-20 max-w-4xl md:mb-28">
-          <Reveal className="mb-6">
-            <Eyebrow>The archive</Eyebrow>
-          </Reveal>
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
             Speakers
           </SplitReveal>
@@ -88,7 +84,6 @@ export default async function SpeakersPage() {
             </p>
             <Reveal className="col-span-4 md:col-span-6 md:col-start-7 md:pb-6">
               <div data-dot-clear className="flex flex-col items-start gap-4">
-              <Eyebrow>Next</Eyebrow>
               <h2 id="next-edition" className="text-title font-medium text-balance">
                 {upcoming.theme ? `Edition ${upcoming.number}: ${upcoming.theme}` : `Edition ${upcoming.number}`}
               </h2>

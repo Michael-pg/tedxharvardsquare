@@ -79,7 +79,7 @@
   --text-small: 0.875rem;
   --text-small--line-height: 1.5;
 
-  /* Eyebrows, labels, metadata — the one place tracking opens up. */
+  /* Labels and metadata — the one place tracking opens up. */
   --text-label: 0.75rem;
   --text-label--line-height: 1.2;
   --text-label--letter-spacing: 0.12em;

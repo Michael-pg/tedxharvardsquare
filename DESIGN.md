@@ -76,8 +76,7 @@ ramp. Photography and the 3D scene are the only other sources of colour.
 
 - **Red text only at large sizes.** `text-brand` on `text-label`, `text-small`,
   or `text-body` fails AA. For small signals use a red *mark* (dot, rule,
-  underline) beside `foreground` text instead — `Eyebrow`
-  (`components/ui/eyebrow.tsx`) does this for eyebrows. (Known violations — see
+  underline) beside `foreground` text instead. (Known violations — see
   `docs/PROGRESS.md`.)
 - **One red moment per viewport.** If two things are red, neither is.
 - Hover/focus colour changes must also meet contrast; the focus ring is the
@@ -108,7 +107,7 @@ for the logo only.
 | `text-lead` | 18 → 22px | Intros, talk titles in detail views. |
 | `text-body` | 16px | Body copy. |
 | `text-small` | 14px | Captions, secondary actions. |
-| `text-label` | 12px, +0.12em, uppercase | Eyebrows and metadata. |
+| `text-label` | 12px, +0.12em, uppercase | Metadata (job titles, small labels). |
 
 - Weights: `font-medium` for headings, regular for everything else. No bold
   body copy, no italics except in quoted titles.
@@ -121,7 +120,7 @@ for the logo only.
 ## 5. Layout & spacing
 
 - **Gutters:** `px-6` (24px) on every page, at every width. The header uses the same gutter so the lockup lines up with page content.
-- **Inner page header:** `pt-40 md:pt-56`, eyebrow → `h1` → lead, then
+- **Inner page header:** `pt-40 md:pt-56`, `h1` → lead (no eyebrow), then
   `mb-20 md:mb-28` before content.
 - **Sections:** `py-24 md:py-40`, separated by `border-t border-rule`.
 - **Widths:** headers `max-w-4xl`, lists `max-w-5xl`, prose `max-w-3xl`.
@@ -177,8 +176,7 @@ for the logo only.
 | `Reveal` / `SplitReveal` | `components/motion/` | Default entrances. |
 | `SpeakerArchive` | `components/speakers/` | Every edition on one page: numbered sections with the edition's facts sticky beside the lineup, performers credited under it. Detail dialog with YouTube embed, prev/next (and ← →) through the whole archive, `#slug` deep links. |
 | `PrintedPortrait` | `components/speakers/` | Speaker portrait that arrives as red halftone and develops into the photo, scrubbed by scroll. Faces are never hidden behind a hover. Not mounted under reduced motion. |
-| `Eyebrow` | `components/ui/` | Small uppercase muted label beside a red dot. Use it instead of red label text. |
-| `FaqAccordion` | `components/faq/` | Numbered, independent items; an open item gets a red dot by its number. Closed answers are `inert`. |
+| `FaqAccordion` | `components/faq/` | Numbered, independent items; an open item's number and question brighten. Closed answers are `inert`. |
 
 Shared patterns:
 
@@ -204,8 +202,8 @@ Shared patterns:
 
 - Confident, plain, specific. Short sentences. No hype words ("revolutionary",
   "world-class"), no exclamation marks.
-- Eyebrows are nouns or short phrases ("The archive", "Flagship"), not
-  sentences.
+- **No eyebrows.** No small uppercase kicker above a heading, with or without
+  a red dot: the owner reads it as a generic-AI tell. Let the heading stand alone.
 - Numbers as figures: "Edition 3", "300+ founders".
 
 ---

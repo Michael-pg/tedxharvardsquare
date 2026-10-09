@@ -119,8 +119,7 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 ## Known issues
 
 1. ~~Small red text fails WCAG AA~~ — fixed on `/speakers` and `/faq` in the
-   redesign (2026-10-09): `Eyebrow` (red dot beside muted text) replaces red
-   labels, and hovers go to `foreground`. No red text remains below 24px.
+   redesign (2026-10-09): the red labels are gone (eyebrows removed), and hovers go to `foreground`. No red text remains below 24px.
 
 ---
 
@@ -485,11 +484,11 @@ The speaker dialog is one fixed size from `md` up (`max-h-dialog`, 44rem): the
 portrait stays put, only the text column scrolls, and the page behind is
 locked. Prev/next (and ← →) step through all 22 speakers without closing.
 
-`/faq`: numbered questions, a red dot marks the open one, and the contact sits
+`/faq`: numbered questions (the open one brightens), and the contact sits
 sticky beside the list. No dot field there, on purpose.
 
 Checked at 375px and desktop in the dev server: no horizontal overflow, no
 console errors, dialog size identical across speakers.
 
-Content notes for Studio: FAQ 01 reads "What is TedxHarvardSQ?" (should
-probably be "What is TEDxHarvardSquare?").
+Follow-up (owner): eyebrows removed site-wide, dotted or not — they read as
+a generic-AI tell. FAQ 01 corrected in Studio to "What is TEDxHarvardSquare?".
