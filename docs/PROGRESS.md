@@ -119,15 +119,17 @@ Resolved: the FAQ "How do I get there?" answer describes Arrow Street Arts, whic
 ## Known issues
 
 1. **Small red text fails WCAG AA** (brand red on black is 4.35:1, needs 4.5).
-   Eyebrow labels on `/speakers`, `/faq`, the hero edition label, and the
-   year in the speaker dialog; red hover on talk titles and FAQ questions.
-   Fix per `DESIGN.md` §3 (red mark beside foreground text). **Do first.**
+   As of 2026-10-09: the red labels on `/speakers` and `/faq`, the year in
+   the speaker dialog, and red hover on talk titles and FAQ questions. Fix per
+   `DESIGN.md` §3 (red mark beside foreground text). **On hold (owner,
+   2026-10-09):** `/speakers` and `/faq` are due for a redesign anyway; fix it
+   as part of that, not separately.
 
 ---
 
 ## Next up (suggested order)
 
-1. Fix the red-text contrast issue (small, visible to every visitor).
+1. Redesign `/speakers` and `/faq` (owner, planned); fix the red-text contrast issue there.
 2. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 3. Team section on `/about` once the organizers send names and bios.
 4. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
