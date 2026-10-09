@@ -1,24 +1,29 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 
+// Inline-block so each word can move; the spaces stay outside the boxes, or
+// they would collapse.
 const Words = ({ text }: { text: string }) =>
   text.split(" ").map((word, j) => (
-    <span key={j} data-word>
-      {j > 0 ? " " : ""}
-      {word}
-    </span>
+    <Fragment key={j}>
+      {j > 0 && " "}
+      <span data-word className="inline-block">
+        {word}
+      </span>
+    </Fragment>
   ));
 
 /**
- * The motto as one statement, one colour, with its answer set smaller beneath
- * it. Words start dim and light up in reading order as the motto scrolls
- * through the viewport — scrubbed, so it tracks the reader instead of playing
- * on its own, and never pinned.
+ * The motto as one statement, with its answer set clearly smaller beneath it.
+ * As it scrolls into view the words come out of focus one after another —
+ * blurred, faint and a few pixels low, easing into place — and the answer
+ * follows once the statement has landed. It plays once, on its own clock, so
+ * the ease stays smooth whatever the scroll speed.
  *
- * Without JS, or under reduced motion, every word is simply lit.
+ * Without JS, or under reduced motion, every word is simply there.
  */
 export function Motto({ lines, coda }: { lines: string[]; coda?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -28,23 +33,23 @@ export function Motto({ lines, coda }: { lines: string[]; coda?: string }) {
     () => {
       const element = ref.current;
       if (!element || reducedMotion) return;
-      gsap.fromTo(
-        element.querySelectorAll("[data-word]"),
-        { opacity: 0.16 },
-        {
-          opacity: 1,
-          ease: "none",
-          stagger: 0.1,
-          scrollTrigger: { trigger: element, start: "top 80%", end: "bottom 45%", scrub: 0.6 },
-        },
-      );
+      const from = { autoAlpha: 0, filter: "blur(14px)", y: 16 };
+      const to = { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: 1.4, ease: "power2.out" };
+      const timeline = gsap.timeline({
+        scrollTrigger: { trigger: element, start: "top 75%", once: true },
+      });
+      timeline.fromTo(element.querySelectorAll("[data-statement] [data-word]"), from, { ...to, stagger: 0.06 });
+      const codaWords = element.querySelectorAll("[data-coda] [data-word]");
+      if (codaWords.length) timeline.fromTo(codaWords, from, { ...to, stagger: 0.03 }, "-=0.9");
+      // Leave no filter behind once the words are sharp.
+      timeline.set(element.querySelectorAll("[data-word]"), { clearProps: "filter" });
     },
     { scope: ref, dependencies: [reducedMotion] },
   );
 
   return (
     <div ref={ref}>
-      <p data-dot-clear className="text-statement font-medium">
+      <p data-dot-clear data-statement className="text-statement font-medium">
         {lines.map((line, i) => (
           <span key={i} className="block">
             <Words text={line} />
@@ -52,7 +57,7 @@ export function Motto({ lines, coda }: { lines: string[]; coda?: string }) {
         ))}
       </p>
       {coda && (
-        <p data-dot-clear className="mt-10 max-w-4xl text-display font-medium text-balance md:mt-16">
+        <p data-dot-clear data-coda className="mt-10 max-w-3xl text-title font-medium text-balance text-ink-300 md:mt-16">
           <Words text={coda} />
         </p>
       )}

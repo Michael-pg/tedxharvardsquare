@@ -43,7 +43,7 @@ const smoothstep = (edge0: number, edge1: number, x: number) => {
  * counts as on screen).
  */
 export function FooterGlow({
-  className = "absolute inset-x-0 -top-40 bottom-0 md:-top-64",
+  className = "absolute inset-0",
   active = true,
 }: {
   className?: string;
