@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
+import { createDotBatch, MIN_FRAME_MS } from "@/lib/dot-batch";
 
 /** Grid pitch in CSS pixels. Tight enough to read as a tone, not as dots. */
 const CELL = 9;
@@ -65,6 +66,7 @@ export function FooterGlow({
     let running = false;
     // In canvas CSS pixels.
     const trail = createPointerTrail();
+    const dots = createDotBatch(BUCKETS);
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -80,7 +82,6 @@ export function FooterGlow({
       // Hidden (the closed menu, a collapsed pane): nothing to draw, and a zero
       // height would turn every dot's position into NaN.
       if (!width || !height) return;
-      const paths = BUCKETS.map(() => new Path2D());
       const cols = Math.ceil(width / CELL) + 1;
       const rows = Math.ceil(height / CELL) + 1;
       // From the width, not the height: the canvas now spans the whole footer,
@@ -132,20 +133,21 @@ export function FooterGlow({
             intensity > 0.99
               ? BUCKETS.length - 1
               : Math.min(BUCKETS.length - 2, Math.floor(intensity * (BUCKETS.length - 1)));
-          const path = paths[bucket];
-          path.moveTo(px + radius, py);
-          path.arc(px, py, radius, 0, Math.PI * 2);
+          dots.add(bucket, px, py, radius);
         }
       }
 
-      paths.forEach((path, i) => {
-        ctx.fillStyle = BUCKETS[i];
-        ctx.fill(path);
-      });
+      dots.flush(ctx);
     };
 
+    let elapsed = 0;
     const tick = (_: number, deltaMs: number) => {
-      const dt = Math.min(deltaMs, 50) / 1000;
+      // Full-screen redraws are the costly part, so a 120 Hz display draws
+      // every other frame; the motion is slow enough not to show it.
+      elapsed += deltaMs;
+      if (elapsed < MIN_FRAME_MS) return;
+      const dt = Math.min(elapsed, 50) / 1000;
+      elapsed = 0;
       time += dt;
       trail.step(dt, CELL * 3);
       draw();
