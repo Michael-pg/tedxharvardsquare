@@ -4,14 +4,13 @@ import Image from "next/image";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { createPointerTrail } from "@/lib/pointer-trail";
 import type { Image as ImageContent } from "@/content";
 
 /** Screen pitch of the trail, in CSS pixels. */
 const CELL = 9;
 /** How far around the pointer the print appears, in CSS pixels. */
 const RADIUS = 80;
-/** Per-frame decay at 60fps: low enough that the trail hangs behind as a tail. */
-const DECAY = 0.955;
 
 /** Brightness buckets, as in the halftone prints: a frame is a few filled paths. */
 const BUCKETS = [
@@ -90,10 +89,9 @@ export function PixelPhoto({
     let height = 0;
     let cols = 0;
     let rows = 0;
-    let energy = new Float32Array(0);
     let luminance: Float32Array | null = null;
     let running = false;
-    const pointer = { x: 0, y: 0, px: 0, py: 0, inside: false, fresh: true };
+    const trail = createPointerTrail();
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -104,7 +102,6 @@ export function PixelPhoto({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       cols = Math.ceil(width / CELL);
       rows = Math.ceil(height / CELL);
-      energy = new Float32Array(cols * rows);
       luminance = null;
     };
 
@@ -113,18 +110,7 @@ export function PixelPhoto({
         const img = wrap.querySelector("img");
         if (img?.complete) luminance = sampleLuminance(img, cols, rows);
       }
-      const decay = Math.pow(DECAY, Math.min(deltaMs, 50) / (1000 / 60));
-      // The segment the pointer travelled this frame, so a quick move leaves
-      // a continuous stroke rather than a row of blobs.
-      const ax = pointer.fresh ? pointer.x : pointer.px;
-      const ay = pointer.fresh ? pointer.y : pointer.py;
-      const bx = pointer.x - ax;
-      const by = pointer.y - ay;
-      const len2 = bx * bx + by * by || 1;
-      pointer.px = pointer.x;
-      pointer.py = pointer.y;
-      pointer.fresh = false;
-      let alive = false;
+      trail.step(Math.min(deltaMs, 50) / 1000, CELL * 2);
       ctx.clearRect(0, 0, width, height);
       const paths = BUCKETS.map(() => new Path2D());
       for (let row = 0; row < rows; row++) {
@@ -133,15 +119,8 @@ export function PixelPhoto({
           // Alternate rows sit half a cell over — the halftone screen.
           const x = col * CELL + CELL / 2 + (row % 2 ? CELL / 4 : -CELL / 4);
           const y = row * CELL + CELL / 2;
-          if (pointer.inside) {
-            const t = Math.min(1, Math.max(0, ((x - ax) * bx + (y - ay) * by) / len2));
-            const d = Math.hypot(x - ax - bx * t, y - ay - by * t);
-            if (d < RADIUS) energy[i] = Math.max(energy[i], smoothstep(RADIUS, RADIUS * 0.15, d));
-          }
-          energy[i] *= decay;
-          const e = energy[i];
+          const e = trail.sample(x, y, RADIUS);
           if (e < 0.03) continue;
-          alive = true;
           const light = luminance ? smoothstep(0.06, 0.9, luminance[i]) : 0.6;
           const v = light * Math.min(1, e * 1.4);
           if (v < 0.05) continue;
@@ -160,7 +139,7 @@ export function PixelPhoto({
         ctx.fill(path);
       });
       // Stop the loop once the trail has faded; the next hover restarts it.
-      if (!alive && !pointer.inside) stop();
+      if (!trail.alive) stop();
     };
     const start = () => {
       if (running) return;
@@ -175,15 +154,10 @@ export function PixelPhoto({
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
       const rect = canvas.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
-      if (!pointer.inside) pointer.fresh = true;
-      pointer.inside = true;
+      trail.move(event.clientX - rect.left, event.clientY - rect.top);
       start();
     };
-    const onLeave = () => {
-      pointer.inside = false;
-    };
+    const onLeave = () => trail.leave();
 
     resize();
     const observer = new ResizeObserver(resize);

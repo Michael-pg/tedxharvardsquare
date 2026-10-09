@@ -49,7 +49,10 @@ export function FlagshipPhoto({ image, className }: { image: ImageContent; class
   );
 
   return (
-    <div ref={root} className={`relative isolate aspect-square ${className ?? ""}`}>
+    // Not isolated: the photo lightens onto the page itself, so its blacks
+    // become the page's black. Isolated, they stayed pure black and the frame
+    // showed as a darker square.
+    <div ref={root} className={`relative aspect-square ${className ?? ""}`}>
       <div ref={plate} className="absolute inset-0">
         <HalftonePhoto
           image={{ ...image, alt: "" }}

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { createPointerTrail } from "@/lib/pointer-trail";
 import type { Image as ImageContent } from "@/content";
 
 /** Brightness buckets, as in the footer glow: a frame is a few filled paths. */
@@ -38,7 +39,8 @@ type Focus = { x: number; y: number };
  * A photograph printed entirely in red halftone — the footer glow's material,
  * with a picture in it. The photo itself is never shown: every dot's size is
  * the brightness of the photo beneath it. The dots settle in from the top as
- * the frame first scrolls into view, and swell under the pointer.
+ * the frame first scrolls into view, and swell along the pointer's trail,
+ * which also pulls scattered bands back into line where it passes.
  *
  * Options for a looser, more abstract print: `cell` sets the screen size,
  * `blur` softens the picture (in cells) so only its masses remain, `focus` is
@@ -87,7 +89,7 @@ export function HalftonePhoto({
     let revealed = false;
     const photo = new Image();
     const state = { progress: reducedMotion ? 1 : 0, disorder: scatter && !reducedMotion ? 1 : SETTLED_DISORDER };
-    const pointer = { x: 0, y: 0, strength: 0, target: 0 };
+    const trail = createPointerTrail();
 
     const sample = () => {
       if (!photo.naturalWidth || !cols) return;
@@ -147,16 +149,15 @@ export function HalftonePhoto({
           if (shown <= 0) continue;
           // A touch of contrast so shadows fall away to black.
           let intensity = smoothstep(0.08, 0.92, luminance[row * cols + col]);
-          const x = col * cell + cell / 2 + (row % 2 ? cell / 4 : -cell / 4) + shift;
+          const baseX = col * cell + cell / 2 + (row % 2 ? cell / 4 : -cell / 4);
           const y = row * cell + cell / 2;
+          const held = trail.alive ? trail.sample(baseX, y, reach) : 0;
+          // Where the trail passes, the print falls back into register.
+          const x = baseX + shift * (1 - held);
           // The print thins out toward its edges, so it has no frame.
           const edge = Math.min(x, width - x, y, height - y);
           intensity *= smoothstep(0, Math.min(width, height) * 0.14, edge);
-          if (pointer.strength > 0.01) {
-            const d = Math.hypot(x - pointer.x, y - pointer.y);
-            const falloff = 1 - Math.min(d / reach, 1);
-            intensity += falloff * falloff * 0.45 * pointer.strength;
-          }
+          intensity += held * 0.45;
           intensity = Math.min(intensity, 1) * shown;
           if (intensity < 0.06) continue;
           const radius = cell * 0.5 * Math.pow(intensity, 0.8);
@@ -174,12 +175,11 @@ export function HalftonePhoto({
       });
     };
 
-    // Runs only while the reveal plays or the pointer's swell is fading.
+    // Runs only while the reveal plays or the pointer's trail is fading.
     const tick = (_: number, deltaMs: number) => {
-      const follow = 1 - Math.pow(0.002, Math.min(deltaMs, 50) / 1000);
-      pointer.strength += (pointer.target - pointer.strength) * follow;
+      trail.step(Math.min(deltaMs, 50) / 1000, cell * 2);
       draw();
-      const settled = state.progress >= 1 && pointer.target === 0 && pointer.strength < 0.01;
+      const settled = state.progress >= 1 && !trail.alive;
       if (settled) stop();
     };
     const start = () => {
@@ -202,13 +202,13 @@ export function HalftonePhoto({
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
       const rect = canvas.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
-      pointer.target = 1;
+      // The canvas may be scaled by a parent (the Flagship photo's plate), so
+      // map from screen pixels to its own.
+      trail.move(((event.clientX - rect.left) * width) / rect.width, ((event.clientY - rect.top) * height) / rect.height);
       start();
     };
     const onLeave = () => {
-      pointer.target = 0;
+      trail.leave();
     };
 
     // The bands fall into line as the frame reaches the middle of the screen.
