@@ -39,12 +39,6 @@ export async function generateMetadata(): Promise<Metadata> {
 const longDate = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
 const dayMonth = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
 
-/** "Jeff Harmon, Shawna Young, Andrea Choe and 9 others". */
-const someNames = (names: string[], shown = 3) =>
-  names.length <= shown + 1
-    ? new Intl.ListFormat("en-US").format(names)
-    : `${names.slice(0, shown).join(", ")} and ${names.length - shown} others`;
-
 /** A crowd, rounded the way people say it: 375 is "Nearly 400", 420 "Over 400". */
 const roughly = (n: number) => {
   const hundred = Math.round(n / 100) * 100;
@@ -79,10 +73,9 @@ const toRow = (edition: PastEdition): PastEditionRow => ({
   recap: edition.recap,
   figures: [
     edition.talkCount > 0 && `${edition.talkCount} talks`,
-    edition.soldOut && "Sold out",
     edition.attendance && `${roughly(edition.attendance)} attended`,
+    edition.soldOut && "sold out",
   ].filter((figure): figure is string => Boolean(figure)),
-  speakers: edition.speakerNames.length > 0 ? `With ${someNames(edition.speakerNames)}` : undefined,
   href: `/speakers#edition-${edition.number}`,
   image: edition.poster ?? edition.still,
 });
@@ -231,7 +224,7 @@ export default async function FlagshipPage() {
                 <span id="editions-title">Over the years</span>
               </Reveal>
               <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
-                Every Flagship so far, and who spoke.
+                Every Flagship so far, and its talks.
               </Reveal>
             </div>
             <EditionList editions={pastEditions.map(toRow)} />
@@ -251,6 +244,32 @@ export default async function FlagshipPage() {
             </div>
           </section>
         )}
+        {/* The close: the dot field comes back behind one last ask, and hands
+            over to the footer's glow. */}
+        {edition && joinHref && (
+          <section
+            data-dot-return
+            aria-labelledby="close-title"
+            className="flex min-h-svh flex-col items-center justify-center px-6 py-32 text-center"
+          >
+            <Reveal as="h2" className="text-statement font-medium text-balance">
+              <span id="close-title" data-dot-clear>
+                {date ? longDate.format(date) : (copy?.month ?? title)}
+              </span>
+            </Reveal>
+            {(edition.theme || showVenue) && (
+              <Reveal as="p" delay={0.1} className="mt-6 text-lead text-ink-300">
+                <span data-dot-clear>
+                  {[edition.theme, showVenue ? `at ${edition.venue?.name}` : undefined].filter(Boolean).join(", ")}
+                </span>
+              </Reveal>
+            )}
+            <Reveal delay={0.2} className="mt-12">
+              <SquareLink href={joinHref}>{joinLabel}</SquareLink>
+            </Reveal>
+          </section>
+        )}
+
       </main>
 
       <SiteFooter />

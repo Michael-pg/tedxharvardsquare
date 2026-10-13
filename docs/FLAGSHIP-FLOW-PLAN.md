@@ -138,7 +138,7 @@ it started, so the dots bookend it.
 
 1. ~~Bento component + Beat 2, with motion and the phone layout.~~ Done (`the-day.tsx`).
 2. ~~Topics band, venue + tickets merge.~~ Done.
-3. Over the years tightening and the dot-field close. Review.
+3. ~~Over the years tightening and the dot-field close.~~ Done.
 
 Each step is its own PR, previewed before merge.
 
