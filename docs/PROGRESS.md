@@ -108,13 +108,14 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 **Domain cutover follow-up**
 - [ ] **Search Console:** submit `https://www.tedxharvardsquare.org/sitemap.xml`.
 - [ ] **Oct 13:** delete the `_webflow` TXT record in Squarespace and cancel Webflow hosting (renews Oct 14). Until then, rollback = put back `A @ 198.202.211.1` and `CNAME www cdn.webflow.com`.
-- [ ] Merge PR #38 (site-verification token typo).
+- [x] Merge PR #38 (site-verification token typo) (merged 2026-10-08).
 
 **Decisions**
 - [ ] House naming and weight on `/home2` (vs CLAUDE.md / DESIGN.md).
 - [ ] Logo: no SVG exists; PNGs in `public/brand/` stand in.
 
 **Tooling (one-time, per machine)**
+- [ ] GitHub: make the CI check "Lint, typecheck, build" required on `main` (Settings → Branches).
 - [ ] Vercel MCP sign-in (`/mcp` in an interactive `claude` session).
 - [ ] Let Claude write to Sanity and merge docs PRs without prompts: auto mode blocked partner creation and a docs merge on 2026-09-25 even after chat approval. Add allow rules in settings, or approve from an interactive session.
 
@@ -135,8 +136,7 @@ None open. (Small red text failing WCAG AA was fixed in the `/speakers` and
 1. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 2. Team section on `/about` once the organizers send names and bios.
 3. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-4. CI: GitHub Actions running lint, typecheck, build on every PR.
-5. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+4. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -547,3 +547,13 @@ both fixed site-wide:
 
 Char-split headlines stay split after the fade, so kerning is slightly looser
 than unsplit text (as before today).
+
+### 2026-10-12 — CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs lint, typecheck and build on
+every PR and on pushes to `main`. Node 24, npm cache, Next build cache. New
+`npm run typecheck` script (`next typegen && tsc --noEmit`; the typegen step
+creates the global `PageProps`/`LayoutProps` types a fresh checkout lacks). The build reads Sanity's public
+API, so CI needs no secrets. Still on the owner: make the check required in
+GitHub (Settings → Branches → `main` → require status check "Lint, typecheck,
+build") so a red PR can't be merged.
