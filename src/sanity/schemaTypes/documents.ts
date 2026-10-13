@@ -393,6 +393,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "statement",
+      // Not shown since 2026-10-12 (owner: the statement wasn't working under the hero); kept so the content survives.
+      hidden: true,
       title: "Theme statement, line by line",
       type: "array",
       of: [{ type: "string" }],

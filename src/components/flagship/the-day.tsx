@@ -10,8 +10,6 @@ import { cn } from "@/lib/utils";
 
 type Reason = FlagshipPageCopy["reasons"][number];
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
 /**
  * From `md` up the reasons zigzag down the page, each photo with one fact
  * opposite it across open space: when and where, who comes, then how the last
@@ -25,13 +23,13 @@ const ROW = [
 
 /** A fact: no surface, a hairline above it, settled to the foot of its row. */
 const Facts = ({ className, children }: { className?: string; children: ReactNode }) => (
-  <div data-tile="type" className={cn("col-span-4 flex flex-col self-end border-t border-rule pt-5", className)}>
+  <div data-tile="type" data-dot-clear className={cn("col-span-4 flex flex-col self-end border-t border-rule pt-5", className)}>
     {children}
   </div>
 );
 
-/** A reason: its photograph, and beneath it the number and the reason in a line. */
-function ReasonTile({ reason, number, className }: { reason: Reason; number: number; className: string }) {
+/** A reason: its photograph, and its title beneath. */
+function ReasonTile({ reason, className }: { reason: Reason; className: string }) {
   const focus = reason.image?.focus ?? { x: 0.5, y: 0.5 };
   return (
     <figure data-tile="photo" className={cn("col-span-4 flex flex-col", className)}>
@@ -50,11 +48,8 @@ function ReasonTile({ reason, number, className }: { reason: Reason; number: num
           </div>
         )}
       </div>
-      <figcaption data-caption className="flex gap-4 pt-4 text-heading font-medium">
-        <span aria-hidden className="text-muted tabular-nums">
-          {pad(number)}
-        </span>
-        <span className="text-balance">{reason.title}</span>
+      <figcaption data-caption data-dot-clear className="pt-4 text-heading font-medium text-balance">
+        {reason.title}
       </figcaption>
     </figure>
   );
@@ -88,7 +83,7 @@ export function TheDay({
   when?: string;
   /** e.g. ["Arrow Street Arts", "Cambridge, MA"]. */
   where: string[];
-  /** How the last edition went, e.g. { headline: "Sold out", line: "Nearly 400 in the room…" }. */
+  /** How the last edition went, e.g. { headline: "Nearly 400", line: "in the room at … It sold out." }. */
   proof?: { headline: string; line?: string };
   action?: { label: string; href: string };
 }) {
@@ -152,7 +147,7 @@ export function TheDay({
 
   return (
     <div ref={ref} className="grid grid-cols-4 gap-x-6 gap-y-12 md:grid-cols-12 md:gap-y-28">
-      {first && <ReasonTile reason={first} number={1} className={ROW[0].photo} />}
+      {first && <ReasonTile reason={first} className={ROW[0].photo} />}
       {when && (
         <Facts className={cn("gap-6", ROW[0].facts)}>
           <p className="text-title font-medium text-balance">{when}</p>
@@ -166,14 +161,14 @@ export function TheDay({
         </Facts>
       )}
 
-      {second && <ReasonTile reason={second} number={2} className={ROW[1].photo} />}
+      {second && <ReasonTile reason={second} className={ROW[1].photo} />}
       {audience && (
         <Facts className={ROW[1].facts}>
           <p className="text-lead text-ink-300">{audience}</p>
         </Facts>
       )}
 
-      {third && <ReasonTile reason={third} number={3} className={ROW[2].photo} />}
+      {third && <ReasonTile reason={third} className={ROW[2].photo} />}
       {(proof || action) && (
         <Facts className={cn("gap-8", ROW[2].facts)}>
           {proof && (
