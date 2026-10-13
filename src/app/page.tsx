@@ -50,10 +50,14 @@ export default async function Home() {
 
   const headline = edition?.theme ?? site.tagline;
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
+  // The edition and its date; the venue is left to the Flagship section below.
   const editionLine = edition
-    ? [`Edition ${pad(edition.number)}`, venueKnown ? edition.venue?.name : edition.venue?.city, edition.year]
-        .filter(Boolean)
-        .join(" · ")
+    ? [
+        `Edition ${pad(edition.number)}`,
+        edition.date
+          ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(edition.date))
+          : edition.year,
+      ].join(" · ")
     : undefined;
   const { lines, coda } = motto(site.missionStatement);
   // The talks picked in Studio, in their order; until some are picked, talks
@@ -80,7 +84,7 @@ export default async function Home() {
     <>
       <JsonLd data={organizationJsonLd(site)} />
       <SiteNav />
-      <DotField />
+      <DotField intro />
 
       <main className="relative">
         {/* Hero: one line across the top, the dot field in the lower right. */}
@@ -101,7 +105,7 @@ export default async function Home() {
               </SquareLink>
             </div>
             {editionLine && (
-              <p data-dot-clear className="text-small text-muted">
+              <p data-dot-clear className="text-heading font-medium">
                 {editionLine}
               </p>
             )}
