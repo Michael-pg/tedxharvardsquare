@@ -12,6 +12,7 @@ import { getArchiveSpeaker, getSiteSettings, getSpeakerArchive } from "@/content
 import { pageMetadata } from "@/lib/metadata";
 import { speakerJsonLd } from "@/lib/structured-data";
 import { youTubeId } from "@/lib/youtube";
+import { YouTubeEmbed } from "@/components/ui/youtube-embed";
 
 /** Every archive speaker is built ahead; one added in Studio later renders on first visit. */
 export async function generateStaticParams() {
@@ -109,16 +110,11 @@ export default async function SpeakerPage({ params }: PageProps<"/speakers/[slug
             ) : null}
 
             {videoId ? (
-              <div className="relative mt-10 aspect-video overflow-hidden bg-ink-900">
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${videoId}`}
-                  title={`${speaker.name} — ${speaker.talk?.title ?? "TEDxHarvardSquare talk"}`}
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  loading="lazy"
-                  className="absolute inset-0 size-full"
-                />
-              </div>
+              <YouTubeEmbed
+                videoId={videoId}
+                title={`${speaker.name}: ${speaker.talk?.title ?? "TEDxHarvardSquare talk"}`}
+                className="mt-10 bg-ink-900"
+              />
             ) : null}
 
             {speaker.bio ? (

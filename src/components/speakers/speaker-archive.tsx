@@ -8,6 +8,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { gsap, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { youTubeId } from "@/lib/youtube";
+import { YouTubeEmbed } from "@/components/ui/youtube-embed";
 import type { SpeakerWithTalk } from "@/content/types";
 import { PrintedPortrait } from "./printed-portrait";
 
@@ -254,17 +255,12 @@ export function SpeakerArchive({ editions }: { editions: ArchiveEdition[] }) {
                 ) : null}
 
                 {videoId ? (
-                  <div className="relative mt-8 aspect-video overflow-hidden bg-ink-950">
-                    <iframe
-                      key={videoId}
-                      src={`https://www.youtube-nocookie.com/embed/${videoId}`}
-                      title={`${open.name} — ${open.talk?.title ?? "TEDxHarvardSquare talk"}`}
-                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      loading="lazy"
-                      className="absolute inset-0 size-full"
-                    />
-                  </div>
+                  <YouTubeEmbed
+                    key={videoId}
+                    videoId={videoId}
+                    title={`${open.name}: ${open.talk?.title ?? "TEDxHarvardSquare talk"}`}
+                    className="mt-8 bg-ink-950"
+                  />
                 ) : null}
 
                 {open.bio ? (

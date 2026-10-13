@@ -25,6 +25,11 @@ type SplitRevealProps = {
  * The element carries `data-animate`, which `globals.css` hides until GSAP
  * takes over — that prevents a flash of unsplit text while fonts load. Under
  * `prefers-reduced-motion` the CSS force-reveals it and no tween is created.
+ *
+ * Screen readers get the text from a visually hidden copy, and the split copy
+ * is `aria-hidden`. SplitText's own `aria: "auto"` puts `aria-label` on the
+ * element instead, which ARIA prohibits on `p`, `span` and other generic
+ * elements, and chars-split text can be read out letter by letter.
  */
 export function SplitReveal({
   children,
@@ -35,13 +40,15 @@ export function SplitReveal({
   onScroll = true,
 }: SplitRevealProps) {
   const container = useRef<HTMLElement>(null);
+  const visual = useRef<HTMLSpanElement>(null);
   const pristineMarkup = useRef<string | null>(null);
   const reducedMotion = useReducedMotion();
 
   useGSAP(
     () => {
       const element = container.current;
-      if (!element) return;
+      const target = visual.current;
+      if (!element || !target) return;
 
       // SplitText rewrites this element's DOM out from under React. If a stale
       // split is still in place when we split again — React StrictMode's double
@@ -49,18 +56,18 @@ export function SplitReveal({
       // nests inside the old one and every glyph is duplicated. Restoring the
       // pristine markup first makes splitting idempotent.
       if (pristineMarkup.current === null) {
-        pristineMarkup.current = element.innerHTML;
+        pristineMarkup.current = target.innerHTML;
       } else {
-        element.innerHTML = pristineMarkup.current;
+        target.innerHTML = pristineMarkup.current;
       }
 
       gsap.set(element, { autoAlpha: 1 });
       if (reducedMotion) return;
 
-      const split = SplitText.create(element, {
+      const split = SplitText.create(target, {
         type: by,
         autoSplit: true,
-        aria: "auto",
+        aria: "none",
         // Splitting to chars turns every glyph into its own box, so the browser
         // will happily break "Meet" across two lines. `smartWrap` keeps words
         // intact by wrapping them in nowrap spans. Only meaningful for chars.
@@ -83,7 +90,7 @@ export function SplitReveal({
       return () => {
         split.revert();
         if (pristineMarkup.current !== null) {
-          element.innerHTML = pristineMarkup.current;
+          target.innerHTML = pristineMarkup.current;
         }
       };
     },
@@ -95,7 +102,10 @@ export function SplitReveal({
 
   return (
     <Component ref={container} className={className} data-animate>
-      {children}
+      <span ref={visual} aria-hidden="true" className="block">
+        {children}
+      </span>
+      <span className="sr-only">{children}</span>
     </Component>
   );
 }

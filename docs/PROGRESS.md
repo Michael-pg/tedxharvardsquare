@@ -136,7 +136,7 @@ None open. (Small red text failing WCAG AA was fixed in the `/speakers` and
 1. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 2. Team section on `/about` once the organizers send names and bios.
 3. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-4. Performance and accessibility pass (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+4. Performance and accessibility pass (round 1 done 2026-10-12; dot field cost next) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -557,3 +557,24 @@ creates the global `PageProps`/`LayoutProps` types a fresh checkout lacks). The 
 API, so CI needs no secrets. Still on the owner: make the check required in
 GitHub (Settings → Branches → `main` → require status check "Lint, typecheck,
 build") so a red PR can't be merged.
+
+### 2026-10-12 — performance and accessibility pass, round 1
+
+Lighthouse (mobile) on the live site before: home 92, Flagship 80, House 97,
+Speakers 92, a speaker page 58, FAQ 98, About 97, Sponsor 97, Privacy 100.
+Accessibility 96–100; SEO 100 everywhere.
+
+Fixed:
+- **YouTube talks load on click** (`src/components/ui/youtube-embed.tsx`): a
+  thumbnail and a square play button; the player iframe arrives on press and
+  autoplays. The eager iframe was most of the speaker page's cost (58 → 96).
+- **`SplitReveal` accessibility**: SplitText's `aria: "auto"` put `aria-label`
+  on `p`/`span`, which ARIA prohibits (Lighthouse a11y 96). The split copy is
+  now `aria-hidden` with a visually hidden copy for screen readers; also stops
+  char-split headings being read letter by letter. A11y 100 on audited pages.
+
+Found, not yet fixed: **the dot field is the Flagship's main-thread cost.**
+It redraws the full screen every frame forever. With it off, Flagship goes
+82 → 92 and blocking time 500 → 90 ms (local build). Home pays the same,
+less. Fix (pause when nothing moves, or a lower frame rate on phones) waits
+for PR #57, which is editing `dot-field.tsx`.
