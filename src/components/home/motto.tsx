@@ -25,7 +25,16 @@ const Words = ({ text }: { text: string }) =>
  *
  * Without JS, or under reduced motion, every word is simply there.
  */
-export function Motto({ lines, coda }: { lines: string[]; coda?: string }) {
+export function Motto({
+  lines,
+  coda,
+  size = "text-statement",
+}: {
+  lines: string[];
+  coda?: string;
+  /** The statement's type size: the ramp token, as a class. */
+  size?: "text-statement" | "text-display";
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -49,7 +58,7 @@ export function Motto({ lines, coda }: { lines: string[]; coda?: string }) {
 
   return (
     <div ref={ref}>
-      <p data-dot-clear data-statement className="text-statement font-medium">
+      <p data-dot-clear data-statement className={`${size} font-medium`}>
         {lines.map((line, i) => (
           <span key={i} className="block">
             <Words text={line} />

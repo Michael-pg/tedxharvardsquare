@@ -10,6 +10,7 @@ import { SpeakerNames } from "@/components/flagship/speaker-names";
 import { TopicMarquee } from "@/components/flagship/topic-marquee";
 import { Venue } from "@/components/flagship/venue";
 import { TheDay } from "@/components/flagship/the-day";
+import { Motto } from "@/components/home/motto";
 import { SquareLink } from "@/components/ui/square-link";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -133,12 +134,21 @@ export default async function FlagshipPage() {
           action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
         />
 
-        {/* The day: statement, reasons and facts in one grid. The dot field
+        {/* The theme statement, on its own in the dot field, set smaller than
+            the hero and to the right of it so the two never stack. */}
+        {copy && copy.statement.length > 0 && (
+          <section aria-label="The theme" className="grid grid-cols-4 px-6 py-32 md:grid-cols-12 md:py-48">
+            <div className="col-span-4 md:col-span-7 md:col-start-6">
+              <Motto lines={copy.statement} size="text-display" />
+            </div>
+          </section>
+        )}
+
+        {/* The day: the reasons as photos, each with a fact. The dot field
             stops here, and comes back for the close. */}
-        {copy && (copy.statement.length > 0 || copy.reasons.length > 0) && (
-          <section data-dot-stop aria-label="The day" className="relative bg-background px-6 py-20 md:py-32">
+        {copy && copy.reasons.length > 0 && (
+          <section data-dot-stop aria-label="The day" className="relative bg-background px-6 pt-8 pb-20 md:pb-32">
             <TheDay
-              statement={copy.statement}
               reasons={copy.reasons}
               audience={copy.audience}
               when={date ? longDate.format(date) : copy.month}

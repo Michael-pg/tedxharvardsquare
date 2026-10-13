@@ -236,11 +236,6 @@ body {
 }
 
 /* Feathers an element's four edges to nothing, so a photo has no frame. */
-/* Row height of the Flagship bento ("The day"): tiles span whole rows. */
-@utility auto-rows-bento {
-  grid-auto-rows: clamp(8rem, 11vw, 12rem);
-}
-
 @utility mask-feather {
   mask-image:
     linear-gradient(to right, transparent, #000 18%, #000 85%, transparent),
