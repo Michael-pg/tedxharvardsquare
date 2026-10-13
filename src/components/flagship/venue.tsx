@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
 import { SquareLink } from "@/components/ui/square-link";
 import { VenueBackdrop } from "./venue-backdrop";
@@ -6,21 +7,25 @@ import type { Image as ImageContent, Venue as VenueContent } from "@/content";
 /**
  * The venue, full bleed, with the date and venue name set huge over it: the
  * second time the date appears, and the big one. The photo arrives as a
- * scattered red print and develops into colour (see `VenueBackdrop`). The address,
- * how to get there and a Maps link sit opposite. Without a photo it is the
- * same type on black.
+ * red print and develops into colour (see `VenueBackdrop`). Opposite: the
+ * address, how to get there and a Maps link, then the ticket ask, since this
+ * is where someone decides to come. Without a photo it is the same type on
+ * black.
  */
 export function Venue({
   venue,
   image,
   day,
   notes,
+  ask,
 }: {
   venue: VenueContent;
   image?: ImageContent;
   /** The date without the year, e.g. "February 20". */
   day?: string;
   notes: string[];
+  /** Tickets: set under the address, after a hairline. */
+  ask?: ReactNode;
 }) {
   const address = [venue.addressLine, `${venue.city}, ${venue.state}`].filter(Boolean).join(", ");
   const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${address}`)}`;
@@ -34,7 +39,7 @@ export function Venue({
         <>
           <VenueBackdrop image={image} />
           {/* Darkens the lower edge so the type reads; the room stays bright above. */}
-          <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-ink-950/90 via-ink-950/40 to-transparent" />
         </>
       )}
 
@@ -57,6 +62,7 @@ export function Venue({
           <SquareLink href={maps} variant="secondary">
             Open in Maps
           </SquareLink>
+          {ask && <div className="mt-4 flex w-full flex-col items-start gap-6 border-t border-ink-500 pt-8">{ask}</div>}
         </Reveal>
       </div>
     </section>
