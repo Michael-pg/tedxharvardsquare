@@ -128,7 +128,7 @@ export default async function FlagshipPage() {
           when={date ? longDate.format(date) : copy?.month}
           venue={venueKnown ? edition?.venue?.name : undefined}
           city={edition?.venue ? `${edition.venue.city}, ${edition.venue.state}` : copy?.place}
-          edition={edition ? `Edition ${edition.number}` : undefined}
+          edition={edition?.number}
           action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
         />
 
