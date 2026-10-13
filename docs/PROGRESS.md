@@ -76,6 +76,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-09 | **Dot field stays scarce** (owner: tasteful, not everywhere). `/speakers` uses it only in the opening, stopping above the archive; `/faq` has none. |
 | 2026-10-09 | **`/flagship` rebuilt in six beats** (after Digital Design Days Milano): poster hero, theme, colour photo collage, speakers as large names, venue full bleed, topics marquee, tickets. Photos on this page are in colour. Why attend / audience / program / close dropped; their Studio fields are hidden, not deleted. |
 | 2026-10-09 | **Split text fades up, never masked** (owner). `SplitReveal` has no mask: sliding up through one cut off ascenders and descenders until the text landed. The `js` class is set by an inline script in `<head>`, not `next/script`, so animated text never flashes before hiding. |
+| 2026-10-12 | **Motion over scores** (owner): keep the animation and the look; a little load time is fine. Performance work must look identical, keep scrolling smooth and never crash. Don't cut frame rates or simplify motion to hit Lighthouse ≥ 90. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -104,6 +105,9 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 **Analytics**
 - [ ] Ask Nana to add you to the GA4 property (Admin → Property access management).
 - [ ] Legal reviewer to see the new analytics wording on `/privacy` (Oct 8).
+
+**Vercel**
+- [ ] Turn on Speed Insights: Vercel → project `tedxharvardsquare` → Speed Insights → Enable. The code is in (PR "Speed Insights"); it reports nothing until enabled. Hobby includes a limited monthly allowance of data points.
 
 **Domain cutover follow-up**
 - [ ] **Search Console:** submit `https://www.tedxharvardsquare.org/sitemap.xml`.
@@ -136,7 +140,7 @@ None open. (Small red text failing WCAG AA was fixed in the `/speakers` and
 1. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 2. Team section on `/about` once the organizers send names and bios.
 3. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-4. Performance and accessibility pass (round 1 done 2026-10-12; dot field cost next) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+4. Performance and accessibility pass (round 1 and dot field done 2026-10-12; Speed Insights added; still open: a manual WCAG 2.2 AA keyboard/focus check) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -578,3 +582,32 @@ It redraws the full screen every frame forever. With it off, Flagship goes
 82 → 92 and blocking time 500 → 90 ms (local build). Home pays the same,
 less. Fix (pause when nothing moves, or a lower frame rate on phones) waits
 for PR #57, which is editing `dot-field.tsx`.
+
+### 2026-10-12 — dot field: same look, a fraction of the work
+
+Measured per frame in headless Chrome: the cost was not the trig but every
+dot testing every text pocket (`data-dot-clear`; 43 line boxes on Flagship),
+about 150,000 distance checks a frame. Each row now only tests the pockets
+that reach it, and each dot skips a pocket it is clear of on either axis; a
+pocket that far away multiplies by exactly 1, so nothing drawn changes. Also
+cached per viewport size: the per-cell seeds and wave sines (rotated by the
+frame's time with angle-sum identities), and the edge harmonics come from
+complex multiplication instead of `atan2` + `sin`. Checked numerically against
+the old formulas (agree to ~1e-14; the skip never drops a pocket that mattered).
+
+| Per frame | Before | After |
+| --- | --- | --- |
+| Phone, 4× CPU slowdown | 45 ms (≈20 fps) | 2.3 ms (60 fps) |
+| Desktop | 10.7 ms | 1.5 ms |
+
+Lighthouse mobile, local build: Flagship 82 → 92–93 (blocking 500 → 90 ms),
+home 94–97 (70 ms).
+
+### 2026-10-12 — Vercel Speed Insights
+
+`@vercel/speed-insights` added next to GA4 in `src/components/site/analytics.tsx`,
+with the same rules: live domain only, never `/studio`. It reports real
+visitors' Core Web Vitals to the Vercel dashboard and sets no cookies. Needs
+enabling once in the Vercel dashboard (owner to-do). `/privacy` already names
+Vercel as the site host; whether it should mention performance measurement
+too is for the legal reviewer.

@@ -34,6 +34,63 @@ const hash = (i: number, j: number, k: number) => {
   const s = Math.sin(i * 127.1 + j * 311.7 + k * 74.7) * 43758.5453;
   return s - Math.floor(s);
 };
+/** The per-cell `hash` seeds the draw loop reads. */
+const SEEDS = [1, 2, 3, 5, 6, 7, 8, 9, 11] as const;
+/**
+ * Everything about a cell that never changes between frames, worked out once
+ * per viewport size: its random seeds, and the sines and cosines of its
+ * position in the waves that ripple the field. Each frame then rotates those
+ * by the frame's time with the angle-sum identities, so the field draws
+ * exactly the same dots with a fraction of the trig.
+ */
+type Grid = {
+  cols: number;
+  rows: number;
+  seed: Record<(typeof SEEDS)[number], Float64Array>;
+  /** gx·0.004 + gy·0.003: the slow wave along the edge. */
+  edgeSin: Float64Array;
+  edgeCos: Float64Array;
+  /** gx·0.018 + gy·0.011 and gy·0.024: the two waves of the texture. */
+  texSin: Float64Array;
+  texCos: Float64Array;
+  rowSin: Float64Array;
+  rowCos: Float64Array;
+};
+function buildGrid(width: number, height: number): Grid {
+  const cols = Math.ceil(width / CELL) + 1;
+  const rows = Math.ceil(height / CELL) + 1;
+  const cells = cols * rows;
+  const seed = Object.fromEntries(SEEDS.map((k) => [k, new Float64Array(cells)])) as Grid["seed"];
+  const grid: Grid = {
+    cols,
+    rows,
+    seed,
+    edgeSin: new Float64Array(cells),
+    edgeCos: new Float64Array(cells),
+    texSin: new Float64Array(cells),
+    texCos: new Float64Array(cells),
+    rowSin: new Float64Array(rows),
+    rowCos: new Float64Array(rows),
+  };
+  for (let row = 0; row < rows; row++) {
+    const gy = row * CELL;
+    grid.rowSin[row] = Math.sin(gy * 0.024);
+    grid.rowCos[row] = Math.cos(gy * 0.024);
+    for (let col = 0; col < cols; col++) {
+      const i = row * cols + col;
+      const gx = col * CELL + (row % 2 ? CELL / 2 : 0);
+      for (const k of SEEDS) seed[k][i] = hash(col, row, k);
+      grid.edgeSin[i] = Math.sin(gx * 0.004 + gy * 0.003);
+      grid.edgeCos[i] = Math.cos(gx * 0.004 + gy * 0.003);
+      grid.texSin[i] = Math.sin(gx * 0.018 + gy * 0.011);
+      grid.texCos[i] = Math.cos(gx * 0.018 + gy * 0.011);
+    }
+  }
+  return grid;
+}
+/** How far the three ripples in `d` can move it, at most. */
+const RIPPLE = 0.07 + 0.045 + 0.05;
+
 const redBucket = (v: number) => (v > 0.97 ? RED.length - 1 : Math.min(RED.length - 2, Math.floor(v * (RED.length - 1))));
 
 type Glyph = { el: HTMLElement; width: number; height: number; alpha: Uint8ClampedArray };
@@ -119,9 +176,12 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
     let time = Math.random() * 100;
     let clears: Element[] = [];
     let glyphs: Glyph[] = [];
+    let grid = buildGrid(0, 0);
     const trail = createPointerTrail();
     // One range, re-pointed at each clearing element every frame.
     const range = document.createRange();
+    // The clearing pockets that reach the row being drawn; reused every row.
+    const rowPockets: number[][] = [];
     const red = createDotBatch(RED);
     const grey = createDotBatch(GREY);
     // 0 → 1 over the intro; 1 is the settled field.
@@ -134,6 +194,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      grid = buildGrid(width, height);
     };
     const collect = () => {
       clears = Array.from(document.querySelectorAll("[data-dot-clear]"));
@@ -198,13 +259,36 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
         })
         .filter((g) => g.strength > 0 && g.top < height && g.top + g.height > 0);
 
-      const cols = Math.ceil(width / CELL) + 1;
-      const rows = Math.ceil(height / CELL) + 1;
+      const { cols, rows, seed, edgeSin, edgeCos, texSin, texCos, rowSin, rowCos } = grid;
+      const [h1, h2, h3, h5, h6, h7, h8, h9, h11] = SEEDS.map((k) => seed[k]);
+      // The time half of every wave, once per frame.
+      const sinA = Math.sin(t * 0.25);
+      const cosA = Math.cos(t * 0.25);
+      const sinB = Math.sin(t * 0.4);
+      const cosB = Math.cos(t * 0.4);
+      const sinE = Math.sin(t * 0.2);
+      const cosE = Math.cos(t * 0.2);
+      const sinT = Math.sin(t * 0.9);
+      const cosT = Math.cos(t * 0.9);
+      const sinR = Math.sin(t * 0.6);
+      const cosR = Math.cos(t * 0.6);
+      // Past this distance no ripple can bring a dot back into the field.
+      const reachLimit = (1.45 + RIPPLE) * radius;
+      // A pocket only touches dots within 1.3 feathers of its box (the feather
+      // plus the texture's ±0.3 wobble); everywhere else it multiplies by
+      // exactly 1. So each row only tests the pockets that reach it, and each
+      // dot skips a pocket it is clear of on either axis.
       for (let row = 0; row < rows; row++) {
+        const gy = row * CELL;
+        rowPockets.length = 0;
+        for (const rect of rects) {
+          const pad = rect[4] * 1.3;
+          if (gy >= rect[1] - pad && gy <= rect[3] + pad) rowPockets.push(rect);
+        }
         for (let col = 0; col < cols; col++) {
+          const i = row * cols + col;
           // Alternate rows sit half a cell over — the classic halftone screen.
           const gx = col * CELL + (row % 2 ? CELL / 2 : 0);
-          const gy = row * CELL;
           const footerFade = smoothstep(stopTop, stopTop - height * 0.4, gy);
           if (footerFade <= 0) continue;
 
@@ -216,7 +300,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
             if (lx < 0 || ly < 0 || lx >= g.width || ly >= g.height) continue;
             if (g.alpha[ly * g.width + lx] > 128) {
               inGlyph = true;
-              if (hash(col, row, 11) < g.strength) {
+              if (h11[i] < g.strength) {
                 const v = 0.9 * footerFade;
                 red.add(redBucket(v), gx, gy, CELL * 0.44 * Math.pow(v, 0.85));
               }
@@ -227,14 +311,32 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
 
           const dx = (gx - cx) / stretch;
           const dy = gy - cy;
-          const angle = Math.atan2(dy, dx);
+          const r = Math.hypot(dx, dy);
+          if (r > reachLimit) continue;
+          // The cell's direction from the centre as a unit vector, and its
+          // 3rd and 7th harmonics by complex multiplication: what
+          // sin(angle · 3 + …) and sin(angle · 7 − …) need, without atan2.
+          const c1 = r ? dx / r : 1;
+          const s1 = r ? dy / r : 0;
+          const c2 = c1 * c1 - s1 * s1;
+          const s2 = 2 * c1 * s1;
+          const c3 = c2 * c1 - s2 * s1;
+          const s3 = s2 * c1 + c2 * s1;
+          const c4 = c2 * c2 - s2 * s2;
+          const s4 = 2 * c2 * s2;
+          const c7 = c4 * c3 - s4 * s3;
+          const s7 = s4 * c3 + c4 * s3;
           // A soft, uneven edge that breathes: never a circle, never a line.
+          //   0.07  · sin(angle · 3 + t · 0.25)
+          //   0.045 · sin(angle · 7 − t · 0.4)
+          //   0.05  · sin(gx · 0.004 + gy · 0.003 + t · 0.2)
           const d =
-            Math.hypot(dx, dy) / radius +
-            0.07 * Math.sin(angle * 3 + t * 0.25) +
-            0.045 * Math.sin(angle * 7 - t * 0.4) +
-            0.05 * Math.sin(gx * 0.004 + gy * 0.003 + t * 0.2);
-          const texture = Math.sin(gx * 0.018 + gy * 0.011 + t * 0.9) * Math.sin(gy * 0.024 - t * 0.6);
+            r / radius +
+            0.07 * (s3 * cosA + c3 * sinA) +
+            0.045 * (s7 * cosB - c7 * sinB) +
+            0.05 * (edgeSin[i] * cosE + edgeCos[i] * sinE);
+          // sin(gx · 0.018 + gy · 0.011 + t · 0.9) · sin(gy · 0.024 − t · 0.6)
+          const texture = (texSin[i] * cosT + texCos[i] * sinT) * (rowSin[row] * cosR - rowCos[row] * sinR);
           // Dots shrink well past where they used to stop, so the mass thins
           // out into the black instead of ending at a rim.
           const body = Math.pow(smoothstep(1.32, 0.32, d), 1.25) * (0.8 + 0.2 * texture);
@@ -247,11 +349,11 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           let sx = 0;
           let sy = 0;
           if (gather.progress < 1) {
-            const start = Math.min(1, d / 1.3) * 0.5 + hash(col, row, 5) * 0.2;
+            const start = Math.min(1, d / 1.3) * 0.5 + h5[i] * 0.2;
             arrive = smoothstep(start, start + 0.3, gather.progress);
             if (arrive <= 0) continue;
             const scatter = (1 - arrive) * (1 - arrive) * CELL * 14;
-            const heading = hash(col, row, 6) * Math.PI * 2;
+            const heading = h6[i] * Math.PI * 2;
             sx = Math.cos(heading) * scatter;
             sy = Math.sin(heading) * scatter;
           }
@@ -266,11 +368,12 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
             clear *= 1 - g.strength * smoothstep(80, 0, q);
           }
           if (clear < 0.02) continue;
-          if (rects.length) {
+          if (rowPockets.length) {
             // Feathered and a little uneven, so a text pocket never reads as a
             // box. Wide pockets stay smooth: the texture is fixed to the screen,
             // so on a pocket that large it slid along the edge while scrolling.
-            for (const [l, top, r, b, feather, shown] of rects) {
+            for (const [l, top, r, b, feather, shown] of rowPockets) {
+              if (gx < l - feather * 1.3 || gx > r + feather * 1.3) continue;
               const q = Math.hypot(Math.max(l - gx, 0, gx - r), Math.max(top - gy, 0, gy - b));
               const wobble = feather === WIDE_FEATHER ? 0 : texture * feather * 0.3;
               clear *= 1 - shown * (1 - smoothstep(2, feather, q + wobble));
@@ -284,24 +387,24 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
 
           // Dithered: each dot has its own threshold, so red gives way to
           // loose grey a dot at a time rather than along a line.
-          if (order > 0.15 + 0.7 * hash(col, row, 3)) {
+          if (order > 0.15 + 0.7 * h3[i]) {
             const v = Math.min(1, Math.max(body, held * 0.35)) * clear;
             if (v < 0.04) continue;
             const k = Math.min(1, order * 1.4);
-            const x = gx + sx + (hash(col, row, 1) - 0.5) * CELL * (1 - k);
-            const y = gy + sy + (hash(col, row, 2) - 0.5) * CELL * (1 - k);
+            const x = gx + sx + (h1[i] - 0.5) * CELL * (1 - k);
+            const y = gy + sy + (h2[i] - 0.5) * CELL * (1 - k);
             red.add(redBucket(v * 0.92), x, y, CELL * 0.46 * Math.pow(v, 0.85) * arrive);
           } else {
             // The fraying edge: dots come loose and drift outward, fading.
             const loose = 1 - order;
-            if (hash(col, row, 7) > 0.42 - loose * 0.2) continue;
-            const cycle = (t * (0.05 + hash(col, row, 8) * 0.07) + hash(col, row, 9)) % 1;
+            if (h7[i] > 0.42 - loose * 0.2) continue;
+            const cycle = (t * (0.05 + h8[i] * 0.07) + h9[i]) % 1;
             const push = cycle * CELL * 7 * loose;
-            const ux = Math.cos(angle) * stretch;
-            const uy = Math.sin(angle);
+            const ux = c1 * stretch;
+            const uy = s1;
             const n = Math.hypot(ux, uy) || 1;
-            const x = gx + sx + (ux / n) * push + (hash(col, row, 1) - 0.5) * CELL * 2.4 * loose;
-            const y = gy + sy + (uy / n) * push + (hash(col, row, 2) - 0.5) * CELL * 2.4 * loose;
+            const x = gx + sx + (ux / n) * push + (h1[i] - 0.5) * CELL * 2.4 * loose;
+            const y = gy + sy + (uy / n) * push + (h2[i] - 0.5) * CELL * 2.4 * loose;
             const v = Math.max(body, dust * 0.35) * (1 - cycle * 0.8) * clear * arrive;
             if (v < 0.05) continue;
             grey.add(Math.min(GREY.length - 1, Math.floor(v * GREY.length)), x, y, CELL * (0.1 + 0.25 * v));
