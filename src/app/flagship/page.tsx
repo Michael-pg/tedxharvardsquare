@@ -94,7 +94,7 @@ export default async function FlagshipPage() {
       <SiteNav />
       <DotField strength={0.8} />
 
-      <main className="relative">
+      <main id="main" className="relative">
         <FlagshipHero
           theme={edition?.theme ?? "Flagship"}
           pitch={edition?.themeStatement}

@@ -87,7 +87,7 @@ export default async function Home() {
       <SiteNav />
       <DotField intro />
 
-      <main className="relative">
+      <main id="main" className="relative">
         {/* Hero: one line across the top, the dot field in the lower right.
             The first visit of a session opens with the loader. */}
         <HomeIntro className="flex min-h-svh flex-col px-6 pt-24 pb-7 md:pt-28">

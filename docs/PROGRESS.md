@@ -112,6 +112,10 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 **Vercel**
 - [ ] Turn on Speed Insights: Vercel → project `tedxharvardsquare` → Speed Insights → Enable. The code is in (PR "Speed Insights"); it reports nothing until enabled. Hobby includes a limited monthly allowance of data points.
 
+**Accessibility (needs a person, not a script)**
+- [ ] Talk videos: check each YouTube video has accurate captions (WCAG 1.2.2). Auto-captions need correcting, especially names.
+- [ ] One pass with a real screen reader (VoiceOver on iPhone and Mac): menu, speakers dialog, FAQ.
+
 **Domain cutover follow-up**
 - [ ] **Search Console:** submit `https://www.tedxharvardsquare.org/sitemap.xml`.
 - [ ] **Oct 13:** delete the `_webflow` TXT record in Squarespace and cancel Webflow hosting (renews Oct 14). Until then, rollback = put back `A @ 198.202.211.1` and `CNAME www cdn.webflow.com`.
@@ -143,7 +147,7 @@ None open. (Small red text failing WCAG AA was fixed in the `/speakers` and
 1. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 2. Team section on `/about` once the organizers send names and bios.
 3. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-4. Performance and accessibility pass (round 1 and dot field done 2026-10-12; Speed Insights added; still open: a manual WCAG 2.2 AA keyboard/focus check) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+4. Performance and accessibility pass (round 1 and dot field done 2026-10-12; Speed Insights added; keyboard/focus audit done) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -645,3 +649,28 @@ Not yet seen at full speed on a real phone (the preview pane throttles
 animation; checked by stepping the timelines). Privacy: the loader's
 `tedx:last-seen` is a first-party timestamp in `localStorage`, no cookie;
 whether `/privacy` should mention it is for the legal reviewer.
+
+### 2026-10-12 — accessibility audit: keyboard, focus, WCAG 2.2 AA
+
+Ran on the live site, every page, at 390px and 1440px:
+- **axe-core** (WCAG 2.0/2.1/2.2 A+AA and best practice): **no violations**.
+- **Contrast over canvases** (text axe can't judge because it sits on the dot
+  field, footer glow or photos): measured from pixels and looked at each flag.
+  Passes; the flags were mid-animation captures. Footer glow fades out behind
+  the links; the "Watch" pill has its own backing.
+- **Keyboard:** every stop on every page shows the red focus ring; none is
+  hidden behind the fixed header. Menu and speakers dialog move focus in, keep
+  Tab inside (page behind is inert), close on Escape and return focus to the
+  trigger; ← → step speakers. FAQ toggles on Enter and Space with
+  `aria-expanded`/`aria-controls`. `lang="en"`.
+- **Reflow at 320px:** no horizontal scroll, after the fix below.
+
+Fixed: a **"Skip to content"** link (first Tab stop, square white button,
+appears only on focus; every `<main>` is now `id="main"`); "Back to top" and
+"All speakers" raised to the 24px minimum target (2.5.8); the sponsor ask
+heading broke out of a 320px screen ("TEDxHarvardSquare" is one long word at
+display size), now wraps there.
+
+Noted, not changed: during the home loader the header is hidden, so the first
+Tab lands in the hero until the intro ends (loader work is in progress
+elsewhere). Captions and a real screen-reader pass are on the owner list.

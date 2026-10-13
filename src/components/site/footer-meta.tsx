@@ -39,7 +39,7 @@ export function BackToTop() {
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" })}
-      className="group inline-flex items-center gap-2 text-small text-ink-300 transition-colors duration-fast hover:text-foreground"
+      className="group inline-flex min-h-6 items-center gap-2 text-small text-ink-300 transition-colors duration-fast hover:text-foreground"
     >
       Back to top
       <ArrowUp
