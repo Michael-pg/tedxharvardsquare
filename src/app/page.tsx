@@ -129,9 +129,12 @@ export default async function Home() {
             then the theme's statement as the through-line. The photo sits left
             on desktop, breaking the run of left-aligned text. The dot field runs
             on through the section into the past talks, keeping pockets of
-            black around the copy and the photo only, so there is no seam. */}
+            black around the copy and the photo only, so there is no seam, and
+            runs faint here so the photo stays the loudest thing. */}
         {edition && (
-          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+          <section
+            data-dot-dim="0.25"
+            className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
             <div
               data-dot-clear
               className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
