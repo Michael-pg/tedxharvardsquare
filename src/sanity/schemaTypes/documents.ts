@@ -373,7 +373,7 @@ export const edition = defineType({
       type: "accessibleImage",
       group: "page",
       description:
-        "Not shown on the page. Search engines use it as the event's image. Landscape. Until set, the first collage photo is used.",
+        "Not shown on the page. Search engines use it as the event's image. Landscape. Until set, the home page's Flagship photo is used.",
     }),
     defineField({
       name: "statement",
@@ -393,6 +393,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "questions",
+      // Not shown since the Flagship page was tightened (2026-10-12); kept so the content survives.
+      hidden: true,
       type: "array",
       of: [{ type: "string" }],
       group: "page",
@@ -401,12 +403,11 @@ export const edition = defineType({
     }),
     defineField({
       name: "reasons",
-      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
-      hidden: true,
-      title: "Why attend",
+      title: "Why come",
       type: "array",
       group: "page",
-      description: "The reasons to come, each with a photo, on a light section. Three reads best.",
+      description:
+        "The case for coming, straight after the theme statement: each reason a photo with a title and a line beneath, side by side. Three reads best. Photos are cropped to 4:3.",
       of: [
         defineArrayMember({
           type: "object",
@@ -510,6 +511,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "photos",
+      // Not shown since the collage gave way to Why come (2026-10-12); kept so the content survives.
+      hidden: true,
       title: "Photos",
       type: "array",
       of: [defineArrayMember({ type: "accessibleImage" })],

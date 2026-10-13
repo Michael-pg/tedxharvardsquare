@@ -81,13 +81,13 @@ ramp. Photography and the 3D scene are the only other sources of colour.
 - **One red moment per viewport.** If two things are red, neither is.
 - Hover/focus colour changes must also meet contrast; the focus ring is the
   2px `brand` outline from `globals.css` (non-text, 3:1 is sufficient).
-- **Paper sections.** Deep pages (Flagship first) alternate black with light
-  paper sections (`Section tone="paper"` in `components/flagship/section.tsx`:
-  `bg-ink-50 text-ink-950`, `data-nav-theme="light"`). Use paper for calm,
-  practical blocks (why attend, what's included, venue); keep black for the
-  theme and the big moments. On paper, secondary text is `ink-600` (`muted`
-  fails on light), rules are `ink-200`, and buttons use `SquareLink tone="light"`.
-  The red-text rule is the same on paper.
+- **Black by default; paper is rare.** Pages stay on black (owner, 2026-10-12:
+  white sections broke the feel of `/flagship`, which is now all black). The
+  one paper section left is on `/sponsor` (`Section tone="paper"` in
+  `components/flagship/section.tsx`: `bg-ink-50 text-ink-950`,
+  `data-nav-theme="light"`). Don't add new ones without asking. On paper,
+  secondary text is `ink-600` (`muted` fails on light), rules are `ink-200`,
+  and buttons use `SquareLink tone="light"`. The red-text rule is the same.
 - No other hues, no gradients in UI. Tints come only from opacity on the ink
   ramp (`bg-white/8` glass, `backdrop:bg-ink-950/85`).
 
