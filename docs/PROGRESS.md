@@ -78,7 +78,8 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-09 | **Split text fades up, never masked** (owner). `SplitReveal` has no mask: sliding up through one cut off ascenders and descenders until the text landed. The `js` class is set by an inline script in `<head>`, not `next/script`, so animated text never flashes before hiding. |
 | 2026-10-12 | **Home hero edition line is the edition and the date** ("Edition 03 · Feb 20, 2027"), at `text-heading`; no venue (owner). The Flagship section below carries the venue. |
 | 2026-10-12 | **Home loader** (owner): black, a hairline and 000→100 counter while the dots gather (3.4s), then the headline word by word, the rest of the hero, the nav. Plays in full on landing after **30+ minutes** away from the site; a reload or a return while browsing shows the page settled. Never a shortened version. Timing in `src/lib/intro.ts`. |
-| 2026-10-12 | **`/flagship` hero leads with "Flagship"** (owner): huge, white, with the theme beneath at `text-statement`. The home hero already leads with the theme, so the two pages must not echo each other. "Edition 03" heads the date and venue block top left; the bottom "TEDxHarvardSquare · Edition N" line is gone. |
+| 2026-10-12 | **`/flagship` hero leads with "Flagship"** (owner): huge, white, with the theme beneath at `text-statement`. The home hero already leads with the theme, so the two pages must not echo each other. Top left is only the date and venue, quiet (`text-lead`); no edition number in the hero. The theme statement sits bottom right, opposite the button. |
+| 2026-10-12 | **Home hero buttons: Subscribe, then Explore Flagship** (→ `/flagship`), replacing "Past talks" (owner). |
 | 2026-10-12 | **Home Flagship photo develops like the speaker portraits** (owner): red halftone print → black-and-white photo on scroll; afterwards the pointer brushes the print back along a small trail. No red plate. The section is no longer a pocket in the dot field; the field runs through into the past talks, with pockets around the copy and photo only, at 25% strength (`data-dot-dim`, owner: too loud at full), easing back to full over a third of a screen. |
 | 2026-10-12 | **Motion over scores** (owner): keep the animation and the look; a little load time is fine. Performance work must look identical, keep scrolling smooth and never crash. Don't cut frame rates or simplify motion to hit Lighthouse ≥ 90. |
 | 2026-10-12 | **Flagship "Over the years"** (owner): past editions as a row of drawers on `/flagship` (`#editions`), not a page, not in the menu. The Oct 2024 TEDxLive is left out. No attendance figures until there's a real count. Plan: `docs/FLAGSHIP-PLAN.md`. |
@@ -701,3 +702,11 @@ huge line, but that copied the home hero, so the owner asked for "Flagship" to
 lead. "Edition 03" now opens the top-left details. Checked at 375 and 1440px:
 no overflow, and the hero fits the viewport. Sanity (published): Edition 1
 venue is The Engine, 750 Main St.
+
+### 2026-10-12 — Flagship hero details, home hero buttons
+
+`/flagship` hero: the top row is now just the date and the venue at
+`text-lead`; "Edition 03" is gone from the hero. The theme statement moved to
+the bottom right, opposite "Get early access" (above it on phones). Home hero:
+the second button is "Explore Flagship". Checked at the pane width and
+1280px: no overflow, and the hero fits the viewport.
