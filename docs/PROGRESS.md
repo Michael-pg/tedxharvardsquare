@@ -70,12 +70,15 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-08 | **Domain switched from Webflow to Vercel**, `www` primary. Webflow's "Apply to speak" (Tally) and "Join our community" (Linktree) buttons dropped. Webflow `/schedule` unpublished; ours redirects to `/flagship`. Legal review of `/privacy` and `/terms` signed off. Stay on Vercel Hobby until tickets. |
 | 2026-10-09 | **Edition 3 date: February 20, 2027** (owner). Set in Studio. |
 | 2026-10-09 | **Dot canvases never allocate per frame.** Draw through `createDotBatch` (`src/lib/dot-batch.ts`), never a fresh `Path2D`: per-frame `Path2D`s grew a Chrome tab to 9 GB and crashed it. Always-running fields redraw at most ~60 fps (`MIN_FRAME_MS`). |
-| 2026-10-09 | **Flagship photo plate is quiet:** oval fade, no hover; the scroll is its only motion. The home Flagship section is a pocket in the dot field, which returns behind the past talks (no labels or edition numbering between them). |
+| 2026-10-09 | ~~**Flagship photo plate is quiet:** oval fade, no hover; the scroll is its only motion. The home Flagship section is a pocket in the dot field, which returns behind the past talks (no labels or edition numbering between them).~~ Superseded 2026-10-12, below. |
 | 2026-10-09 | **`/speakers` is one page**, every edition as a numbered section (no year tabs or pills). Portraits develop from red halftone on scroll; faces are never hidden behind a hover. |
 | 2026-10-09 | **No eyebrows, anywhere** (owner): no small uppercase kicker above a heading, with or without a red dot. Reads as a generic-AI tell. Recorded in `DESIGN.md` §9. |
 | 2026-10-09 | **Dot field stays scarce** (owner: tasteful, not everywhere). `/speakers` uses it only in the opening, stopping above the archive; `/faq` has none. |
 | 2026-10-09 | **`/flagship` rebuilt in six beats** (after Digital Design Days Milano): poster hero, theme, colour photo collage, speakers as large names, venue full bleed, topics marquee, tickets. Photos on this page are in colour. Why attend / audience / program / close dropped; their Studio fields are hidden, not deleted. |
 | 2026-10-09 | **Split text fades up, never masked** (owner). `SplitReveal` has no mask: sliding up through one cut off ascenders and descenders until the text landed. The `js` class is set by an inline script in `<head>`, not `next/script`, so animated text never flashes before hiding. |
+| 2026-10-12 | **Home hero edition line is the edition and the date** ("Edition 03 · Feb 20, 2027"), at `text-heading`; no venue (owner). The Flagship section below carries the venue. |
+| 2026-10-12 | **Home loader** (owner): black, a hairline and 000→100 counter while the dots gather (3.4s), then the headline word by word, the rest of the hero, the nav. Plays in full on landing after **30+ minutes** away from the site; a reload or a return while browsing shows the page settled. Never a shortened version. Timing in `src/lib/intro.ts`. |
+| 2026-10-12 | **Home Flagship photo develops like the speaker portraits** (owner): red halftone print → black-and-white photo on scroll; afterwards the pointer brushes the print back along a small trail. No red plate. The section is no longer a pocket in the dot field; the field runs through into the past talks, with pockets around the copy and photo only. |
 | 2026-10-12 | **Motion over scores** (owner): keep the animation and the look; a little load time is fine. Performance work must look identical, keep scrolling smooth and never crash. Don't cut frame rates or simplify motion to hit Lighthouse ≥ 90. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
@@ -611,3 +614,34 @@ visitors' Core Web Vitals to the Vercel dashboard and sets no cookies. Needs
 enabling once in the Vercel dashboard (owner to-do). `/privacy` already names
 Vercel as the site host; whether it should mention performance measurement
 too is for the legal reviewer.
+
+### 2026-10-12 — home hero date, loader, Flagship photo (PRs #57, #59, merged)
+
+- **Hero date** (#57): the bottom-right line reads "Edition 03 · Feb 20,
+  2027", larger (`text-heading`, foreground). Falls back to the year when the
+  edition has no date.
+- **Loader** (#57 started it, #59 finished it): `HomeIntro` wraps the hero.
+  Hero parts carry `data-intro` + `data-animate`; the headline is split into
+  words. `DotField intro` gathers the dots from scattered to ordered, core
+  first. `src/lib/intro.ts` holds the timing and decides once per page load
+  whether it plays: home only, and only if `localStorage` `tedx:last-seen` is
+  over 30 minutes old. The nav writes that timestamp on every page and on
+  `pagehide`; visiting any other page ends the loader's turn, so a client-side
+  return to home shows the page settled. To replay it: a private window, or
+  clear `tedx:last-seen`.
+- **Flagship photo** (#59): the scattered red plate is gone. It now prints in
+  red halftone and develops into the photo on scroll, as `PrintedPortrait`
+  does on `/speakers`. `HalftonePhoto` gained `trail`: a print drawn only
+  along the pointer's trail (smaller head), layered over the photo.
+- **Seam above "Watch past talks"** (#59): the whole Flagship section was a
+  wide pocket, so the field ended in a hard, wavy band above the past talks.
+  Now only the copy and the photo are pockets. Wide pockets drop the texture
+  wobble (it is fixed to the screen, so on a big pocket it slid along the edge
+  while scrolling). Pockets scale with their element's opacity, so the field
+  has no holes where loader text hasn't arrived yet; that reads computed
+  style per pocket element per frame, cheap next to the dot loop.
+
+Not yet seen at full speed on a real phone (the preview pane throttles
+animation; checked by stepping the timelines). Privacy: the loader's
+`tedx:last-seen` is a first-party timestamp in `localStorage`, no cookie;
+whether `/privacy` should mention it is for the legal reviewer.
