@@ -84,6 +84,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-12 | **Motion over scores** (owner): keep the animation and the look; a little load time is fine. Performance work must look identical, keep scrolling smooth and never crash. Don't cut frame rates or simplify motion to hit Lighthouse ≥ 90. |
 | 2026-10-12 | **Flagship "Over the years"** (owner): past editions ~~as a row of drawers~~ (a list since later the same day, above) on `/flagship` (`#editions`), not a page, not in the menu. The Oct 2024 TEDxLive is left out. No attendance figures until there's a real count. Plan: `docs/FLAGSHIP-PLAN.md`. |
 | 2026-10-12 | **`/flagship` tightened, all black** (owner). Hero → theme statement with the invitation beneath → **Why come** (the value prop: the three Studio reasons, formerly hidden "Why attend", each a straight 4:3 photo with a numbered title and line). The tilted collage and the three questions are gone (Studio fields hidden, not deleted). Speakers now start ~3 screens down at 1440×900 instead of ~6. No paper (white) sections on the page: Tickets is on black. Section titles below Speakers are `text-display`, not `text-mega`; Speakers and the venue keep their size. The venue print no longer slides sideways in bands; it develops straight into the photo, like every other photograph. **Over the years** is a short list (a row per edition: number, photo, theme, date · venue, who spoke, Watch the talks) instead of drawers. |
+| 2026-10-12 | **`/sponsor` all black, pitch with photos, partners bigger** (owner). The pitch is no longer on paper; each paragraph sits beside a photo (new Studio field Sponsor page → **Pitch photos**, 2 max; until filled, the home hero's audience and raised-hands frames stand in). Partners get an "Our partners" heading and a cell each between hairlines. Logos stay inside the TEDx cap: smaller than the header lockup (142×48), so at most 136×44. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -108,6 +109,7 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [x] Rosa Jacobs' title now "Songwriter / Musician"; **Gustavo** Luna (owner) — name fixed, slug left as `gustav-luna` so the link doesn't break (2026-10-12).
 - [ ] Job titles for the ten 2025 speakers (blank in Webflow too). TED's April 2025 listing (ted.com/tedx/events/59961) has one-line bios for eight of them.
 - [ ] Confirm the Arrow Street Arts white logo (inferred from Webflow's "Mask group-2").
+- [ ] Optional: Sponsor page → **Pitch photos** (two, colour; the home hero's frames stand in until set).
 - [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
 - [ ] Real content for House events, team, and past-edition themes (no placeholders). TED expects core team names and backgrounds on the site; an `/about` team section is ready to build once they exist.
 - [ ] Invite marketing editors: sanity.io/manage → Members → Editor.

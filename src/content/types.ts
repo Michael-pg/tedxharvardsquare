@@ -221,6 +221,8 @@ export type SponsorPage = {
   headline: string;
   photo?: Image;
   body: string[];
+  /** Beside the pitch paragraphs. Empty until filled in Studio. */
+  photos: Image[];
   ask?: string;
   ctaLabel?: string;
 };
