@@ -552,7 +552,8 @@ than unsplit text (as before today).
 
 GitHub Actions (`.github/workflows/ci.yml`) runs lint, typecheck and build on
 every PR and on pushes to `main`. Node 24, npm cache, Next build cache. New
-`npm run typecheck` script (`tsc --noEmit`). The build reads Sanity's public
+`npm run typecheck` script (`next typegen && tsc --noEmit`; the typegen step
+creates the global `PageProps`/`LayoutProps` types a fresh checkout lacks). The build reads Sanity's public
 API, so CI needs no secrets. Still on the owner: make the check required in
 GitHub (Settings → Branches → `main` → require status check "Lint, typecheck,
 build") so a red PR can't be merged.
