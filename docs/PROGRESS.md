@@ -106,6 +106,9 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [ ] Ask Nana to add you to the GA4 property (Admin → Property access management).
 - [ ] Legal reviewer to see the new analytics wording on `/privacy` (Oct 8).
 
+**Vercel**
+- [ ] Turn on Speed Insights: Vercel → project `tedxharvardsquare` → Speed Insights → Enable. The code is in (PR "Speed Insights"); it reports nothing until enabled. Hobby includes a limited monthly allowance of data points.
+
 **Domain cutover follow-up**
 - [ ] **Search Console:** submit `https://www.tedxharvardsquare.org/sitemap.xml`.
 - [ ] **Oct 13:** delete the `_webflow` TXT record in Squarespace and cancel Webflow hosting (renews Oct 14). Until then, rollback = put back `A @ 198.202.211.1` and `CNAME www cdn.webflow.com`.
@@ -137,7 +140,7 @@ None open. (Small red text failing WCAG AA was fixed in the `/speakers` and
 1. Sponsor packages/tiers on `/sponsor`, if the organizers want them public (the pitch is live).
 2. Team section on `/about` once the organizers send names and bios.
 3. Program page for the Flagship (its "Explore the program" button appears once Studio has the link).
-4. Performance and accessibility pass (round 1 and dot field done 2026-10-12; still open: Vercel Speed Insights, a manual WCAG 2.2 AA keyboard/focus check) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
+4. Performance and accessibility pass (round 1 and dot field done 2026-10-12; Speed Insights added; still open: a manual WCAG 2.2 AA keyboard/focus check) (Lighthouse ≥ 90, WCAG 2.2 AA); Vercel Speed Insights.
 
 ---
 
@@ -599,3 +602,12 @@ the old formulas (agree to ~1e-14; the skip never drops a pocket that mattered).
 
 Lighthouse mobile, local build: Flagship 82 → 92–93 (blocking 500 → 90 ms),
 home 94–97 (70 ms).
+
+### 2026-10-12 — Vercel Speed Insights
+
+`@vercel/speed-insights` added next to GA4 in `src/components/site/analytics.tsx`,
+with the same rules: live domain only, never `/studio`. It reports real
+visitors' Core Web Vitals to the Vercel dashboard and sets no cookies. Needs
+enabling once in the Vercel dashboard (owner to-do). `/privacy` already names
+Vercel as the site host; whether it should mention performance measurement
+too is for the legal reviewer.

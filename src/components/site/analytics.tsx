@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 /** GA4 property run by the marketing team. Measurement IDs are public. */
 const GA_ID = "G-MP9EG22C1W";
@@ -10,7 +11,9 @@ const GA_ID = "G-MP9EG22C1W";
 const noop = () => () => {};
 
 /**
- * Google Analytics, on the live domain only.
+ * Google Analytics and Vercel Speed Insights, on the live domain only. Speed
+ * Insights reports real visitors' load and responsiveness timings (Core Web
+ * Vitals) to the Vercel dashboard; it sets no cookies.
  *
  * Localhost, PR previews and the `*.vercel.app` alias serve the same pages, so
  * the host is checked in the browser rather than at build time; a server check
@@ -27,5 +30,10 @@ export function Analytics({ siteUrl }: { siteUrl: string }) {
 
   if (host !== new URL(siteUrl).hostname) return null;
   if (pathname.startsWith("/studio")) return null;
-  return <GoogleAnalytics gaId={GA_ID} />;
+  return (
+    <>
+      <GoogleAnalytics gaId={GA_ID} />
+      <SpeedInsights />
+    </>
+  );
 }
