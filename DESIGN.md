@@ -157,6 +157,9 @@ for the logo only.
   `DotField` pass `strength` below 1 (Flagship: 0.55); paper sections cover it.
 - **One scroll-driven set piece per page** (the home hero is the only pinned
   sequence today). Everything else reveals once and stays still.
+- **Bento: one, on purpose.** Flagship's "The day" (`components/flagship/the-day.tsx`)
+  is the site's only bento: the facts of the day at different weights. It is
+  that page's set piece. Elsewhere, a grid is still only for parallel items.
 - Animate `transform` and `opacity`; height only for disclosure (accordion).
 - **`prefers-reduced-motion` is mandatory:** skip creating tweens; content
   must be fully visible without JS.

@@ -3,14 +3,13 @@ import { SiteNav } from "@/components/site/site-nav";
 import { SiteFooter } from "@/components/site/site-footer";
 import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home/dot-field";
-import { Motto } from "@/components/home/motto";
 import { FlagshipHero } from "@/components/flagship/flagship-hero";
 import { EditionList, type PastEditionRow } from "@/components/flagship/edition-list";
 import { LineupPlaceholder } from "@/components/flagship/lineup-placeholder";
 import { SpeakerNames } from "@/components/flagship/speaker-names";
 import { TopicMarquee } from "@/components/flagship/topic-marquee";
 import { Venue } from "@/components/flagship/venue";
-import { WhyCome } from "@/components/flagship/why-come";
+import { TheDay } from "@/components/flagship/the-day";
 import { SquareLink } from "@/components/ui/square-link";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -46,6 +45,26 @@ const someNames = (names: string[], shown = 3) =>
     ? new Intl.ListFormat("en-US").format(names)
     : `${names.slice(0, shown).join(", ")} and ${names.length - shown} others`;
 
+/** A crowd, rounded the way people say it: 375 is "Nearly 400", 420 "Over 400". */
+const roughly = (n: number) => {
+  const hundred = Math.round(n / 100) * 100;
+  if (n < 100 || n === hundred) return String(n);
+  return n < hundred ? `Nearly ${hundred}` : `Over ${hundred}`;
+};
+
+const monthYear = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+
+/** How the last Flagship went, for the grid: "Sold out" and the crowd, when on record. */
+const lastTime = (edition?: PastEdition) => {
+  if (!edition || (!edition.soldOut && !edition.attendance)) return undefined;
+  const crowd = edition.attendance ? `${roughly(edition.attendance)} in the room` : undefined;
+  const when = edition.date ? monthYear.format(new Date(edition.date)) : String(edition.year);
+  const at = edition.venue ? ` at ${edition.venue.name}` : "";
+  return edition.soldOut
+    ? { headline: "Sold out", line: `${crowd ? `${crowd}${at}` : `Every seat${at}`}, ${when}.` }
+    : { headline: roughly(edition.attendance ?? 0), line: `In the room${at}, ${when}.` };
+};
+
 /** A past edition, written out for "Over the years". */
 const toRow = (edition: PastEdition): PastEditionRow => ({
   number: edition.number,
@@ -56,7 +75,8 @@ const toRow = (edition: PastEdition): PastEditionRow => ({
   recap: edition.recap,
   figures: [
     edition.talkCount > 0 && `${edition.talkCount} talks`,
-    edition.attendance && `${edition.attendance} attended`,
+    edition.soldOut && "Sold out",
+    edition.attendance && `${roughly(edition.attendance)} attended`,
   ].filter((figure): figure is string => Boolean(figure)),
   speakers: edition.speakerNames.length > 0 ? `With ${someNames(edition.speakerNames)}` : undefined,
   href: `/speakers#edition-${edition.number}`,
@@ -113,30 +133,22 @@ export default async function FlagshipPage() {
           action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
         />
 
-        {/* The theme, lit line by line, and who the day is for. */}
-        {copy && (copy.statement.length > 0 || copy.invitation) && (
-          <section aria-label="The theme" className="grid grid-cols-4 gap-x-6 gap-y-10 px-6 py-20 md:grid-cols-12 md:gap-y-12 md:py-32">
-            {copy.statement.length > 0 && (
-              <div className="col-span-4 md:col-span-12">
-                <Motto lines={copy.statement} />
-              </div>
-            )}
-            {copy.invitation && (
-              <Reveal as="p" className="col-span-4 max-w-md text-lead text-ink-300 md:col-start-9">
-                <span data-dot-clear>{copy.invitation}</span>
-              </Reveal>
-            )}
-          </section>
-        )}
-
-        {/* Why come: the case for the day, each reason with a photo. The dot
-            field stops here. */}
-        {copy && copy.reasons.length > 0 && (
-          <section data-dot-stop aria-labelledby="why-title" className="relative bg-background px-6 py-20 md:py-32">
-            <Reveal as="h2" className="mb-10 text-display font-medium md:mb-14">
-              <span id="why-title">Why come</span>
-            </Reveal>
-            <WhyCome reasons={copy.reasons} />
+        {/* The day: statement, reasons and facts in one grid. The dot field
+            stops here, and comes back for the close. */}
+        {copy && (copy.statement.length > 0 || copy.reasons.length > 0) && (
+          <section data-dot-stop aria-label="The day" className="relative bg-background px-6 py-20 md:py-32">
+            <TheDay
+              statement={copy.statement}
+              reasons={copy.reasons}
+              format={copy.programBody[0]}
+              audience={copy.audience}
+              when={date ? longDate.format(date) : copy.month}
+              where={[venueKnown ? edition?.venue?.name : undefined, edition?.venue?.city].filter(
+                (line): line is string => Boolean(line),
+              )}
+              proof={lastTime(pastEditions[0])}
+              action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
+            />
           </section>
         )}
 
