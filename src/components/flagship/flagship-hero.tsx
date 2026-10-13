@@ -4,10 +4,11 @@ import { SquareLink } from "@/components/ui/square-link";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * The Flagship page's first screen, set as a poster: "Flagship", the edition,
- * date and venue in the top corner from the first frame, a short pitch
- * opposite, and the theme alone, huge, along the bottom. No photograph; the
- * dot field behind is the backdrop.
+ * The Flagship page's first screen, set as a poster: the edition, date and
+ * venue in the top corner from the first frame, a short pitch opposite, and
+ * "Flagship" huge along the bottom with the theme beneath it. The home page
+ * leads with the theme, so here the page's name leads instead. No photograph;
+ * the dot field behind is the backdrop.
  */
 export function FlagshipHero({
   theme,
@@ -31,11 +32,9 @@ export function FlagshipHero({
   return (
     <section className="flex min-h-svh flex-col px-6 pt-24 pb-7 md:pt-28">
       <div className="grid grid-cols-4 gap-x-6 gap-y-8 md:grid-cols-12">
-        {/* "Flagship" names the page, so it never reads as the home page; it
-            leads the details rather than competing with the theme. */}
         <p data-dot-clear className="col-span-4 flex flex-col text-heading font-medium md:col-span-5">
-          <span>{edition ? `Flagship · Edition ${pad(edition)}` : "Flagship"}</span>
-          {when && <span className="mt-3">{when}</span>}
+          {edition && <span>{`Edition ${pad(edition)}`}</span>}
+          {when && <span className={edition ? "mt-3" : undefined}>{when}</span>}
           {venue && <span className="text-ink-300">{venue}</span>}
           {city && <span className="text-ink-300">{city}</span>}
         </p>
@@ -46,11 +45,14 @@ export function FlagshipHero({
         )}
       </div>
 
-      {/* The theme is the title. Lines, not chars: split chars lose their
-          kerning and shift when the split is undone. */}
-      <h1 className="mt-auto pt-16 text-poster font-medium text-balance">
-        <span className="sr-only">{"Flagship: "}</span>
-        <SplitReveal as="span" by="lines" onScroll={false} className="block">
+      {/* Lines, not chars: split chars lose their kerning and shift when the
+          split is undone. */}
+      <h1 className="mt-auto pt-16 font-medium">
+        <SplitReveal as="span" by="lines" onScroll={false} className="block text-mega">
+          {"Flagship"}
+        </SplitReveal>
+        <span className="sr-only">{": "}</span>
+        <SplitReveal as="span" by="lines" delay={0.15} onScroll={false} className="mt-3 block text-statement text-balance md:mt-4">
           {theme}
         </SplitReveal>
       </h1>

@@ -47,12 +47,6 @@
   --text-mega--line-height: 0.9;
   --text-mega--letter-spacing: -0.055em;
 
-  /* Flagship: the theme as a poster, wrapping a word or two to a line. Capped
-     by viewport height so the hero still fits a short laptop screen. */
-  --text-poster: clamp(4rem, min(25vw, 28svh), 22rem);
-  --text-poster--line-height: 0.88;
-  --text-poster--letter-spacing: -0.05em;
-
   /* Home: large running statements, e.g. the motto. */
   --text-statement: clamp(2.5rem, 6.2vw, 7.25rem);
   --text-statement--line-height: 0.95;
