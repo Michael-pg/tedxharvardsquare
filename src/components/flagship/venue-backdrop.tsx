@@ -8,12 +8,9 @@ import { HalftonePhoto } from "@/components/home/halftone-photo";
 import type { Image as ImageContent } from "@/content";
 
 /**
- * The venue photo, full bleed, arriving the way the theme reads. It comes in
- * as a red halftone print sliced into bands knocked sideways (disorder); the
- * bands fall into register as the section rises (the pointer's trail pulls
- * them into line early), and once it fills the screen the colour photograph
- * develops through the dots and the print fades away. Scrolling back up
- * reverses it.
+ * The venue photo, full bleed, arriving the way every photograph on the site
+ * does: a red halftone print that, once it fills the screen, develops into the
+ * colour photograph as the print fades away. Scrolling back up reverses it.
  *
  * Without JS, or under reduced motion, it is simply the photograph.
  */
@@ -48,7 +45,6 @@ export function VenueBackdrop({ image }: { image: ImageContent }) {
             focus={focus}
             cell={10}
             blur={0.4}
-            scatter={160}
             exposure={3}
             className="size-full"
           />

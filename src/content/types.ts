@@ -70,7 +70,7 @@ export type FlagshipPageCopy = {
   statement: string[];
   invitation?: string;
   questions: string[];
-  /** "Why attend". */
+  /** "Why come", under the theme statement. */
   reasons: { title: string; body?: string; image?: Image }[];
   /** One running line naming who comes. */
   audience?: string;
@@ -85,7 +85,7 @@ export type FlagshipPageCopy = {
   speakersNote?: string;
   /** What a ticket includes. Empty until decided. */
   included: string[];
-  /** The collage under the theme statement. Empty until filled in Studio. */
+  /** Not shown since 2026-10-12 (was the collage); kept so the content survives. */
   photos: Image[];
   venueImage?: Image;
   /** Transit, parking, accessibility: one paragraph each. */

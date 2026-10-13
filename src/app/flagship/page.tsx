@@ -5,13 +5,12 @@ import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home/dot-field";
 import { Motto } from "@/components/home/motto";
 import { FlagshipHero } from "@/components/flagship/flagship-hero";
-import { EditionDrawers, type DrawerEdition } from "@/components/flagship/edition-drawers";
+import { EditionList, type PastEditionRow } from "@/components/flagship/edition-list";
 import { LineupPlaceholder } from "@/components/flagship/lineup-placeholder";
-import { PhotoCollage } from "@/components/flagship/photo-collage";
-import { Section } from "@/components/flagship/section";
 import { SpeakerNames } from "@/components/flagship/speaker-names";
 import { TopicMarquee } from "@/components/flagship/topic-marquee";
 import { Venue } from "@/components/flagship/venue";
+import { WhyCome } from "@/components/flagship/why-come";
 import { SquareLink } from "@/components/ui/square-link";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -22,7 +21,6 @@ import {
   getSpeakerArchive,
   getSpeakers,
   getTopics,
-  type Image as ImageContent,
   type PastEdition,
 } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
@@ -42,9 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
 const longDate = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
 const dayMonth = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
 
-/** The three questions step across the grid, so the list reads as a sequence. */
-const questionStart = ["md:col-start-1", "md:col-start-4", "md:col-start-7"];
-
 /** "Jeff Harmon, Shawna Young, Andrea Choe and 9 others". */
 const someNames = (names: string[], shown = 3) =>
   names.length <= shown + 1
@@ -52,7 +47,7 @@ const someNames = (names: string[], shown = 3) =>
     : `${names.slice(0, shown).join(", ")} and ${names.length - shown} others`;
 
 /** A past edition, written out for "Over the years". */
-const toDrawer = (edition: PastEdition): DrawerEdition => ({
+const toRow = (edition: PastEdition): PastEditionRow => ({
   number: edition.number,
   year: edition.year,
   title: edition.theme ?? `Edition ${edition.number}`,
@@ -68,22 +63,16 @@ const toDrawer = (edition: PastEdition): DrawerEdition => ({
   image: edition.poster ?? edition.still,
 });
 
-/** Drops repeats of the same photo, keeping the first. */
-const unique = (images: (ImageContent | undefined)[]) =>
-  images.filter((image, i, all): image is ImageContent =>
-    Boolean(image?.src) && all.findIndex((other) => other?.src === image?.src) === i,
-  );
-
 /**
- * Flagship: the annual conference, led by the current edition. Six beats, each
- * with one idea: the poster (theme, date, venue), the statement and a
- * collage of past editions, the lineup, the venue, the topics, and tickets.
- * Everything comes from the edition in Studio; any part left empty is simply
- * not shown, and the collage borrows the home page's photos until the edition
- * has its own.
+ * Flagship: the annual conference, led by the current edition. The poster
+ * (name, theme, date, venue), the theme statement with who the day is for,
+ * why come, then the lineup, the venue, the topics, past editions, and
+ * tickets. The opening is kept short so the lineup sits close to the top once
+ * it is announced. Everything comes from the edition in Studio; any part left
+ * empty is simply not shown.
  *
  * The dot field runs behind the poster and the statement only, and stops at
- * the collage, so the photographs and everything after sit on plain black.
+ * Why come, so the photographs and everything after sit on plain ground.
  */
 export default async function FlagshipPage() {
   const [site, edition, archive, home, topics, pastEditions] = await Promise.all([
@@ -104,16 +93,9 @@ export default async function FlagshipPage() {
   const joinHref = edition?.ticketUrl ?? site.earlyAccessUrl ?? site.newsletterUrl;
   const joinLabel = edition?.ticketUrl ? "Get tickets" : "Get early access";
 
-  const photos = copy?.photos.length
-    ? copy.photos
-    : unique([
-        home.flagshipPhoto,
-        ...home.heroImages,
-        ...archive.map((speaker) => speaker.talk?.still),
-      ]);
   // Past speakers' portraits, printed past recognition, stand in for the lineup.
   const placeholders = archive.flatMap((s) => (s.headshot?.src ? [s.headshot] : [])).slice(0, 4);
-  const eventJsonLd = edition && editionJsonLd(site, edition, copy?.heroImage ?? photos[0]);
+  const eventJsonLd = edition && editionJsonLd(site, edition, copy?.heroImage ?? home.flagshipPhoto ?? copy?.reasons[0]?.image);
 
   return (
     <>
@@ -131,39 +113,30 @@ export default async function FlagshipPage() {
           action={joinHref ? { label: joinLabel, href: joinHref } : undefined}
         />
 
-        {/* The theme, lit line by line, with its invitation and questions. */}
-        {copy && (copy.statement.length > 0 || copy.invitation || copy.questions.length > 0) && (
-          <section aria-label="The theme" className="px-6 py-24 md:py-40">
-            {copy.statement.length > 0 && <Motto lines={copy.statement} />}
+        {/* The theme, lit line by line, and who the day is for. */}
+        {copy && (copy.statement.length > 0 || copy.invitation) && (
+          <section aria-label="The theme" className="grid grid-cols-4 gap-x-6 gap-y-10 px-6 py-20 md:grid-cols-12 md:gap-y-12 md:py-32">
+            {copy.statement.length > 0 && (
+              <div className="col-span-4 md:col-span-12">
+                <Motto lines={copy.statement} />
+              </div>
+            )}
             {copy.invitation && (
-              <Reveal
-                as="p"
-                className={`max-w-3xl text-lead text-ink-300 ${copy.statement.length > 0 ? "mt-16 md:mt-24" : ""}`}
-              >
+              <Reveal as="p" className="col-span-4 max-w-md text-lead text-ink-300 md:col-start-9">
                 <span data-dot-clear>{copy.invitation}</span>
               </Reveal>
-            )}
-            {copy.questions.length > 0 && (
-              <ul className="mt-20 grid grid-cols-4 gap-y-8 md:mt-32 md:grid-cols-12 md:gap-y-12">
-                {copy.questions.slice(0, questionStart.length).map((question, i) => (
-                  <Reveal
-                    key={question}
-                    as="li"
-                    delay={i * 0.1}
-                    className={`col-span-4 text-title font-medium text-balance md:col-span-6 ${questionStart[i]}`}
-                  >
-                    <span data-dot-clear>{question}</span>
-                  </Reveal>
-                ))}
-              </ul>
             )}
           </section>
         )}
 
-        {/* Past editions in pictures; the dot field stops here. */}
-        {photos.length > 0 && (
-          <section data-dot-stop aria-label="Photographs from past editions" className="relative bg-background px-6 py-24 md:py-40">
-            <PhotoCollage images={photos} />
+        {/* Why come: the case for the day, each reason with a photo. The dot
+            field stops here. */}
+        {copy && copy.reasons.length > 0 && (
+          <section data-dot-stop aria-labelledby="why-title" className="relative bg-background px-6 py-20 md:py-32">
+            <Reveal as="h2" className="mb-10 text-display font-medium md:mb-14">
+              <span id="why-title">Why come</span>
+            </Reveal>
+            <WhyCome reasons={copy.reasons} />
           </section>
         )}
 
@@ -209,9 +182,9 @@ export default async function FlagshipPage() {
         )}
 
         {topics.length > 0 && (
-          <section aria-labelledby="topics-title" className="py-24 md:py-40">
-            <div className="mb-12 grid grid-cols-4 gap-x-6 gap-y-6 px-6 md:mb-20 md:grid-cols-12">
-              <Reveal as="h2" className="col-span-4 text-mega font-medium md:col-span-7">
+          <section aria-labelledby="topics-title" className="py-20 md:py-32">
+            <div className="mb-10 grid grid-cols-4 gap-x-6 gap-y-6 px-6 md:mb-14 md:grid-cols-12">
+              <Reveal as="h2" className="col-span-4 self-end text-display font-medium md:col-span-7">
                 <span id="topics-title">Topics</span>
               </Reveal>
               <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
@@ -222,57 +195,55 @@ export default async function FlagshipPage() {
           </section>
         )}
 
-        {/* Every Flagship so far, as drawers: proof, just before the ask. */}
+        {/* Every Flagship so far, a row each: proof, just before the ask. */}
         {pastEditions.length > 0 && (
-          <section id="editions" aria-labelledby="editions-title" className="scroll-mt-16 py-24 md:py-40">
-            <div className="mb-12 grid grid-cols-4 gap-x-6 gap-y-6 px-6 md:mb-20 md:grid-cols-12">
-              <Reveal as="h2" className="col-span-4 text-statement font-medium md:col-span-8 md:text-mega">
+          <section id="editions" aria-labelledby="editions-title" className="scroll-mt-16 px-6 py-20 md:py-32">
+            <div className="mb-10 grid grid-cols-4 gap-x-6 gap-y-6 md:mb-14 md:grid-cols-12">
+              <Reveal as="h2" className="col-span-4 self-end text-display font-medium md:col-span-8">
                 <span id="editions-title">Over the years</span>
               </Reveal>
               <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
-                Every Flagship so far. Open one to see who spoke.
+                Every Flagship so far, and who spoke.
               </Reveal>
             </div>
-            <Reveal>
-              <EditionDrawers editions={pastEditions.map(toDrawer)} />
-            </Reveal>
+            <EditionList editions={pastEditions.map(toRow)} />
           </section>
         )}
 
         {/* Tickets: the one ask on the page, and its close. */}
         {edition && (
-          <Section tone="paper" aria-labelledby="tickets-title" className="px-6 py-24 md:py-40">
-            <div className="grid grid-cols-4 gap-x-6 gap-y-12 md:grid-cols-12">
-              <Reveal as="h2" className="col-span-4 text-mega font-medium md:col-span-6">
+          <section aria-labelledby="tickets-title" className="px-6 py-20 md:py-32">
+            <div className="grid grid-cols-4 gap-x-6 gap-y-10 md:grid-cols-12">
+              <Reveal as="h2" className="col-span-4 text-display font-medium md:col-span-6">
                 <span id="tickets-title">Tickets</span>
               </Reveal>
               <div className="col-span-4 flex flex-col items-start gap-8 md:col-span-5 md:col-start-8 md:pt-6">
                 {copy && copy.included.length > 0 ? (
-                  <Reveal as="ul" className="w-full border-t border-ink-200">
+                  <Reveal as="ul" className="w-full border-t border-rule">
                     {copy.included.map((item) => (
-                      <li key={item} className="border-b border-ink-200 py-5 text-lead">
+                      <li key={item} className="border-b border-rule py-5 text-lead">
                         {item}
                       </li>
                     ))}
                   </Reveal>
                 ) : (
-                  <Reveal as="p" className="max-w-md text-lead text-ink-600">
+                  <Reveal as="p" className="max-w-md text-lead text-ink-300">
                     {`Tickets for ${title} are not on sale yet. Join the early-access list to hear first.`}
                   </Reveal>
                 )}
                 <Reveal className="flex flex-wrap gap-2">
                   {joinHref && (
-                    <SquareLink href={joinHref} tone="light">
+                    <SquareLink href={joinHref}>
                       {joinLabel}
                     </SquareLink>
                   )}
-                  <SquareLink href="/faq" variant="secondary" tone="light">
+                  <SquareLink href="/faq" variant="secondary">
                     Questions
                   </SquareLink>
                 </Reveal>
               </div>
             </div>
-          </Section>
+          </section>
         )}
       </main>
 
