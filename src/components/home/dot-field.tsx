@@ -149,6 +149,8 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  *   that should sit in the field rather than be cut out of it.
  * - `data-dot-stop` — a section the field fades out above and stays out of,
  *   for a passage that should sit on plain black down to the footer.
+ * - `data-dot-return` — a section below the stop where the field comes back,
+ *   fading in at its top and out again above the footer: a closing moment.
  * - `data-dot-dim="0.25"` — a section the field runs through at that
  *   fraction of its strength, easing back to full over a long feather above
  *   and below, so the change never reads as an edge.
@@ -243,9 +245,15 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
       const progress = smoothstep(0, 1, window.scrollY / Math.max(1, docHeight - height));
 
       // Fade out above the first plain-black section, or the footer, whose own
-      // glow takes over from here.
+      // glow takes over from here. A `data-dot-return` section further down
+      // brings the field back, fading in at its top and out again above the
+      // footer.
       const stopTop = document.querySelector("[data-dot-stop], footer")?.getBoundingClientRect().top ?? Infinity;
-      if (stopTop <= 0) return;
+      const returnTop = document.querySelector("[data-dot-return]")?.getBoundingClientRect().top ?? Infinity;
+      const footerTop = document.querySelector("footer")?.getBoundingClientRect().top ?? Infinity;
+      const returning = returnTop < height && footerTop > 0;
+      if (stopTop <= 0 && !returning) return;
+      const fadeSpan = height * 0.4;
 
       // The mass: anchored lower right, drifting toward a wide, low glow.
       const cx = lerp(width * 1.02, width * 0.55, progress);
@@ -303,12 +311,17 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           const cover = smoothstep(top - dimFeather, top, gy) * smoothstep(bottom + dimFeather, bottom, gy);
           rowDim *= 1 - (1 - level) * cover;
         }
+        const shown = Math.max(
+          smoothstep(stopTop, stopTop - fadeSpan, gy),
+          returning ? smoothstep(returnTop, returnTop + fadeSpan, gy) * smoothstep(footerTop, footerTop - fadeSpan, gy) : 0,
+        );
+        const rowShow = shown * rowDim;
+        if (rowShow <= 0) continue;
         for (let col = 0; col < cols; col++) {
           const i = row * cols + col;
           // Alternate rows sit half a cell over — the classic halftone screen.
           const gx = col * CELL + (row % 2 ? CELL / 2 : 0);
-          const footerFade = smoothstep(stopTop, stopTop - height * 0.4, gy) * rowDim;
-          if (footerFade <= 0) continue;
+          const footerFade = rowShow;
 
           // Glyphs: letterforms drawn in ordered red, cell by cell.
           let inGlyph = false;
