@@ -57,7 +57,7 @@ export default async function SpeakersPage() {
     <>
       <SiteNav />
       <DotField strength={0.55} />
-      <main className="relative px-6 pt-40 pb-32 md:pt-56">
+      <main id="main" className="relative px-6 pt-40 pb-32 md:pt-56">
         <header data-dot-clear className="mb-20 max-w-4xl md:mb-28">
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
             Speakers

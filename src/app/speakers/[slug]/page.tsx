@@ -58,10 +58,10 @@ export default async function SpeakerPage({ params }: PageProps<"/speakers/[slug
     <>
       <JsonLd data={speakerJsonLd(site, speaker)} />
       <SiteNav />
-      <main className="px-6 pt-40 pb-32 md:pt-56">
+      <main id="main" className="px-6 pt-40 pb-32 md:pt-56">
         <Link
           href="/speakers"
-          className="group mb-16 inline-flex items-center gap-2 text-small text-muted transition-colors duration-fast hover:text-foreground md:mb-24"
+          className="group mb-16 inline-flex min-h-6 items-center gap-2 text-small text-muted transition-colors duration-fast hover:text-foreground md:mb-24"
         >
           <ArrowLeft aria-hidden className="size-4 transition-transform duration-fast group-hover:-translate-x-0.5" />
           All speakers

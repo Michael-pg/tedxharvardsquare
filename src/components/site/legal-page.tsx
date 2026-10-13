@@ -22,7 +22,7 @@ export function LegalPage({
   return (
     <>
       <SiteNav />
-      <main className="px-6 pt-40 pb-32 md:pt-56">
+      <main id="main" className="px-6 pt-40 pb-32 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
           <p className="mb-6 text-label text-muted uppercase">Updated {updated}</p>
           <h1 className="text-display font-medium text-balance">{title}</h1>

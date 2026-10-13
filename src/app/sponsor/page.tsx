@@ -42,7 +42,7 @@ export default async function SponsorPage() {
   return (
     <>
       <SiteNav />
-      <main>
+      <main id="main">
         <header className="px-6 pt-40 pb-16 md:pt-56 md:pb-24">
           <SplitReveal as="h1" by="words" onScroll={false} className="max-w-5xl text-display font-medium text-balance">
             {page?.headline ?? "Sponsor"}
@@ -92,7 +92,7 @@ export default async function SponsorPage() {
 
         {/* The ask. Partners never shape the program; the TEDx licence says so. */}
         <section aria-labelledby="sponsor-ask" className="flex flex-col items-center px-6 py-24 text-center md:py-40">
-          <Reveal as="h2" className="max-w-4xl text-display font-medium text-balance">
+          <Reveal as="h2" className="max-w-4xl text-display font-medium text-balance wrap-anywhere">
             <span id="sponsor-ask">{page?.ask ?? `Interested in partnering with ${site.name}?`}</span>
           </Reveal>
           <Reveal className="mt-12 flex flex-col items-center gap-5">

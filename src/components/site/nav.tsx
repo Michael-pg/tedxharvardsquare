@@ -279,6 +279,14 @@ export function Nav({
 
   return (
     <div ref={root}>
+      {/* First stop for keyboard users: past the header, straight to the page. */}
+      <a
+        href="#main"
+        inert={open}
+        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-60 focus-visible:inline-flex focus-visible:h-13 focus-visible:items-center focus-visible:bg-foreground focus-visible:px-4.5 focus-visible:text-body focus-visible:font-medium focus-visible:text-background"
+      >
+        Skip to content
+      </a>
       {/*
         The "Harvard Square" wordmark, in its own fixed layer so it can blend
         with the page: difference turns the white letters black wherever they
