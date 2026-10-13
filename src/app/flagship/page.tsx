@@ -140,7 +140,6 @@ export default async function FlagshipPage() {
             <TheDay
               statement={copy.statement}
               reasons={copy.reasons}
-              format={copy.programBody[0]}
               audience={copy.audience}
               when={date ? longDate.format(date) : copy.month}
               where={[venueKnown ? edition?.venue?.name : undefined, edition?.venue?.city].filter(

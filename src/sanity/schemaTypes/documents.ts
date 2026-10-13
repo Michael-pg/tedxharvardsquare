@@ -423,7 +423,7 @@ export const edition = defineType({
       type: "array",
       group: "page",
       description:
-        "The case for coming, straight after the theme statement: each reason a photo with a title and a line beneath, side by side. Three reads best. Photos are cropped to 4:3.",
+        "The three reasons to come, in the grid straight after the theme statement: each a photo with its title beneath. Three exactly. The body is not shown on the page.",
       of: [
         defineArrayMember({
           type: "object",
@@ -488,6 +488,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "programBody",
+      // Not shown since the Flagship grid was lightened (2026-10-12); kept so the content survives.
+      hidden: true,
       title: "Program text",
       type: "array",
       of: [{ type: "text", rows: 3 }],

@@ -14,15 +14,14 @@ type Reason = FlagshipPageCopy["reasons"][number];
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * Where each tile sits on the 12-column grid from `md` up, eight bento rows
- * deep. Phones stack them in source order, two kinds alternating.
+ * Where each tile sits on the 12-column grid from `md` up, seven bento rows
+ * deep. Phones stack them in source order, photos and facts alternating.
  *
  *   statement ········· │ reason 1 (tall)
  *   statement ········· │ reason 1
  *   statement ········· │ reason 1
  *   reason 2 ···· │ when │ reason 1
  *   reason 2 ···· │ when │ who comes
- *   format ············ │ who comes
  *   reason 3 ······ │ last time + ask
  *   reason 3 ······ │ last time + ask
  */
@@ -31,30 +30,24 @@ const AREA = {
   reason1: "md:col-span-4 md:col-start-9 md:row-span-4 md:row-start-1",
   reason2: "md:col-span-5 md:row-span-2 md:row-start-4",
   when: "md:col-span-3 md:col-start-6 md:row-span-2 md:row-start-4",
-  who: "md:col-span-4 md:col-start-9 md:row-span-2 md:row-start-5",
-  format: "md:col-span-8 md:row-start-6",
-  reason3: "md:col-span-7 md:row-span-2 md:row-start-7",
-  proof: "md:col-span-5 md:col-start-8 md:row-span-2 md:row-start-7",
+  who: "md:col-span-4 md:col-start-9 md:row-start-5",
+  reason3: "md:col-span-7 md:row-span-2 md:row-start-6",
+  proof: "md:col-span-5 md:col-start-8 md:row-span-2 md:row-start-6",
 };
 
-/** A tile of type on a raised surface. */
-const Plate = ({ className, children }: { className?: string; children: ReactNode }) => (
-  <div data-tile="type" className={cn("col-span-4 flex flex-col bg-ink-900 p-6 md:p-8", className)}>
+/** A tile of type: no surface, just a hairline above it, so the grid stays open. */
+const Facts = ({ className, children }: { className?: string; children: ReactNode }) => (
+  <div data-tile="type" className={cn("col-span-4 flex flex-col border-t border-rule pt-5", className)}>
     {children}
   </div>
 );
 
-/** A reason: its photograph to the tile's edges, the line set over its foot. */
+/** A reason: its photograph, and beneath it the number and the reason in a line. */
 function ReasonTile({ reason, number, className }: { reason: Reason; number: number; className: string }) {
   const focus = reason.image?.focus ?? { x: 0.5, y: 0.5 };
   return (
-    <figure
-      data-tile="photo"
-      className={cn("relative col-span-4 flex flex-col overflow-hidden bg-ink-900 md:block", className)}
-    >
-      {/* On phones the photo sits above its line; from md up it fills the
-          tile and the line is set over its foot. */}
-      <div className="relative aspect-4/3 overflow-hidden md:absolute md:inset-0 md:aspect-auto">
+    <figure data-tile="photo" className={cn("col-span-4 flex flex-col", className)}>
+      <div data-frame className="relative aspect-4/3 overflow-hidden bg-ink-900 md:aspect-auto md:min-h-0 md:flex-1">
         {reason.image && (
           <div data-drift className="absolute inset-0">
             <Image
@@ -68,16 +61,12 @@ function ReasonTile({ reason, number, className }: { reason: Reason; number: num
             />
           </div>
         )}
-        <div aria-hidden className="absolute inset-0 hidden bg-linear-to-t from-ink-950/90 via-ink-950/30 to-transparent md:block" />
       </div>
-      <figcaption data-caption className="flex gap-4 p-6 md:absolute md:inset-x-0 md:bottom-0 md:p-8">
-        <span aria-hidden className="text-heading font-medium text-ink-300 tabular-nums">
+      <figcaption data-caption className="flex gap-4 pt-4 text-heading font-medium">
+        <span aria-hidden className="text-muted tabular-nums">
           {pad(number)}
         </span>
-        <span className="flex flex-col gap-2">
-          <span className="text-heading font-medium text-balance">{reason.title}</span>
-          {reason.body && <span className="max-w-md text-body text-ink-200">{reason.body}</span>}
-        </span>
+        <span className="text-balance">{reason.title}</span>
       </figcaption>
     </figure>
   );
@@ -85,10 +74,10 @@ function ReasonTile({ reason, number, className }: { reason: Reason; number: num
 
 /**
  * The day, as one composed grid straight after the hero: the theme statement,
- * the three reasons to come as photographs, and the facts a visitor is
- * looking for (when and where, the format, who comes, how the last one went,
- * and the way in), each a tile of its own size. It replaces the stack of
- * statement, collage and "Why come" sections with one screen and a half.
+ * the three reasons to come as photographs, and the few facts a visitor is
+ * looking for (when and where, who comes, how the last one went, and the way
+ * in). Kept airy like the rest of the page: no tile surfaces, no type over
+ * photos, a hairline above each fact, one short line per reason.
  *
  * It assembles as it scrolls in, the page's one set piece: each photo opens
  * from a thin slit while the image inside settles from a slight zoom, its line
@@ -99,7 +88,6 @@ function ReasonTile({ reason, number, className }: { reason: Reason; number: num
 export function TheDay({
   statement,
   reasons,
-  format,
   audience,
   when,
   where,
@@ -108,8 +96,6 @@ export function TheDay({
 }: {
   statement: string[];
   reasons: Reason[];
-  /** e.g. "Talks, Discovery Sessions and conversations, all in one day." */
-  format?: string;
   /** Who comes, as one running line. */
   audience?: string;
   /** e.g. "February 20, 2027". */
@@ -130,7 +116,7 @@ export function TheDay({
       const photos = gsap.utils.toArray<HTMLElement>('[data-tile="photo"]');
       const types = gsap.utils.toArray<HTMLElement>('[data-tile="type"]');
 
-      gsap.set(photos, { clipPath: "inset(48% 0% 48% 0%)" });
+      gsap.set(photos.map((tile) => tile.querySelector("[data-frame]")), { clipPath: "inset(48% 0% 48% 0%)" });
       gsap.set(types, { autoAlpha: 0, y: 24 });
       photos.forEach((tile) => {
         gsap.set(tile.querySelectorAll("[data-photo]"), { scale: 1.18 });
@@ -145,7 +131,7 @@ export function TheDay({
           batch.forEach((tile, i) => {
             const delay = i * 0.12;
             if ((tile as HTMLElement).dataset.tile === "photo") {
-              gsap.to(tile, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: timing.ease.expo, delay });
+              gsap.to(tile.querySelector("[data-frame]"), { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: timing.ease.expo, delay });
               gsap.to(tile.querySelectorAll("[data-photo]"), { scale: 1, duration: 1.6, ease: timing.ease.expo, delay });
               gsap.to(tile.querySelectorAll("[data-caption]"), {
                 autoAlpha: 1,
@@ -179,7 +165,7 @@ export function TheDay({
   );
 
   return (
-    <div ref={ref} className="grid grid-cols-4 gap-4 md:auto-rows-bento md:grid-cols-12 md:gap-6">
+    <div ref={ref} className="grid grid-cols-4 gap-x-4 gap-y-12 md:auto-rows-bento md:grid-cols-12 md:gap-x-6 md:gap-y-10">
       {statement.length > 0 && (
         <div className={cn("col-span-4 flex items-start pb-6 md:pb-0", AREA.statement)}>
           <Motto lines={statement} />
@@ -189,40 +175,34 @@ export function TheDay({
       {first && <ReasonTile reason={first} number={1} className={AREA.reason1} />}
 
       {when && (
-        <Plate className={cn("justify-between gap-10", AREA.when)}>
+        <Facts className={cn("justify-between gap-6", AREA.when)}>
           <p className="text-title font-medium text-balance">{when}</p>
           {where.length > 0 && (
-            <p className="flex flex-col text-body text-ink-300">
+            <p className="flex flex-col text-body text-muted">
               {where.map((line) => (
                 <span key={line}>{line}</span>
               ))}
             </p>
           )}
-        </Plate>
+        </Facts>
       )}
 
       {second && <ReasonTile reason={second} number={2} className={AREA.reason2} />}
 
       {audience && (
-        <Plate className={cn("justify-end", AREA.who)}>
-          <p className="text-heading font-medium text-balance">{audience}</p>
-        </Plate>
-      )}
-
-      {format && (
-        <div data-tile="type" className={cn("col-span-4 flex items-center py-6 md:py-0", AREA.format)}>
-          <p className="max-w-4xl text-title font-medium text-balance text-ink-300">{format}</p>
-        </div>
+        <Facts className={AREA.who}>
+          <p className="text-body text-ink-300">{audience}</p>
+        </Facts>
       )}
 
       {third && <ReasonTile reason={third} number={3} className={AREA.reason3} />}
 
       {(proof || action) && (
-        <Plate className={cn("justify-between gap-10", AREA.proof)}>
+        <Facts className={cn("justify-between gap-8", AREA.proof)}>
           {proof && (
             <div className="flex flex-col gap-3">
               <p className="text-display font-medium">{proof.headline}</p>
-              {proof.line && <p className="max-w-sm text-lead text-ink-300">{proof.line}</p>}
+              {proof.line && <p className="max-w-sm text-body text-muted">{proof.line}</p>}
             </div>
           )}
           {action && (
@@ -230,7 +210,7 @@ export function TheDay({
               <SquareLink href={action.href}>{action.label}</SquareLink>
             </div>
           )}
-        </Plate>
+        </Facts>
       )}
     </div>
   );
