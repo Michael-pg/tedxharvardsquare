@@ -3,19 +3,19 @@
 import { useRef, type ReactNode } from "react";
 import { gsap, useGSAP, SplitText, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
-import { INTRO, introPending, markIntroSeen } from "@/lib/intro";
+import { INTRO, introPending } from "@/lib/intro";
 
 /**
- * The home hero, and the loader that opens it. On the first visit of a
- * session the page starts on black: a hairline fills along the bottom toward a
+ * The home hero, and the loader that opens it. When someone arrives after
+ * time away (see `INTRO`), the page starts on black: a hairline fills along the bottom toward a
  * counter running to 100, while the dot field gathers into order behind it (the
  * field times itself from `INTRO`). Then the line fades, the headline arrives
  * word by word, and the rest of the hero follows.
  *
  * Children opt in with `data-intro` (and `data-animate`, so they start
  * hidden): `data-intro="headline"` wraps the `h1`, which is split into words;
- * everything else arrives in document order. Later visits, reduced motion and
- * no JS all show the hero as it is.
+ * everything else arrives in document order. A reload, a return while
+ * browsing, reduced motion and no JS all show the hero as it is.
  */
 export function HomeIntro({ children, className }: { children: ReactNode; className?: string }) {
   const root = useRef<HTMLElement>(null);
@@ -33,7 +33,7 @@ export function HomeIntro({ children, className }: { children: ReactNode; classN
       const headline = root.current?.querySelector<HTMLElement>("[data-intro='headline'] h1");
       const rest = parts.filter((part) => part.dataset.intro !== "headline");
       const count = { value: 0 };
-      const timeline = gsap.timeline({ onComplete: markIntroSeen });
+      const timeline = gsap.timeline();
 
       timeline
         .set(loader.current, { autoAlpha: 1 }, 0)

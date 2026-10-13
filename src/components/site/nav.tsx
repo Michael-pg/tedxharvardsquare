@@ -6,7 +6,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
-import { INTRO, introPending } from "@/lib/intro";
+import { INTRO, introPending, markVisit } from "@/lib/intro";
 import { barNav, menuPrimary, menuSecondary } from "@/content/navigation";
 import type { MenuImageKey, MenuImages } from "@/content/types";
 import { cn } from "@/lib/utils";
@@ -62,7 +62,7 @@ export function Nav({
   const secondary = [...menuSecondary, { label: "Contact", href: `mailto:${contactEmail}` }];
 
   // Entrance: the bar drops in after the hero copy has begun to settle; on
-  // home's first visit, after the loader.
+  // home, after the loader when it plays.
   useGSAP(
     () => {
       if (reducedMotion) {
@@ -77,6 +77,13 @@ export function Nav({
     },
     { scope: bar, dependencies: [reducedMotion] },
   );
+
+  // Every page notes the visit, so the home loader only plays after time away.
+  useEffect(() => {
+    markVisit();
+    window.addEventListener("pagehide", markVisit);
+    return () => window.removeEventListener("pagehide", markVisit);
+  }, []);
 
   // Lockup tone: sample what is under the logo's centre on scroll and resize.
   useEffect(() => {

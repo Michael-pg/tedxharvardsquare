@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap, timing } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
 import { createDotBatch, MIN_FRAME_MS } from "@/lib/dot-batch";
@@ -12,8 +12,6 @@ const CELL = 10;
 /** How far the black pocket around `data-dot-clear` elements fades, in px. */
 const TEXT_FEATHER = 48;
 const WIDE_FEATHER = 140;
-/** How long the field takes to gather on a visit after the loader has played. */
-const REGATHER = timing.duration.slow * 1.5;
 
 /** Brightness buckets, so a frame is a handful of filled paths. */
 const RED = [
@@ -100,9 +98,9 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * `strength` (0–1) fades the whole field, for pages where it should sit
  * further back than on home. Opaque sections above it simply cover it.
  *
- * `intro` plays the theme on load: the dots start scattered and pull
- * themselves into order, the core first and the fraying edge last. On home's
- * first visit of the session it is the loader, slow, timed by `INTRO`.
+ * `intro` makes the field part of home's loader (see `INTRO`): when it plays,
+ * the dots start scattered and pull themselves into order, the core first and
+ * the fraying edge last. Otherwise the field is simply there, settled.
  *
  * Under reduced motion it draws single still frames on scroll and resize, and
  * skips the intro.
@@ -127,7 +125,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
     const red = createDotBatch(RED);
     const grey = createDotBatch(GREY);
     // 0 → 1 over the intro; 1 is the settled field.
-    const gather = { progress: intro && !reducedMotion ? 0 : 1 };
+    const gather = { progress: intro && !reducedMotion && introPending() ? 0 : 1 };
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -353,10 +351,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
     if (reducedMotion) {
       window.addEventListener("scroll", draw, { passive: true });
     } else {
-      if (gather.progress < 1) {
-        const duration = introPending() ? INTRO.gather : REGATHER;
-        gsap.to(gather, { progress: 1, duration, ease: "power2.out" });
-      }
+      if (gather.progress < 1) gsap.to(gather, { progress: 1, duration: INTRO.gather, ease: "power2.out" });
       gsap.ticker.add(tick);
       window.addEventListener("pointermove", onMove, { passive: true });
       document.documentElement.addEventListener("pointerleave", onLeave);
