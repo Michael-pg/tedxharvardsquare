@@ -8,6 +8,7 @@ import { Motto } from "@/components/home/motto";
 import { PhotoStrip } from "@/components/home/photo-strip";
 import { FlagshipPhoto } from "@/components/home/flagship-photo";
 import { PastTalks } from "@/components/home/past-talks";
+import { HomeIntro } from "@/components/home/home-intro";
 import { SquareLink } from "@/components/ui/square-link";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getCurrentEdition, getHomePage, getSiteSettings, getSpeakerArchive } from "@/content";
@@ -87,30 +88,31 @@ export default async function Home() {
       <DotField intro />
 
       <main className="relative">
-        {/* Hero: one line across the top, the dot field in the lower right. */}
-        <section className="flex min-h-svh flex-col px-6 pt-24 pb-7 md:pt-28">
-          <div>
+        {/* Hero: one line across the top, the dot field in the lower right.
+            The first visit of a session opens with the loader. */}
+        <HomeIntro className="flex min-h-svh flex-col px-6 pt-24 pb-7 md:pt-28">
+          <div data-intro="headline" data-animate>
             <FitHeadline>{headline}</FitHeadline>
           </div>
           {edition?.themeStatement && (
-            <p data-dot-clear className="mt-8 max-w-md text-heading font-medium text-balance md:mt-10">
+            <p data-intro data-animate data-dot-clear className="mt-8 max-w-md text-heading font-medium text-balance md:mt-10">
               {edition.themeStatement}
             </p>
           )}
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
-            <div data-dot-clear className="flex flex-wrap gap-2">
+            <div data-intro data-animate data-dot-clear className="flex flex-wrap gap-2">
               {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>Subscribe</SquareLink>}
               <SquareLink href="/speakers" variant="secondary">
                 Past talks
               </SquareLink>
             </div>
             {editionLine && (
-              <p data-dot-clear className="text-heading font-medium">
+              <p data-intro data-animate data-dot-clear className="text-heading font-medium">
                 {editionLine}
               </p>
             )}
           </div>
-        </section>
+        </HomeIntro>
 
         {/* The motto, lit word by word as it scrolls through. */}
         <section aria-label="What we believe" className="px-6 py-24 md:py-40">
@@ -125,16 +127,14 @@ export default async function Home() {
 
         {/* Flagship: the year leads, since the hero already carries the theme,
             then the theme's statement as the through-line. The photo sits left
-            on desktop, breaking the run of left-aligned text. The whole section
-            is a pocket in the dot field, so the photo's red plate is the only
-            red here; the field returns behind the past talks below. */}
+            on desktop, breaking the run of left-aligned text. The dot field runs
+            on through the section into the past talks, keeping pockets of
+            black around the copy and the photo only, so there is no seam. */}
         {edition && (
-          // The photo's red plate is scaled and knocked sideways past its frame;
-          // on phones that ran off the right edge and the page scrolled sideways.
-          <section
-            data-dot-clear="wide"
-            className="grid grid-cols-4 items-center gap-x-6 gap-y-12 overflow-x-clip px-6 py-24 md:grid-cols-12 md:py-40">
-            <div className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
+          <section className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+            <div
+              data-dot-clear
+              className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
               <Reveal as="h2" className="text-display font-medium text-balance">
                 {`Flagship ${edition.year}`}
               </Reveal>

@@ -6,6 +6,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { INTRO, introPending } from "@/lib/intro";
 import { barNav, menuPrimary, menuSecondary } from "@/content/navigation";
 import type { MenuImageKey, MenuImages } from "@/content/types";
 import { cn } from "@/lib/utils";
@@ -60,7 +61,8 @@ export function Nav({
     key && menuImages[key] ? key : "general";
   const secondary = [...menuSecondary, { label: "Contact", href: `mailto:${contactEmail}` }];
 
-  // Entrance: the bar drops in after the hero copy has begun to settle.
+  // Entrance: the bar drops in after the hero copy has begun to settle; on
+  // home's first visit, after the loader.
   useGSAP(
     () => {
       if (reducedMotion) {
@@ -70,7 +72,7 @@ export function Nav({
       gsap.fromTo(
         [bar.current, wordmark.current],
         { autoAlpha: 0, y: -24 },
-        { autoAlpha: 1, y: 0, delay: 0.6, duration: timing.duration.slow, ease: timing.ease.expo },
+        { autoAlpha: 1, y: 0, delay: introPending() ? INTRO.nav : 0.6, duration: timing.duration.slow, ease: timing.ease.expo },
       );
     },
     { scope: bar, dependencies: [reducedMotion] },

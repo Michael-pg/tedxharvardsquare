@@ -5,14 +5,15 @@ import { gsap, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
 import { createDotBatch, MIN_FRAME_MS } from "@/lib/dot-batch";
+import { INTRO, introPending } from "@/lib/intro";
 
 /** Grid pitch in CSS pixels — the same screen as the footer glow. */
 const CELL = 10;
 /** How far the black pocket around `data-dot-clear` elements fades, in px. */
 const TEXT_FEATHER = 48;
 const WIDE_FEATHER = 140;
-/** How long the field takes to gather on load, in seconds. */
-const INTRO_DURATION = timing.duration.slow * 2;
+/** How long the field takes to gather on a visit after the loader has played. */
+const REGATHER = timing.duration.slow * 1.5;
 
 /** Brightness buckets, so a frame is a handful of filled paths. */
 const RED = [
@@ -99,8 +100,9 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * `strength` (0–1) fades the whole field, for pages where it should sit
  * further back than on home. Opaque sections above it simply cover it.
  *
- * `intro` plays the theme once on load: the dots start scattered and pull
- * themselves into order, the core first and the fraying edge last.
+ * `intro` plays the theme on load: the dots start scattered and pull
+ * themselves into order, the core first and the fraying edge last. On home's
+ * first visit of the session it is the loader, slow, timed by `INTRO`.
  *
  * Under reduced motion it draws single still frames on scroll and resize, and
  * skips the intro.
@@ -142,19 +144,26 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
         .filter((glyph): glyph is Glyph => glyph !== null);
     };
 
-    /** The line boxes of every clearing element that is near the viewport. */
+    /**
+     * The line boxes of every clearing element that is near the viewport, with
+     * the element's opacity, so a pocket fades in with its text rather than
+     * waiting, empty, for text still to arrive.
+     */
     const clearRects = () => {
       const rects: number[][] = [];
       for (const el of clears) {
         const box = el.getBoundingClientRect();
         if (box.bottom < -100 || box.top > height + 100) continue;
+        const style = getComputedStyle(el);
+        const shown = style.visibility === "hidden" ? 0 : Number(style.opacity);
+        if (shown < 0.01) continue;
         if (el.getAttribute("data-dot-clear") === "wide") {
-          rects.push([box.left, box.top, box.right, box.bottom, WIDE_FEATHER]);
+          rects.push([box.left, box.top, box.right, box.bottom, WIDE_FEATHER, shown]);
           continue;
         }
         range.selectNodeContents(el);
         for (const r of range.getClientRects()) {
-          if (r.width > 2) rects.push([r.left, r.top, r.right, r.bottom, TEXT_FEATHER]);
+          if (r.width > 2) rects.push([r.left, r.top, r.right, r.bottom, TEXT_FEATHER, shown]);
         }
       }
       return rects;
@@ -260,10 +269,13 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           }
           if (clear < 0.02) continue;
           if (rects.length) {
-            // Feathered and a little uneven, so the pocket never reads as a box.
-            for (const [l, top, r, b, feather] of rects) {
+            // Feathered and a little uneven, so a text pocket never reads as a
+            // box. Wide pockets stay smooth: the texture is fixed to the screen,
+            // so on a pocket that large it slid along the edge while scrolling.
+            for (const [l, top, r, b, feather, shown] of rects) {
               const q = Math.hypot(Math.max(l - gx, 0, gx - r), Math.max(top - gy, 0, gy - b));
-              clear *= smoothstep(2, feather, q + texture * feather * 0.3);
+              const wobble = feather === WIDE_FEATHER ? 0 : texture * feather * 0.3;
+              clear *= 1 - shown * (1 - smoothstep(2, feather, q + wobble));
             }
             if (clear < 0.02) continue;
           }
@@ -341,7 +353,10 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
     if (reducedMotion) {
       window.addEventListener("scroll", draw, { passive: true });
     } else {
-      if (gather.progress < 1) gsap.to(gather, { progress: 1, duration: INTRO_DURATION, ease: timing.ease.out });
+      if (gather.progress < 1) {
+        const duration = introPending() ? INTRO.gather : REGATHER;
+        gsap.to(gather, { progress: 1, duration, ease: "power2.out" });
+      }
       gsap.ticker.add(tick);
       window.addEventListener("pointermove", onMove, { passive: true });
       document.documentElement.addEventListener("pointerleave", onLeave);

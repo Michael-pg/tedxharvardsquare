@@ -7,66 +7,52 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 import type { Image as ImageContent } from "@/content";
 import { HalftonePhoto } from "./halftone-photo";
 
-/** Where the red plate sits against the photograph, before and after scrolling past. */
-// The plate drifts right, toward the text: the photo sits at the page's left.
-const PLATE_FROM = { xPercent: 24, yPercent: 5, scale: 1.35 };
-const PLATE_TO = { xPercent: 14, yPercent: -2, scale: 1.35 };
-
 /**
- * A Flagship speaker, printed twice: the photograph in black and white,
- * cropped square around the Studio hotspot, and behind it the same frame as a
- * coarse, blurred red halftone — larger, out of register, and sliced into
- * bands that scatter sideways. The photo is lightened onto the plate, so the
- * red shows through everywhere the photo is dark. As the section scrolls to
- * the middle of the screen the bands fall into line: disorder resolving to
- * order, the edition's theme, without quite reaching it. The plate is quiet
- * (see `HalftonePhoto`): an oval with no frame, moved only by the scroll.
+ * A Flagship speaker that arrives the way portraits do on the speakers page
+ * (`PrintedPortrait`): the frame settles in as red halftone, then, scrubbed by
+ * the scroll, the black-and-white photograph develops over it and the dots
+ * fade away. Once developed, the pointer brushes the print back into view
+ * along a small, tapering trail.
  *
- * Works best with a lit speaker on a dark stage. Under reduced motion the
- * plate holds still, nearly in line.
+ * Every layer is feathered at its edges and the photo is lightened onto the
+ * page, so its blacks are the page's black and the frame never shows. Under
+ * reduced motion, or without JS, it is simply the photograph.
+ *
+ * Works best with a lit speaker on a dark stage.
  */
 export function FlagshipPhoto({ image, className }: { image: ImageContent; className?: string }) {
   const root = useRef<HTMLDivElement>(null);
-  const plate = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const focus = image.focus ?? { x: 0.5, y: 0.5 };
+  const print = { ...image, alt: "" };
 
   useGSAP(
     () => {
-      const element = root.current;
-      const layer = plate.current;
-      if (!element || !layer) return;
-      if (reducedMotion) {
-        gsap.set(layer, PLATE_TO);
-        return;
-      }
-      gsap.fromTo(layer, PLATE_FROM, {
-        ...PLATE_TO,
-        ease: "none",
-        scrollTrigger: { trigger: element, start: "top bottom", end: "bottom top", scrub: 0.8 },
-      });
+      const photo = root.current?.querySelector<HTMLElement>("[data-photo]");
+      const plate = root.current?.querySelector<HTMLElement>("[data-print]");
+      if (!photo) return;
+      gsap.set(photo, { autoAlpha: 1 });
+      if (reducedMotion || !plate) return;
+      gsap
+        .timeline({
+          scrollTrigger: { trigger: root.current, start: "top 85%", end: "center 50%", scrub: 0.6 },
+        })
+        .fromTo(photo, { autoAlpha: 0 }, { autoAlpha: 1, ease: "none", duration: 0.7 }, 0.3)
+        .fromTo(plate, { autoAlpha: 0.9 }, { autoAlpha: 0, ease: "none", duration: 0.5 }, 0.5);
     },
     { scope: root, dependencies: [reducedMotion] },
   );
 
   return (
     // Not isolated: the photo lightens onto the page itself, so its blacks
-    // become the page's black. Isolated, they stayed pure black and the frame
-    // showed as a darker square.
+    // become the page's black.
     <div ref={root} className={`relative aspect-square ${className ?? ""}`}>
-      <div ref={plate} className="absolute inset-0">
-        <HalftonePhoto
-          image={{ ...image, alt: "" }}
-          className="w-full"
-          ratio={1}
-          focus={focus}
-          cell={13}
-          blur={1.6}
-          scatter={120}
-          quiet
-        />
-      </div>
-      <div className="mask-feather pointer-events-none absolute inset-0 mix-blend-lighten">
+      {!reducedMotion && (
+        <div data-print aria-hidden="true" className="mask-feather absolute inset-0">
+          <HalftonePhoto image={print} ratio={1} focus={focus} cell={9} blur={0.6} pointer={false} className="w-full" />
+        </div>
+      )}
+      <div data-photo data-animate className="mask-feather pointer-events-none absolute inset-0 mix-blend-lighten">
         <Image
           src={image.src}
           alt={image.alt}
@@ -76,6 +62,11 @@ export function FlagshipPhoto({ image, className }: { image: ImageContent; class
           className="object-cover contrast-125 grayscale"
         />
       </div>
+      {!reducedMotion && (
+        <div aria-hidden="true" className="mask-feather absolute inset-0">
+          <HalftonePhoto image={print} ratio={1} focus={focus} cell={7} trail className="w-full" />
+        </div>
+      )}
     </div>
   );
 }
