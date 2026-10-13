@@ -84,7 +84,7 @@ export default async function Home() {
     <>
       <JsonLd data={organizationJsonLd(site)} />
       <SiteNav />
-      <DotField />
+      <DotField intro />
 
       <main className="relative">
         {/* Hero: one line across the top, the dot field in the lower right. */}

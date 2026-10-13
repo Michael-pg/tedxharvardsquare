@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { createPointerTrail } from "@/lib/pointer-trail";
 import { createDotBatch, MIN_FRAME_MS } from "@/lib/dot-batch";
@@ -11,6 +11,8 @@ const CELL = 10;
 /** How far the black pocket around `data-dot-clear` elements fades, in px. */
 const TEXT_FEATHER = 48;
 const WIDE_FEATHER = 140;
+/** How long the field takes to gather on load, in seconds. */
+const INTRO_DURATION = timing.duration.slow * 2;
 
 /** Brightness buckets, so a frame is a handful of filled paths. */
 const RED = [
@@ -97,9 +99,13 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  * `strength` (0–1) fades the whole field, for pages where it should sit
  * further back than on home. Opaque sections above it simply cover it.
  *
- * Under reduced motion it draws single still frames on scroll and resize.
+ * `intro` plays the theme once on load: the dots start scattered and pull
+ * themselves into order, the core first and the fraying edge last.
+ *
+ * Under reduced motion it draws single still frames on scroll and resize, and
+ * skips the intro.
  */
-export function DotField({ strength = 1 }: { strength?: number }) {
+export function DotField({ strength = 1, intro = false }: { strength?: number; intro?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -118,6 +124,8 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     const range = document.createRange();
     const red = createDotBatch(RED);
     const grey = createDotBatch(GREY);
+    // 0 → 1 over the intro; 1 is the settled field.
+    const gather = { progress: intro && !reducedMotion ? 0 : 1 };
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -226,6 +234,21 @@ export function DotField({ strength = 1 }: { strength?: number }) {
           const dust = smoothstep(1.45, 1.0, d);
           if (body < 0.04 && dust < 0.02) continue;
 
+          // The intro: each dot arrives from a scattered start, the core
+          // settling first and order spreading outward to the edge.
+          let arrive = 1;
+          let sx = 0;
+          let sy = 0;
+          if (gather.progress < 1) {
+            const start = Math.min(1, d / 1.3) * 0.5 + hash(col, row, 5) * 0.2;
+            arrive = smoothstep(start, start + 0.3, gather.progress);
+            if (arrive <= 0) continue;
+            const scatter = (1 - arrive) * (1 - arrive) * CELL * 14;
+            const heading = hash(col, row, 6) * Math.PI * 2;
+            sx = Math.cos(heading) * scatter;
+            sy = Math.sin(heading) * scatter;
+          }
+
           let clear = footerFade;
           // Keep the mass out from behind a glyph so the number reads on black.
           for (const g of activeGlyphs) {
@@ -255,9 +278,9 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             const v = Math.min(1, Math.max(body, held * 0.35)) * clear;
             if (v < 0.04) continue;
             const k = Math.min(1, order * 1.4);
-            const x = gx + (hash(col, row, 1) - 0.5) * CELL * (1 - k);
-            const y = gy + (hash(col, row, 2) - 0.5) * CELL * (1 - k);
-            red.add(redBucket(v * 0.92), x, y, CELL * 0.46 * Math.pow(v, 0.85));
+            const x = gx + sx + (hash(col, row, 1) - 0.5) * CELL * (1 - k);
+            const y = gy + sy + (hash(col, row, 2) - 0.5) * CELL * (1 - k);
+            red.add(redBucket(v * 0.92), x, y, CELL * 0.46 * Math.pow(v, 0.85) * arrive);
           } else {
             // The fraying edge: dots come loose and drift outward, fading.
             const loose = 1 - order;
@@ -267,9 +290,9 @@ export function DotField({ strength = 1 }: { strength?: number }) {
             const ux = Math.cos(angle) * stretch;
             const uy = Math.sin(angle);
             const n = Math.hypot(ux, uy) || 1;
-            const x = gx + (ux / n) * push + (hash(col, row, 1) - 0.5) * CELL * 2.4 * loose;
-            const y = gy + (uy / n) * push + (hash(col, row, 2) - 0.5) * CELL * 2.4 * loose;
-            const v = Math.max(body, dust * 0.35) * (1 - cycle * 0.8) * clear;
+            const x = gx + sx + (ux / n) * push + (hash(col, row, 1) - 0.5) * CELL * 2.4 * loose;
+            const y = gy + sy + (uy / n) * push + (hash(col, row, 2) - 0.5) * CELL * 2.4 * loose;
+            const v = Math.max(body, dust * 0.35) * (1 - cycle * 0.8) * clear * arrive;
             if (v < 0.05) continue;
             grey.add(Math.min(GREY.length - 1, Math.floor(v * GREY.length)), x, y, CELL * (0.1 + 0.25 * v));
           }
@@ -318,19 +341,21 @@ export function DotField({ strength = 1 }: { strength?: number }) {
     if (reducedMotion) {
       window.addEventListener("scroll", draw, { passive: true });
     } else {
+      if (gather.progress < 1) gsap.to(gather, { progress: 1, duration: INTRO_DURATION, ease: timing.ease.out });
       gsap.ticker.add(tick);
       window.addEventListener("pointermove", onMove, { passive: true });
       document.documentElement.addEventListener("pointerleave", onLeave);
     }
 
     return () => {
+      gsap.killTweensOf(gather);
       gsap.ticker.remove(tick);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", draw);
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);
     };
-  }, [reducedMotion, strength]);
+  }, [reducedMotion, strength, intro]);
 
   return <canvas ref={canvasRef} aria-hidden="true" className="pointer-events-none fixed inset-0 size-full" />;
 }
