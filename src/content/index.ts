@@ -146,7 +146,7 @@ export async function getHomePage(): Promise<HomePage> {
 
 export async function getSponsorPage(): Promise<SponsorPage | undefined> {
   const page = await fetchContent<SponsorPage | null>(
-    `*[_id == "sponsorPage"][0]{ headline, "photo": ${image("photo")}, "body": coalesce(body, []), ask, ctaLabel }`,
+    `*[_id == "sponsorPage"][0]{ headline, "photo": ${image("photo")}, "body": coalesce(body, []), ${imageList("photos")}, ask, ctaLabel }`,
     {},
     ["sponsorPage"],
   );

@@ -239,6 +239,15 @@ export const sponsorPage = defineType({
       description: "Who the audience is and what partnering offers. One paragraph each; the first is set larger.",
     }),
     defineField({
+      name: "photos",
+      title: "Pitch photos",
+      type: "array",
+      of: [defineArrayMember({ type: "accessibleImage" })],
+      description:
+        "Two photos set beside the pitch paragraphs, in colour: the first upright beside the opening paragraph, the second wide beside the rest. The audience and the room work best. Until filled, two of the home page's hero photos stand in.",
+      validation: (r) => r.max(2),
+    }),
+    defineField({
       name: "ask",
       title: "Closing question",
       type: "string",
