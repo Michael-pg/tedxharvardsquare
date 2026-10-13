@@ -80,6 +80,7 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-12 | **Home loader** (owner): black, a hairline and 000→100 counter while the dots gather (3.4s), then the headline word by word, the rest of the hero, the nav. Plays in full on landing after **30+ minutes** away from the site; a reload or a return while browsing shows the page settled. Never a shortened version. Timing in `src/lib/intro.ts`. |
 | 2026-10-12 | **Home Flagship photo develops like the speaker portraits** (owner): red halftone print → black-and-white photo on scroll; afterwards the pointer brushes the print back along a small trail. No red plate. The section is no longer a pocket in the dot field; the field runs through into the past talks, with pockets around the copy and photo only, at 25% strength (`data-dot-dim`, owner: too loud at full), easing back to full over a third of a screen. |
 | 2026-10-12 | **Motion over scores** (owner): keep the animation and the look; a little load time is fine. Performance work must look identical, keep scrolling smooth and never crash. Don't cut frame rates or simplify motion to hit Lighthouse ≥ 90. |
+| 2026-10-12 | **Flagship "Over the years"** (owner): past editions as a row of drawers on `/flagship` (`#editions`), not a page, not in the menu. The Oct 2024 TEDxLive is left out. No attendance figures until there's a real count. Plan: `docs/FLAGSHIP-PLAN.md`. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -98,8 +99,11 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [x] Against Entropy → **Date**: February 20, 2027 (set 2026-10-09).
 - [x] Home page → **Flagship photo**: the wide Feb 2026 stage shot (set 2026-10-09). Swap in Studio if a better one turns up; keep it out of the photo strip so it never appears twice.
 - [ ] Optional: Site settings → Mission statement, drop the em dash.
-- [ ] Edition 1 date and theme; Edition 2 theme.
-- [ ] Job titles for the ten 2025 speakers (blank in Webflow too).
+- [x] Edition themes and dates (owner, 2026-10-12): Edition 1 "Hope for All of Mankind", April 26, 2025; Edition 2 "The Future We Choose". Set in Studio.
+- [ ] Edition 1 **venue** (TED's listing: "Dx, 33 Dunster St"; the venue needs a name).
+- [ ] **Over the years photos** (each past edition → Details → Poster): **filler for now** (Edition 1: the gallery-room talk `IMG_9825`, year unconfirmed; Edition 2: the wheelchair/raised-hands stage shot, also a home hero frame). Owner to swap in real picks. Optional: a Recap line on the Over the years tab.
+- [ ] Rosa Jacobs' title typo ("Muscian"). Studio has "Gustav Luna", TED's listing "Gustavo": check which is right.
+- [ ] Job titles for the ten 2025 speakers (blank in Webflow too). TED's April 2025 listing (ted.com/tedx/events/59961) has one-line bios for eight of them.
 - [ ] Confirm the Arrow Street Arts white logo (inferred from Webflow's "Mask group-2").
 - [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
 - [ ] Real content for House events, team, and past-edition themes (no placeholders). TED expects core team names and backgrounds on the site; an `/about` team section is ready to build once they exist.
@@ -674,3 +678,17 @@ display size), now wraps there.
 Noted, not changed: during the home loader the header is hidden, so the first
 Tab lands in the hero until the intro ends (loader work is in progress
 elsewhere). Captions and a real screen-reader pass are on the owner list.
+
+### 2026-10-12 — Flagship review, "Over the years"
+
+Reviewed `/flagship` and wrote `docs/FLAGSHIP-PLAN.md` (checklist, research
+on past editions, decisions). Built **Over the years** between Topics and
+Tickets: past editions as drawers. One is open (colour photo, theme, date and
+venue, talk count, a few speakers, "Watch the talks" → `/speakers#edition-N`).
+The rest are strips with the photo in red halftone. Hovering or clicking a
+strip pulls it open, and on phones the drawers stack. New edition fields:
+`recap` and `attendance`. Sanity (published): Edition 2 theme "The Future We
+Choose". Checked on a local copy at 375 and 1024px: no overflow, and the
+toggle and ARIA states work. The halftone can't draw on a non-allowlisted
+localhost port (Sanity CDN CORS), so check the preview for that.
+

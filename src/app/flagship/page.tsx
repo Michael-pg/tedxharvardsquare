@@ -5,6 +5,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home/dot-field";
 import { Motto } from "@/components/home/motto";
 import { FlagshipHero } from "@/components/flagship/flagship-hero";
+import { EditionDrawers, type DrawerEdition } from "@/components/flagship/edition-drawers";
 import { LineupPlaceholder } from "@/components/flagship/lineup-placeholder";
 import { PhotoCollage } from "@/components/flagship/photo-collage";
 import { Section } from "@/components/flagship/section";
@@ -16,11 +17,13 @@ import { JsonLd } from "@/components/seo/json-ld";
 import {
   getCurrentEdition,
   getHomePage,
+  getPastEditions,
   getSiteSettings,
   getSpeakerArchive,
   getSpeakers,
   getTopics,
   type Image as ImageContent,
+  type PastEdition,
 } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 import { editionJsonLd } from "@/lib/structured-data";
@@ -42,6 +45,29 @@ const dayMonth = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric
 /** The three questions step across the grid, so the list reads as a sequence. */
 const questionStart = ["md:col-start-1", "md:col-start-4", "md:col-start-7"];
 
+/** "Jeff Harmon, Shawna Young, Andrea Choe and 9 others". */
+const someNames = (names: string[], shown = 3) =>
+  names.length <= shown + 1
+    ? new Intl.ListFormat("en-US").format(names)
+    : `${names.slice(0, shown).join(", ")} and ${names.length - shown} others`;
+
+/** A past edition, written out for "Over the years". */
+const toDrawer = (edition: PastEdition): DrawerEdition => ({
+  number: edition.number,
+  year: edition.year,
+  title: edition.theme ?? `Edition ${edition.number}`,
+  when: edition.date ? longDate.format(new Date(edition.date)) : undefined,
+  where: edition.venue ? `${edition.venue.name}, ${edition.venue.city}` : undefined,
+  recap: edition.recap,
+  figures: [
+    edition.talkCount > 0 && `${edition.talkCount} talks`,
+    edition.attendance && `${edition.attendance} attended`,
+  ].filter((figure): figure is string => Boolean(figure)),
+  speakers: edition.speakerNames.length > 0 ? `With ${someNames(edition.speakerNames)}` : undefined,
+  href: `/speakers#edition-${edition.number}`,
+  image: edition.poster ?? edition.still,
+});
+
 /** Drops repeats of the same photo, keeping the first. */
 const unique = (images: (ImageContent | undefined)[]) =>
   images.filter((image, i, all): image is ImageContent =>
@@ -60,12 +86,13 @@ const unique = (images: (ImageContent | undefined)[]) =>
  * the collage, so the photographs and everything after sit on plain black.
  */
 export default async function FlagshipPage() {
-  const [site, edition, archive, home, topics] = await Promise.all([
+  const [site, edition, archive, home, topics, pastEditions] = await Promise.all([
     getSiteSettings(),
     getCurrentEdition(),
     getSpeakerArchive(),
     getHomePage(),
     getTopics(),
+    getPastEditions(),
   ]);
   const lineup = edition ? (await getSpeakers(edition.slug)).filter((s) => s.kind === "speaker") : [];
 
@@ -193,6 +220,23 @@ export default async function FlagshipPage() {
               </Reveal>
             </div>
             <TopicMarquee topics={topics} />
+          </section>
+        )}
+
+        {/* Every Flagship so far, as drawers: proof, just before the ask. */}
+        {pastEditions.length > 0 && (
+          <section id="editions" aria-labelledby="editions-title" className="scroll-mt-16 py-24 md:py-40">
+            <div className="mb-12 grid grid-cols-4 gap-x-6 gap-y-6 px-6 md:mb-20 md:grid-cols-12">
+              <Reveal as="h2" className="col-span-4 text-statement font-medium md:col-span-8 md:text-mega">
+                <span id="editions-title">Over the years</span>
+              </Reveal>
+              <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
+                Every Flagship so far. Open one to see who spoke.
+              </Reveal>
+            </div>
+            <Reveal>
+              <EditionDrawers editions={pastEditions.map(toDrawer)} />
+            </Reveal>
           </section>
         )}
 

@@ -52,6 +52,8 @@ export function editionJsonLd(site: SiteConfig, edition: Edition, image?: Image)
     name: edition.theme ? `${site.name} ${edition.year}: ${edition.theme}` : `${site.name} ${edition.year}`,
     description: edition.themeStatement ?? site.description,
     startDate: edition.date,
+    // One day, so it ends the day it starts.
+    endDate: edition.date,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     url: `${site.url}/flagship`,
