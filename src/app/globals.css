@@ -102,6 +102,9 @@
      opens into the same frame and long content scrolls inside it. */
   --spacing-dialog: 44rem;
 
+  /* "Over the years" on /flagship: the row of edition drawers. */
+  --spacing-drawer: 80svh;
+
   /* —— Aspect ratios ————————————————————————————————————————————————— */
 
   /* Talk thumbnails: a 3:2 stage photo cropped in a little, toward square. */
@@ -233,6 +236,12 @@ body {
   .prose a:hover {
     text-decoration-color: var(--color-brand);
   }
+}
+
+/* A label set up the side of a closed drawer, read bottom to top. */
+@utility text-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
 /* Feathers an element's four edges to nothing, so a photo has no frame. */

@@ -20,6 +20,7 @@ import type {
   HomePage,
   HouseEvent,
   MenuImages,
+  PastEdition,
   Partner,
   SiteSettings,
   Slug,
@@ -71,7 +72,7 @@ const imageList = (field: string) => `"${field}": coalesce(${field}[]{
 
 const editionFields = `
   "slug": slug.current, number, year, theme, themeStatement, date, venue, status,
-  ticketUrl, "poster": ${image("poster")},
+  ticketUrl, "poster": ${image("poster")}, recap, attendance,
   "page": {
     place, month, invitation, audience, programTitle, programUrl, speakersNote, closeTitle,
     "heroImage": ${image("heroImage")},
@@ -222,6 +223,21 @@ export async function getCurrentEdition(): Promise<Edition | undefined> {
     ["edition"],
   );
   return edition ?? undefined;
+}
+
+/** Editions that have happened, newest first, with what "Over the years" shows. */
+export async function getPastEditions(): Promise<PastEdition[]> {
+  return fetchContent(
+    `*[_type == "edition" && status == "past"] | order(number desc){
+      ${editionFields},
+      "talkCount": count(*[_type == "talk" && references(^._id)]),
+      "speakerNames": *[_type == "speaker" && kind == "speaker" && references(^._id)]
+        | order(order asc, name asc).name,
+      "still": *[_type == "talk" && references(^._id) && defined(still.asset)][0].${image("still")}
+    }`,
+    {},
+    ["edition", "speaker", "talk"],
+  );
 }
 
 // —— Speakers & talks ——————————————————————————————————————————————————

@@ -264,6 +264,7 @@ export const edition = defineType({
   groups: [
     { name: "details", title: "Details", default: true },
     { name: "page", title: "Flagship page" },
+    { name: "recap", title: "Over the years" },
   ],
   fields: [
     defineField({
@@ -333,7 +334,24 @@ export const edition = defineType({
       group: "details",
       type: "accessibleImage",
       description:
-        "Key art or a stage photo for this edition. The home page prints it in red dots beside the edition's theme; until one is added, the first home page photo is used.",
+        "Key art or a stage photo for this edition, landscape. The home page prints it in red dots beside the edition's theme; until one is added, the first home page photo is used. Once the edition is Past, it is the photo in the Flagship page's \"Over the years\".",
+    }),
+    defineField({
+      name: "recap",
+      group: "recap",
+      type: "string",
+      description:
+        'Shown once the edition is Past, in "Over the years" on the Flagship page. One line on how the day went, e.g. "A full day at Arrow Street Arts: talks, Discovery Sessions, and dinners across the Square."',
+      validation: (r) => r.max(160),
+    }),
+    defineField({
+      name: "attendance",
+      group: "recap",
+      title: "Attendance",
+      type: "number",
+      description:
+        'People in the room, shown in "Over the years" as "373 attended". A real count only; leave empty rather than estimate.',
+      validation: (r) => r.integer().positive(),
     }),
     defineField({
       name: "place",
