@@ -57,6 +57,9 @@ type Focus = { x: number; y: number };
  * the rectangular print but ignores the pointer too, for a print that sits
  * under something else.
  *
+ * `trail` hides the print entirely except along the pointer's trail, with a
+ * smaller head: a print under a photograph that the pointer brushes into view.
+ *
  * Under reduced motion it draws the finished print once. The element carries
  * the photo's alt text, since the canvas has none of its own.
  */
@@ -71,6 +74,7 @@ export function HalftonePhoto({
   exposure = 1,
   quiet = false,
   pointer = true,
+  trail: trailOnly = false,
 }: {
   image: ImageContent;
   className?: string;
@@ -82,6 +86,7 @@ export function HalftonePhoto({
   exposure?: number;
   quiet?: boolean;
   pointer?: boolean;
+  trail?: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -102,7 +107,7 @@ export function HalftonePhoto({
     let running = false;
     let revealed = false;
     const photo = new Image();
-    const state = { progress: reducedMotion ? 1 : 0, disorder: scatter && !reducedMotion ? 1 : SETTLED_DISORDER };
+    const state = { progress: reducedMotion || trailOnly ? 1 : 0, disorder: scatter && !reducedMotion ? 1 : SETTLED_DISORDER };
     const trail = createPointerTrail();
     const dots = createDotBatch(BUCKETS);
 
@@ -146,7 +151,8 @@ export function HalftonePhoto({
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
       if (!luminance) return;
-      const reach = Math.max(width, height) * 0.18;
+      if (trailOnly && !trail.alive) return;
+      const reach = Math.max(width, height) * (trailOnly ? 0.09 : 0.18);
       // Rows travel in bands of one to five, each knocked its own way.
       let band = 0;
       let bandEnd = 0;
@@ -169,7 +175,10 @@ export function HalftonePhoto({
           // Where the trail passes, the print falls back into register.
           const x = baseX + shift * (1 - held);
           // The print thins out toward its edges, so it has no frame.
-          if (quiet) {
+          if (trailOnly) {
+            // Only where the trail is, with a floor so dark passages still show it.
+            intensity = (0.3 + 0.6 * intensity) * held;
+          } else if (quiet) {
             // An oval, applied last, so nothing reaches the canvas's edge.
             const ox = (x / width - 0.5) * 2;
             const oy = (y / height - 0.5) * 2;
@@ -281,7 +290,7 @@ export function HalftonePhoto({
       wrap.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
     };
-  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, exposure, quiet, pointer]);
+  }, [image.src, reducedMotion, cellSize, blur, focus.x, focus.y, scatter, exposure, quiet, pointer, trailOnly]);
 
   const ratio = ratioOverride ?? (image.width && image.height ? image.width / image.height : 3 / 2);
   return (
