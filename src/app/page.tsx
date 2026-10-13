@@ -125,77 +125,79 @@ export default async function Home() {
           </section>
         )}
 
-        {/* Flagship: the year leads, since the hero already carries the theme,
-            then the theme's statement as the through-line. The photo sits left
-            on desktop, breaking the run of left-aligned text. The dot field runs
-            on through the section into the past talks, keeping pockets of
-            black around the copy and the photo only, so there is no seam, and
-            runs faint here so the photo stays the loudest thing. */}
-        {edition && (
-          <section
-            data-dot-dim="0.25"
-            className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
-            <div
-              data-dot-clear
-              className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
-              <Reveal as="h2" className="text-display font-medium text-balance">
-                {`Flagship ${edition.year}`}
-              </Reveal>
-              {statement.length > 0 && (
-                <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
-                  <span className="text-foreground">{statement[0]}</span> {statement.slice(1).join(" ")}
+        {/* The dot field runs faint through Flagship and the past talks as one
+            band (two would double-dim at their seam), with pockets of black
+            around the copy, the photo and the talks, then fades out above
+            What is TEDx. Faint so the photo and the talks stay the loudest. */}
+        <div data-dot-dim="0.25">
+          {/* Flagship: the year leads, since the hero already carries the theme,
+              then the theme's statement as the through-line. The photo sits left
+              on desktop, breaking the run of left-aligned text. */}
+          {edition && (
+            <section
+              className="grid grid-cols-4 items-center gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+              <div
+                data-dot-clear
+                className="col-span-4 flex flex-col items-start gap-6 md:col-span-5 md:col-start-8 md:row-start-1">
+                <Reveal as="h2" className="text-display font-medium text-balance">
+                  {`Flagship ${edition.year}`}
                 </Reveal>
-              )}
-              {/* The facts as a sentence, not a table. */}
-              <Reveal as="p" className="max-w-md text-body text-balance text-muted">
-                {[
-                  edition.theme ? `Edition ${edition.number}: ${edition.theme}.` : `Edition ${edition.number}.`,
-                  venueKnown
-                    ? `At ${edition.venue?.name}, ${edition.venue?.city}.`
-                    : `In ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
-                  edition.date
-                    ? `${new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))}.`
-                    : "Date to be announced.",
-                ].join(" ")}
-              </Reveal>
-              <Reveal className="mt-4 flex flex-wrap gap-2">
-                <SquareLink href="/flagship">{edition.theme ? `Explore ${edition.theme}` : `Flagship ${edition.year}`}</SquareLink>
-                {site.newsletterUrl && (
-                  <SquareLink href={site.newsletterUrl} variant="secondary">
-                    Subscribe
-                  </SquareLink>
+                {statement.length > 0 && (
+                  <Reveal as="p" className="max-w-md text-lead text-balance text-muted">
+                    <span className="text-foreground">{statement[0]}</span> {statement.slice(1).join(" ")}
+                  </Reveal>
                 )}
-              </Reveal>
-            </div>
-            {flagshipPhoto && (
-              <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-6 md:col-start-1 md:row-start-1" />
-            )}
-          </section>
-        )}
+                {/* The facts as a sentence, not a table. */}
+                <Reveal as="p" className="max-w-md text-body text-balance text-muted">
+                  {[
+                    edition.theme ? `Edition ${edition.number}: ${edition.theme}.` : `Edition ${edition.number}.`,
+                    venueKnown
+                      ? `At ${edition.venue?.name}, ${edition.venue?.city}.`
+                      : `In ${edition.venue?.city ?? "Cambridge"}, venue to be announced.`,
+                    edition.date
+                      ? `${new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(edition.date))}.`
+                      : "Date to be announced.",
+                  ].join(" ")}
+                </Reveal>
+                <Reveal className="mt-4 flex flex-wrap gap-2">
+                  <SquareLink href="/flagship">{edition.theme ? `Explore ${edition.theme}` : `Flagship ${edition.year}`}</SquareLink>
+                  {site.newsletterUrl && (
+                    <SquareLink href={site.newsletterUrl} variant="secondary">
+                      Subscribe
+                    </SquareLink>
+                  )}
+                </Reveal>
+              </div>
+              {flagshipPhoto && (
+                <FlagshipPhoto image={flagshipPhoto} className="col-span-4 w-full md:col-span-6 md:col-start-1 md:row-start-1" />
+              )}
+            </section>
+          )}
 
-        {/* Past talks: an archive to watch, dated, so it never reads as the next lineup. */}
-        {featuredTalks.length > 0 && (
-          <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
-            <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
-              <Reveal as="h2" className="text-display font-medium text-balance">
-                Watch past talks
-              </Reveal>
-              <Reveal as="p" className="text-lead text-muted">
-                {`${talkCount} talks from ${editionCount} ${editionCount === 1 ? "edition" : "editions"} so far.`}
-              </Reveal>
-              <Reveal className="mt-4">
-                <SquareLink href="/speakers" variant="secondary">
-                  All speakers and talks
-                </SquareLink>
-              </Reveal>
-            </div>
-            <div data-dot-clear className="col-span-4 md:col-span-7">
-              <Reveal>
-                <PastTalks speakers={featuredTalks} />
-              </Reveal>
-            </div>
-          </section>
-        )}
+          {/* Past talks: an archive to watch, dated, so it never reads as the next lineup. */}
+          {featuredTalks.length > 0 && (
+            <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+              <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
+                <Reveal as="h2" className="text-display font-medium text-balance">
+                  Watch past talks
+                </Reveal>
+                <Reveal as="p" className="text-lead text-muted">
+                  {`${talkCount} talks from ${editionCount} ${editionCount === 1 ? "edition" : "editions"} so far.`}
+                </Reveal>
+                <Reveal className="mt-4">
+                  <SquareLink href="/speakers" variant="secondary">
+                    All speakers and talks
+                  </SquareLink>
+                </Reveal>
+              </div>
+              <div data-dot-clear className="col-span-4 md:col-span-7">
+                <Reveal>
+                  <PastTalks speakers={featuredTalks} />
+                </Reveal>
+              </div>
+            </section>
+          )}
+        </div>
 
         {/* What is TEDx: the TEDx licence requires this text and a visible
             link to the TEDx program on the homepage. Partner logos may not
