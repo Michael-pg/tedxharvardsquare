@@ -89,14 +89,14 @@ const toRow = (edition: PastEdition): PastEditionRow => ({
 
 /**
  * Flagship: the annual conference, led by the current edition. The poster
- * (name, theme, date, venue), the theme statement with who the day is for,
- * why come, then the lineup, the venue, the topics, past editions, and
- * tickets. The opening is kept short so the lineup sits close to the top once
- * it is announced. Everything comes from the edition in Studio; any part left
- * empty is simply not shown.
+ * (name, theme, date, venue); the day (the reasons to come as photos, each
+ * with a fact); the lineup; the topics as a moving band; the venue with the
+ * ticket ask; then past editions. Kept short above Speakers so the lineup sits
+ * near the top once announced. Everything comes from the edition in Studio;
+ * any part left empty is simply not shown.
  *
- * The dot field runs behind the poster and the statement only, and stops at
- * Why come, so the photographs and everything after sit on plain ground.
+ * The dot field runs behind the poster and, quieter, the day, and stops at
+ * Speakers.
  */
 export default async function FlagshipPage() {
   const [site, edition, archive, home, topics, pastEditions] = await Promise.all([
@@ -116,6 +116,30 @@ export default async function FlagshipPage() {
   // Tickets once they are on sale; until then, the early-access list.
   const joinHref = edition?.ticketUrl ?? site.earlyAccessUrl ?? site.newsletterUrl;
   const joinLabel = edition?.ticketUrl ? "Get tickets" : "Get early access";
+  const showVenue = Boolean(edition?.venue && venueKnown);
+  const tickets = edition && (
+    <>
+      {copy && copy.included.length > 0 ? (
+        <ul className="w-full">
+          {copy.included.map((item) => (
+            <li key={item} className="border-b border-rule py-3 text-body last:border-b-0">
+              {item}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="max-w-md text-body text-ink-200">
+          {`Tickets for ${title} are not on sale yet. Join the early-access list to hear first.`}
+        </p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {joinHref && <SquareLink href={joinHref}>{joinLabel}</SquareLink>}
+        <SquareLink href="/faq" variant="secondary">
+          Questions
+        </SquareLink>
+      </div>
+    </>
+  );
 
   // Past speakers' portraits, printed past recognition, stand in for the lineup.
   const placeholders = archive.flatMap((s) => (s.headshot?.src ? [s.headshot] : [])).slice(0, 4);
@@ -186,27 +210,17 @@ export default async function FlagshipPage() {
           </section>
         )}
 
-        {edition?.venue && venueKnown && (
+        {topics.length > 0 && <TopicMarquee topics={topics} />}
+
+        {/* Where and when, and the ask: the moment someone decides to come. */}
+        {edition?.venue && showVenue && (
           <Venue
             venue={edition.venue}
             image={copy?.venueImage}
             day={date ? dayMonth.format(date) : copy?.month}
             notes={copy?.venueNotes ?? []}
+            ask={tickets}
           />
-        )}
-
-        {topics.length > 0 && (
-          <section aria-labelledby="topics-title" className="py-20 md:py-32">
-            <div className="mb-10 grid grid-cols-4 gap-x-6 gap-y-6 px-6 md:mb-14 md:grid-cols-12">
-              <Reveal as="h2" className="col-span-4 self-end text-display font-medium md:col-span-7">
-                <span id="topics-title">Topics</span>
-              </Reveal>
-              <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
-                The subjects we program around, year after year. Every Flagship draws its talks from across them.
-              </Reveal>
-            </div>
-            <TopicMarquee topics={topics} />
-          </section>
         )}
 
         {/* Every Flagship so far, a row each: proof, just before the ask. */}
@@ -224,38 +238,16 @@ export default async function FlagshipPage() {
           </section>
         )}
 
-        {/* Tickets: the one ask on the page, and its close. */}
-        {edition && (
+        {/* Tickets on their own only when there is no venue to set them in. */}
+        {edition && !showVenue && (
           <section aria-labelledby="tickets-title" className="px-6 py-20 md:py-32">
             <div className="grid grid-cols-4 gap-x-6 gap-y-10 md:grid-cols-12">
               <Reveal as="h2" className="col-span-4 text-display font-medium md:col-span-6">
                 <span id="tickets-title">Tickets</span>
               </Reveal>
-              <div className="col-span-4 flex flex-col items-start gap-8 md:col-span-5 md:col-start-8 md:pt-6">
-                {copy && copy.included.length > 0 ? (
-                  <Reveal as="ul" className="w-full border-t border-rule">
-                    {copy.included.map((item) => (
-                      <li key={item} className="border-b border-rule py-5 text-lead">
-                        {item}
-                      </li>
-                    ))}
-                  </Reveal>
-                ) : (
-                  <Reveal as="p" className="max-w-md text-lead text-ink-300">
-                    {`Tickets for ${title} are not on sale yet. Join the early-access list to hear first.`}
-                  </Reveal>
-                )}
-                <Reveal className="flex flex-wrap gap-2">
-                  {joinHref && (
-                    <SquareLink href={joinHref}>
-                      {joinLabel}
-                    </SquareLink>
-                  )}
-                  <SquareLink href="/faq" variant="secondary">
-                    Questions
-                  </SquareLink>
-                </Reveal>
-              </div>
+              <Reveal className="col-span-4 flex flex-col items-start gap-8 md:col-span-5 md:col-start-8 md:pt-6">
+                {tickets}
+              </Reveal>
             </div>
           </section>
         )}
