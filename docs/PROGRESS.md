@@ -102,7 +102,7 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [x] Edition themes and dates (owner, 2026-10-12): Edition 1 "Hope for All of Mankind", April 26, 2025; Edition 2 "The Future We Choose". Set in Studio.
 - [ ] Edition 1 **venue** (TED's listing: "Dx, 33 Dunster St"; the venue needs a name).
 - [ ] **Over the years photos** (each past edition → Details → Poster): **filler for now** (Edition 1: the gallery-room talk `IMG_9825`, year unconfirmed; Edition 2: the wheelchair/raised-hands stage shot, also a home hero frame). Owner to swap in real picks. Optional: a Recap line on the Over the years tab.
-- [ ] Rosa Jacobs' title typo ("Muscian"). Studio has "Gustav Luna", TED's listing "Gustavo": check which is right.
+- [x] Rosa Jacobs' title now "Songwriter / Musician"; **Gustavo** Luna (owner) — name fixed, slug left as `gustav-luna` so the link doesn't break (2026-10-12).
 - [ ] Job titles for the ten 2025 speakers (blank in Webflow too). TED's April 2025 listing (ted.com/tedx/events/59961) has one-line bios for eight of them.
 - [ ] Confirm the Arrow Street Arts white logo (inferred from Webflow's "Mask group-2").
 - [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
