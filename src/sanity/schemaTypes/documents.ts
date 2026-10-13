@@ -359,8 +359,15 @@ export const edition = defineType({
       title: "Attendance",
       type: "number",
       description:
-        'People in the room, shown in "Over the years" as "373 attended". A real count only; leave empty rather than estimate.',
+        'People in the room. The site rounds it ("Nearly 400 in the room"), so a close count is fine; leave empty rather than guess.',
       validation: (r) => r.integer().positive(),
+    }),
+    defineField({
+      name: "soldOut",
+      group: "recap",
+      title: "Sold out",
+      type: "boolean",
+      description: 'Tick if every ticket went. Shown on the Flagship page with the attendance, e.g. "Sold out. Nearly 400 in the room."',
     }),
     defineField({
       name: "place",
@@ -386,6 +393,8 @@ export const edition = defineType({
     }),
     defineField({
       name: "statement",
+      // Not shown since 2026-10-12 (owner: the statement wasn't working under the hero); kept so the content survives.
+      hidden: true,
       title: "Theme statement, line by line",
       type: "array",
       of: [{ type: "string" }],
@@ -416,7 +425,7 @@ export const edition = defineType({
       type: "array",
       group: "page",
       description:
-        "The case for coming, straight after the theme statement: each reason a photo with a title and a line beneath, side by side. Three reads best. Photos are cropped to 4:3.",
+        "The three reasons to come, in the grid straight after the theme statement: each a photo with its title beneath. Three exactly. The body is not shown on the page.",
       of: [
         defineArrayMember({
           type: "object",
@@ -433,14 +442,12 @@ export const edition = defineType({
     }),
     defineField({
       name: "audience",
-      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
-      hidden: true,
       title: "Who's in the room",
       type: "text",
       rows: 2,
       group: "page",
       description:
-        'One running line naming who comes, set large, e.g. "Scientists, engineers, founders, artists…".',
+        'One running line naming who comes, in the grid under the theme on the Flagship page, e.g. "Scientists, engineers, founders, artists…".',
     }),
     defineField({
       name: "audienceStats",
@@ -483,13 +490,14 @@ export const edition = defineType({
     }),
     defineField({
       name: "programBody",
-      // Not shown since the Flagship page rebuild (2026-10-09); kept so the content survives.
+      // Not shown since the Flagship grid was lightened (2026-10-12); kept so the content survives.
       hidden: true,
       title: "Program text",
       type: "array",
       of: [{ type: "text", rows: 3 }],
       group: "page",
-      description: "Paragraphs under the program heading. The first is brighter than the rest.",
+      description:
+        'Only the first paragraph is shown: the format line in the grid under the theme on the Flagship page, e.g. "Talks, Discovery Sessions and conversations, all in one day."',
     }),
     defineField({
       name: "programUrl",

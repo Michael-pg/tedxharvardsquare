@@ -45,6 +45,7 @@ export type Edition = {
   recap?: string;
   /** People in the room. Real figures only; absent rather than estimated. */
   attendance?: number;
+  soldOut?: boolean;
   /** The Flagship page's copy, written for this edition. */
   page?: FlagshipPageCopy;
 };

@@ -72,7 +72,7 @@ const imageList = (field: string) => `"${field}": coalesce(${field}[]{
 
 const editionFields = `
   "slug": slug.current, number, year, theme, themeStatement, date, venue, status,
-  ticketUrl, "poster": ${image("poster")}, recap, attendance,
+  ticketUrl, "poster": ${image("poster")}, recap, attendance, soldOut,
   "page": {
     place, month, invitation, audience, programTitle, programUrl, speakersNote, closeTitle,
     "heroImage": ${image("heroImage")},
