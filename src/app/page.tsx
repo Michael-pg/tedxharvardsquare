@@ -102,8 +102,8 @@ export default async function Home() {
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
             <div data-intro data-animate data-dot-clear className="flex flex-wrap gap-2">
               {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>Subscribe</SquareLink>}
-              <SquareLink href="/speakers" variant="secondary">
-                Past talks
+              <SquareLink href="/flagship" variant="secondary">
+                Explore Flagship
               </SquareLink>
             </div>
             {editionLine && (
