@@ -313,7 +313,7 @@ function EditionSection({ edition, onOpen }: { edition: ArchiveEdition; onOpen: 
     >
       <Reveal className="col-span-4 md:col-span-3">
         <div className="flex flex-col gap-6 md:sticky md:top-32">
-          <h2 id={titleId} className="flex flex-col gap-2">
+          <h2 id={titleId} className="flex scroll-mt-32 flex-col gap-2">
             <span aria-hidden className="text-statement font-medium tabular-nums">
               {pad(edition.number)}
             </span>

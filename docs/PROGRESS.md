@@ -78,8 +78,9 @@ user-wide in `~/.claude/skills/`.
 | 2026-10-09 | **Split text fades up, never masked** (owner). `SplitReveal` has no mask: sliding up through one cut off ascenders and descenders until the text landed. The `js` class is set by an inline script in `<head>`, not `next/script`, so animated text never flashes before hiding. |
 | 2026-10-12 | **Home hero edition line is the edition and the date** ("Edition 03 · Feb 20, 2027"), at `text-heading`; no venue (owner). The Flagship section below carries the venue. |
 | 2026-10-12 | **Home loader** (owner): black, a hairline and 000→100 counter while the dots gather (3.4s), then the headline word by word, the rest of the hero, the nav. Plays in full on landing after **30+ minutes** away from the site; a reload or a return while browsing shows the page settled. Never a shortened version. Timing in `src/lib/intro.ts`. |
-| 2026-10-12 | **Home Flagship photo develops like the speaker portraits** (owner): red halftone print → black-and-white photo on scroll; afterwards the pointer brushes the print back along a small trail. No red plate. The section is no longer a pocket in the dot field; the field runs through into the past talks, with pockets around the copy and photo only. |
+| 2026-10-12 | **Home Flagship photo develops like the speaker portraits** (owner): red halftone print → black-and-white photo on scroll; afterwards the pointer brushes the print back along a small trail. No red plate. The section is no longer a pocket in the dot field; the field runs through into the past talks, with pockets around the copy and photo only, at 25% strength (`data-dot-dim`, owner: too loud at full), easing back to full over a third of a screen. |
 | 2026-10-12 | **Motion over scores** (owner): keep the animation and the look; a little load time is fine. Performance work must look identical, keep scrolling smooth and never crash. Don't cut frame rates or simplify motion to hit Lighthouse ≥ 90. |
+| 2026-10-12 | **Flagship "Over the years"** (owner): past editions as a row of drawers on `/flagship` (`#editions`), not a page, not in the menu. The Oct 2024 TEDxLive is left out. No attendance figures until there's a real count. Plan: `docs/FLAGSHIP-PLAN.md`. |
 | 2026-10-08 | **Google Analytics 4** (`G-MP9EG22C1W`, property run by Nana on marketing) on the live domain only, not in `/studio`. No cookie banner (owner); `/privacy` discloses it. |
 
 ---
@@ -98,8 +99,10 @@ Everything waiting on the owner, in one place. Tick items off here as they land.
 - [x] Against Entropy → **Date**: February 20, 2027 (set 2026-10-09).
 - [x] Home page → **Flagship photo**: the wide Feb 2026 stage shot (set 2026-10-09). Swap in Studio if a better one turns up; keep it out of the photo strip so it never appears twice.
 - [ ] Optional: Site settings → Mission statement, drop the em dash.
-- [ ] Edition 1 date and theme; Edition 2 theme.
-- [ ] Job titles for the ten 2025 speakers (blank in Webflow too).
+- [ ] Edition 1 theme (owner is finding it). Edition 1 date and venue: TED's listing says **April 26, 2025, 33 Dunster St**. Confirm, then set them in Studio. Edition 2 theme is set ("The Future We Choose", 2026-10-12).
+- [ ] **Over the years** (each past edition → Details → Poster): one landscape photo per edition. Edition 2 borrows a talk still for now; Edition 1 shows only its number. Optional: a Recap line on the Over the years tab.
+- [ ] Rosa Jacobs' title typo ("Muscian"). Studio has "Gustav Luna", TED's listing "Gustavo": check which is right.
+- [ ] Job titles for the ten 2025 speakers (blank in Webflow too). TED's April 2025 listing (ted.com/tedx/events/59961) has one-line bios for eight of them.
 - [ ] Confirm the Arrow Street Arts white logo (inferred from Webflow's "Mask group-2").
 - [ ] Media library: 12 unused past-sponsor logos (uploaded 2026-09-25, not on the site). Delete, or ask Claude to.
 - [ ] Real content for House events, team, and past-edition themes (no placeholders). TED expects core team names and backgrounds on the site; an `/about` team section is ready to build once they exist.
@@ -645,3 +648,17 @@ Not yet seen at full speed on a real phone (the preview pane throttles
 animation; checked by stepping the timelines). Privacy: the loader's
 `tedx:last-seen` is a first-party timestamp in `localStorage`, no cookie;
 whether `/privacy` should mention it is for the legal reviewer.
+
+### 2026-10-12 — Flagship review, "Over the years"
+
+Reviewed `/flagship` and wrote `docs/FLAGSHIP-PLAN.md` (checklist, research
+on past editions, decisions). Built **Over the years** between Topics and
+Tickets: past editions as drawers. One is open (colour photo, theme, date and
+venue, talk count, a few speakers, "Watch the talks" → `/speakers#edition-N`).
+The rest are strips with the photo in red halftone. Hovering or clicking a
+strip pulls it open, and on phones the drawers stack. New edition fields:
+`recap` and `attendance`. Sanity (published): Edition 2 theme "The Future We
+Choose". Checked on a local copy at 375 and 1024px: no overflow, and the
+toggle and ARIA states work. The halftone can't draw on a non-allowlisted
+localhost port (Sanity CDN CORS), so check the preview for that.
+

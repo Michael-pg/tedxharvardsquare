@@ -41,8 +41,21 @@ export type Edition = {
   status: "upcoming" | "past" | "announced";
   ticketUrl?: string;
   poster?: Image;
+  /** One line on how it went, for "Over the years". Past editions only. */
+  recap?: string;
+  /** People in the room. Real figures only; absent rather than estimated. */
+  attendance?: number;
   /** The Flagship page's copy, written for this edition. */
   page?: FlagshipPageCopy;
+};
+
+/** A past edition as "Over the years" on the Flagship page shows it. */
+export type PastEdition = Edition & {
+  talkCount: number;
+  /** Its speakers (not performers), in lineup order. */
+  speakerNames: string[];
+  /** The first talk's stage photo: stands in while the edition has no poster. */
+  still?: Image;
 };
 
 /** Copy for the Flagship page. Every part is optional; empty parts render as absence. */

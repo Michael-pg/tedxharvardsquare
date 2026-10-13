@@ -149,6 +149,9 @@ function buildGlyph(el: HTMLElement): Glyph | null {
  *   that should sit in the field rather than be cut out of it.
  * - `data-dot-stop` — a section the field fades out above and stays out of,
  *   for a passage that should sit on plain black down to the footer.
+ * - `data-dot-dim="0.25"` — a section the field runs through at that
+ *   fraction of its strength, easing back to full over a long feather above
+ *   and below, so the change never reads as an edge.
  * - `data-dot-glyph` — text the field draws itself, in ordered red dots, as
  *   the element scrolls into view. The element's own text should be invisible.
  *
@@ -175,6 +178,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
     let height = 0;
     let time = Math.random() * 100;
     let clears: Element[] = [];
+    let dims: HTMLElement[] = [];
     let glyphs: Glyph[] = [];
     let grid = buildGrid(0, 0);
     const trail = createPointerTrail();
@@ -198,6 +202,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
     };
     const collect = () => {
       clears = Array.from(document.querySelectorAll("[data-dot-clear]"));
+      dims = Array.from(document.querySelectorAll<HTMLElement>("[data-dot-dim]"));
       glyphs = Array.from(document.querySelectorAll<HTMLElement>("[data-dot-glyph]"))
         .map(buildGlyph)
         .filter((glyph): glyph is Glyph => glyph !== null);
@@ -250,6 +255,14 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
       const reach = Math.min(width, height) * 0.2;
 
       const rects = clearRects();
+      // Dimmed sections, as vertical bands with a long feather either side.
+      const dimFeather = height * 0.35;
+      const dimBands = dims
+        .map((el) => {
+          const box = el.getBoundingClientRect();
+          return [box.top, box.bottom, Number(el.dataset.dotDim) || 1];
+        })
+        .filter(([top, bottom, level]) => level < 1 && bottom > -dimFeather && top < height + dimFeather);
       const activeGlyphs = glyphs
         .map((glyph) => {
           const box = glyph.el.getBoundingClientRect();
@@ -285,11 +298,16 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           const pad = rect[4] * 1.3;
           if (gy >= rect[1] - pad && gy <= rect[3] + pad) rowPockets.push(rect);
         }
+        let rowDim = 1;
+        for (const [top, bottom, level] of dimBands) {
+          const cover = smoothstep(top - dimFeather, top, gy) * smoothstep(bottom + dimFeather, bottom, gy);
+          rowDim *= 1 - (1 - level) * cover;
+        }
         for (let col = 0; col < cols; col++) {
           const i = row * cols + col;
           // Alternate rows sit half a cell over — the classic halftone screen.
           const gx = col * CELL + (row % 2 ? CELL / 2 : 0);
-          const footerFade = smoothstep(stopTop, stopTop - height * 0.4, gy);
+          const footerFade = smoothstep(stopTop, stopTop - height * 0.4, gy) * rowDim;
           if (footerFade <= 0) continue;
 
           // Glyphs: letterforms drawn in ordered red, cell by cell.
