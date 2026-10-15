@@ -96,6 +96,14 @@ Edition 1 = April 2025, Edition 2 = Feb 21 2026 (Arrow Street Arts), Edition 3 =
 corrected the `number` fields in Studio (the slugs still carry the old numbers). Edition 3 is on February 20,
 2027 (owner, 2026-10-09). Still unconfirmed: Edition 1's date and theme, and job titles for the 2025 speakers.
 
+Each page's headings, intros and button labels are under **Pages** in Studio
+(one document per page, fields in scroll order), with defaults in
+`src/content/page-copy.ts` that an empty field falls back to; read them with
+`getPageCopy(id)`. New copy on a page goes there, not inline. Text the TEDx
+licence fixes word for word stays in code (`src/content/tedx.ts`).
+`scripts/seed-page-copy.ts` filled them and only sets empty fields, so it is
+safe to re-run after adding a key.
+
 Published content revalidates every 60 seconds, so Studio edits go live
 without a redeploy.
 

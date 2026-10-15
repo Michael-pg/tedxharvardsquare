@@ -11,7 +11,7 @@ import { PastTalks } from "@/components/home/past-talks";
 import { HomeIntro } from "@/components/home/home-intro";
 import { SquareLink } from "@/components/ui/square-link";
 import { JsonLd } from "@/components/seo/json-ld";
-import { getCurrentEdition, getHomePage, getSiteSettings, getSpeakerArchive } from "@/content";
+import { getCurrentEdition, getHomePage, getPageCopy, getSiteSettings, getSpeakerArchive } from "@/content";
 import { TEDX_PROGRAM_URL, whatIsTedx } from "@/content/tedx";
 import { organizationJsonLd } from "@/lib/structured-data";
 
@@ -26,7 +26,7 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * The motto is the mission statement. Its first sentence is the statement,
+ * The motto (Pages → Home in Studio). Its first sentence is the statement,
  * broken into its clauses: the first three on their own lines, the outcome
  * kept whole. The rest is the answer, set smaller beneath it.
  */
@@ -42,9 +42,10 @@ function motto(missionStatement: string) {
 const FEATURED_TALKS = 4;
 
 export default async function Home() {
-  const [site, home, edition, archive] = await Promise.all([
+  const [site, home, copy, edition, archive] = await Promise.all([
     getSiteSettings(),
     getHomePage(),
+    getPageCopy("homePage"),
     getCurrentEdition(),
     getSpeakerArchive(),
   ]);
@@ -60,7 +61,7 @@ export default async function Home() {
           : edition.year,
       ].join(" · ")
     : undefined;
-  const { lines, coda } = motto(site.missionStatement);
+  const { lines, coda } = motto(copy.motto);
   // The talks picked in Studio, in their order; until some are picked, talks
   // with a stage photo and a published video first, so most rows show the
   // talk itself and play something.
@@ -101,9 +102,9 @@ export default async function Home() {
           )}
           <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-4 pt-16">
             <div data-intro data-animate data-dot-clear className="flex flex-wrap gap-2">
-              {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>Subscribe</SquareLink>}
+              {site.newsletterUrl && <SquareLink href={site.newsletterUrl}>{copy.heroSubscribeLabel}</SquareLink>}
               <SquareLink href="/flagship" variant="secondary">
-                Explore Flagship
+                {copy.heroFlagshipLabel}
               </SquareLink>
             </div>
             {editionLine && (
@@ -163,7 +164,7 @@ export default async function Home() {
                   <SquareLink href="/flagship">{edition.theme ? `Explore ${edition.theme}` : `Flagship ${edition.year}`}</SquareLink>
                   {site.newsletterUrl && (
                     <SquareLink href={site.newsletterUrl} variant="secondary">
-                      Subscribe
+                      {copy.flagshipSubscribeLabel}
                     </SquareLink>
                   )}
                 </Reveal>
@@ -179,14 +180,14 @@ export default async function Home() {
             <section className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
               <div data-dot-clear className="col-span-4 flex flex-col items-start gap-6 md:col-span-5">
                 <Reveal as="h2" className="text-display font-medium text-balance">
-                  Watch past talks
+                  {copy.talksHeading}
                 </Reveal>
                 <Reveal as="p" className="text-lead text-muted">
                   {`${talkCount} talks from ${editionCount} ${editionCount === 1 ? "edition" : "editions"} so far.`}
                 </Reveal>
                 <Reveal className="mt-4">
                   <SquareLink href="/speakers" variant="secondary">
-                    All speakers and talks
+                    {copy.talksLinkLabel}
                   </SquareLink>
                 </Reveal>
               </div>

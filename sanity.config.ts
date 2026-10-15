@@ -9,22 +9,33 @@ import { structureTool, type StructureResolver } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { apiVersion, dataset, projectId, studioBasePath } from "./src/sanity/env";
 import { schemaTypes, singletonTypes } from "./src/sanity/schemaTypes";
+import { pageTypes } from "./src/sanity/schemaTypes/pages";
+import { PanelsTopLeft } from "lucide-react";
 
 /**
- * The sidebar mirrors how the org thinks about its work: the Flagship and
+ * The sidebar opens with Pages, one document per page with its fields in
+ * scroll order, so editors find a heading where they saw it. Then it mirrors
+ * how the org thinks about its work: the Flagship and
  * House — the year-round programming — sit side by side, rather than House
  * events being one more item in a flat list of document types.
  */
 const singleton = (S: Parameters<StructureResolver>[0], id: string, title: string) =>
-  S.listItem().title(title).id(id).child(S.document().schemaType(id).documentId(id));
+  S.listItem().title(title).id(id).schemaType(id).child(S.document().schemaType(id).documentId(id));
 
 const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
+      // Each page's headings, intros and buttons, in the order of the menu.
+      S.listItem()
+        .title("Pages")
+        .icon(PanelsTopLeft)
+        .child(
+          S.list()
+            .title("Pages")
+            .items(pageTypes.map((type) => singleton(S, type.name, type.title ?? type.name))),
+        ),
       singleton(S, "siteSettings", "Site settings"),
-      singleton(S, "homePage", "Home page"),
-      singleton(S, "sponsorPage", "Sponsor page"),
       S.divider(),
       S.listItem()
         .title("Flagship")

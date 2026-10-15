@@ -42,7 +42,14 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * dialog. Old `#slug` links still open the dialog. Inside it, the arrows (and
  * ← → keys) step through the whole archive without closing.
  */
-export function SpeakerArchive({ editions }: { editions: ArchiveEdition[] }) {
+export function SpeakerArchive({
+  editions,
+  alsoOnStageHeading,
+}: {
+  editions: ArchiveEdition[];
+  /** Above each edition's performers. */
+  alsoOnStageHeading: string;
+}) {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   /** Whether opening the dialog added a history entry that closing should undo. */
@@ -171,6 +178,7 @@ export function SpeakerArchive({ editions }: { editions: ArchiveEdition[] }) {
         <EditionSection
           key={edition.slug}
           edition={edition}
+          alsoOnStageHeading={alsoOnStageHeading}
           onOpen={(slug) => openSpeaker(slug, { push: true })}
         />
       ))}
@@ -303,7 +311,15 @@ export function SpeakerArchive({ editions }: { editions: ArchiveEdition[] }) {
 }
 
 /** One edition: its number and facts pinned on the left, the lineup on the right. */
-function EditionSection({ edition, onOpen }: { edition: ArchiveEdition; onOpen: (slug: string) => void }) {
+function EditionSection({
+  edition,
+  alsoOnStageHeading,
+  onOpen,
+}: {
+  edition: ArchiveEdition;
+  alsoOnStageHeading: string;
+  onOpen: (slug: string) => void;
+}) {
   const talks = edition.speakers.filter((s) => s.talk).length;
   const titleId = `edition-${edition.number}`;
   return (
@@ -339,7 +355,7 @@ function EditionSection({ edition, onOpen }: { edition: ArchiveEdition; onOpen: 
 
         {edition.performers.length > 0 ? (
           <Reveal className="mt-16 border-t border-rule pt-6">
-            <h3 className="mb-4 text-label text-muted uppercase">Also on stage</h3>
+            <h3 className="mb-4 text-label text-muted uppercase">{alsoOnStageHeading}</h3>
             <ul className="flex flex-col gap-3">
               {edition.performers.map((performer) => (
                 <li key={performer.name} className="text-body">

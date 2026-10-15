@@ -26,7 +26,7 @@ export type PastEditionRow = {
  * went, and a way to the talks. Kept short so the archive can grow a row a
  * year without the section growing a screen.
  */
-export function EditionList({ editions }: { editions: PastEditionRow[] }) {
+export function EditionList({ editions, watchLabel }: { editions: PastEditionRow[]; watchLabel: string }) {
   return (
     <Reveal as="ol" stagger className="border-t border-rule">
       {editions.map((edition) => {
@@ -56,7 +56,7 @@ export function EditionList({ editions }: { editions: PastEditionRow[] }) {
             </div>
             <div className="col-span-4 md:col-span-3 md:justify-self-end">
               <SquareLink href={edition.href} variant="secondary">
-                Watch the talks
+                {watchLabel}
               </SquareLink>
             </div>
           </li>

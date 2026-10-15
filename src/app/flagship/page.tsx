@@ -15,6 +15,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import {
   getCurrentEdition,
   getHomePage,
+  getPageCopy,
   getPastEditions,
   getSiteSettings,
   getSpeakerArchive,
@@ -85,15 +86,17 @@ const toRow = (edition: PastEdition): PastEditionRow => ({
  * (name, theme, date, venue); the day (the reasons to come as photos, each
  * with a fact); the lineup; the topics as a moving band; the venue with the
  * ticket ask; then past editions. Kept short above Speakers so the lineup sits
- * near the top once announced. Everything comes from the edition in Studio;
- * any part left empty is simply not shown.
+ * near the top once announced. The content comes from the edition in Studio,
+ * and any part left empty is simply not shown; the headings and buttons from
+ * Pages → Flagship (`words`).
  *
  * The dot field runs behind the poster and, quieter, the day, and stops at
  * Speakers.
  */
 export default async function FlagshipPage() {
-  const [site, edition, archive, home, topics, pastEditions] = await Promise.all([
+  const [site, words, edition, archive, home, topics, pastEditions] = await Promise.all([
     getSiteSettings(),
+    getPageCopy("flagshipPage"),
     getCurrentEdition(),
     getSpeakerArchive(),
     getHomePage(),
@@ -108,7 +111,7 @@ export default async function FlagshipPage() {
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
   // Tickets once they are on sale; until then, the Substack newsletter.
   const joinHref = edition?.ticketUrl ?? site.newsletterUrl;
-  const joinLabel = edition?.ticketUrl ? "Get tickets" : "Get early access";
+  const joinLabel = edition?.ticketUrl ? words.ticketsLabel : words.earlyAccessLabel;
   const showVenue = Boolean(edition?.venue && venueKnown);
   const tickets = edition && (
     <>
@@ -122,13 +125,13 @@ export default async function FlagshipPage() {
         </ul>
       ) : (
         <p className="max-w-md text-body text-ink-200">
-          {`Tickets for ${title} are not on sale yet. Join the early-access list to hear first.`}
+          {words.notOnSale}
         </p>
       )}
       <div className="flex flex-wrap gap-2">
         {joinHref && <SquareLink href={joinHref}>{joinLabel}</SquareLink>}
         <SquareLink href="/faq" variant="secondary">
-          Questions
+          {words.questionsLabel}
         </SquareLink>
       </div>
     </>
@@ -146,6 +149,7 @@ export default async function FlagshipPage() {
 
       <main id="main" className="relative">
         <FlagshipHero
+          title={words.title}
           theme={edition?.theme ?? "Flagship"}
           pitch={edition?.themeStatement}
           when={date ? longDate.format(date) : copy?.month}
@@ -175,7 +179,7 @@ export default async function FlagshipPage() {
         {edition && (
           <section data-dot-stop aria-labelledby="speakers-title" className="relative bg-background px-6 py-24 md:py-40">
             <Reveal as="h2" className="mb-12 flex flex-wrap items-baseline justify-between gap-x-6 text-statement font-medium md:mb-20 md:text-mega">
-              <span id="speakers-title">Speakers</span>
+              <span id="speakers-title">{words.speakersHeading}</span>
               <span className="text-muted">{edition.year}</span>
             </Reveal>
             {lineup.length > 0 ? (
@@ -186,15 +190,15 @@ export default async function FlagshipPage() {
                   <LineupPlaceholder images={placeholders} />
                 </Reveal>
                 <Reveal className="mt-12 flex flex-wrap items-center justify-between gap-6">
-                  <p className="text-lead text-muted">{copy?.speakersNote ?? "Lineup coming soon."}</p>
+                  <p className="text-lead text-muted">{copy?.speakersNote ?? words.lineupNote}</p>
                   <div className="flex flex-wrap gap-2">
                     {site.newsletterUrl && (
                       <SquareLink href={site.newsletterUrl} variant="secondary">
-                        Get notified
+                        {words.notifyLabel}
                       </SquareLink>
                     )}
                     <SquareLink href="/speakers" variant="secondary">
-                      Watch past talks
+                      {words.pastTalksLabel}
                     </SquareLink>
                   </div>
                 </Reveal>
@@ -212,6 +216,7 @@ export default async function FlagshipPage() {
             image={copy?.venueImage}
             day={date ? dayMonth.format(date) : copy?.month}
             notes={copy?.venueNotes ?? []}
+            mapsLabel={words.mapsLabel}
             ask={tickets}
           />
         )}
@@ -221,13 +226,13 @@ export default async function FlagshipPage() {
           <section id="editions" aria-labelledby="editions-title" className="scroll-mt-16 px-6 py-20 md:py-32">
             <div className="mb-10 grid grid-cols-4 gap-x-6 gap-y-6 md:mb-14 md:grid-cols-12">
               <Reveal as="h2" className="col-span-4 self-end text-display font-medium md:col-span-8">
-                <span id="editions-title">Over the years</span>
+                <span id="editions-title">{words.editionsHeading}</span>
               </Reveal>
               <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
-                Every Flagship so far, and its talks.
+                {words.editionsIntro}
               </Reveal>
             </div>
-            <EditionList editions={pastEditions.map(toRow)} />
+            <EditionList editions={pastEditions.map(toRow)} watchLabel={words.watchTalksLabel} />
           </section>
         )}
 
@@ -236,7 +241,7 @@ export default async function FlagshipPage() {
           <section aria-labelledby="tickets-title" className="px-6 py-20 md:py-32">
             <div className="grid grid-cols-4 gap-x-6 gap-y-10 md:grid-cols-12">
               <Reveal as="h2" className="col-span-4 text-display font-medium md:col-span-6">
-                <span id="tickets-title">Tickets</span>
+                <span id="tickets-title">{words.ticketsHeading}</span>
               </Reveal>
               <Reveal className="col-span-4 flex flex-col items-start gap-8 md:col-span-5 md:col-start-8 md:pt-6">
                 {tickets}

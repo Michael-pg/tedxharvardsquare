@@ -14,6 +14,7 @@ import "server-only";
 
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
+import { pageCopy, type PageCopy, type PageCopyId } from "./page-copy";
 import type {
   Edition,
   Faq,
@@ -33,6 +34,7 @@ import type {
 } from "./types";
 
 export type * from "./types";
+export type { PageCopy, PageCopyId } from "./page-copy";
 
 /**
  * Published content is cached and refreshed at most once a minute, so a Studio
@@ -115,7 +117,7 @@ const houseEventFields = `
 // —— Site ——————————————————————————————————————————————————————————————
 
 const siteSettingsQuery = defineQuery(`*[_id == "siteSettings"][0]{
-  name, tagline, description, missionStatement, url, locale,
+  name, tagline, description, url, locale,
   "social": coalesce(social[]{ label, href }, []),
   newsletterUrl, lumaUrl, contactEmail
 }`);
@@ -146,12 +148,34 @@ export async function getHomePage(): Promise<HomePage> {
 
 export async function getSponsorPage(): Promise<SponsorPage | undefined> {
   const page = await fetchContent<SponsorPage | null>(
-    `*[_id == "sponsorPage"][0]{ headline, "photo": ${image("photo")}, "body": coalesce(body, []), ${imageList("photos")}, ask, ctaLabel }`,
+    `*[_id == "sponsorPage"][0]{ headline, "photo": ${image("photo")}, "body": coalesce(body, []), ${imageList("photos")} }`,
     {},
     ["sponsorPage"],
   );
   if (!page?.headline) return undefined;
   return { ...page, photo: page.photo?.src ? page.photo : undefined };
+}
+
+/**
+ * A page's headings, intros and button labels, from its document under Pages
+ * in Studio (the footer's from Site settings). Any field left empty falls back
+ * to its default in `./page-copy`, so the page never renders a blank heading.
+ */
+export async function getPageCopy<K extends PageCopyId>(id: K): Promise<PageCopy<K>> {
+  const defaults: Record<string, string> = pageCopy[id];
+  const documentId = id === "footer" ? "siteSettings" : id;
+  const fields = Object.keys(defaults);
+  const stored = await fetchContent<Record<string, unknown> | null>(
+    `*[_id == $documentId][0]{ ${fields.join(", ")} }`,
+    { documentId },
+    [documentId],
+  );
+  return Object.fromEntries(
+    fields.map((field) => {
+      const value = stored?.[field];
+      return [field, typeof value === "string" && value.trim() ? value : defaults[field]];
+    }),
+  ) as PageCopy<K>;
 }
 
 const menuImagesQuery = defineQuery(`*[_id == "siteSettings"][0].menuImages{

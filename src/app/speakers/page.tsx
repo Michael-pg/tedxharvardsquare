@@ -6,16 +6,12 @@ import { Reveal } from "@/components/motion/reveal";
 import { DotField } from "@/components/home/dot-field";
 import { SquareLink } from "@/components/ui/square-link";
 import { SpeakerArchive, type ArchiveEdition } from "@/components/speakers/speaker-archive";
-import { getEditions, getSpeakerArchive, getSpeakers } from "@/content";
+import { getEditions, getPageCopy, getSpeakerArchive, getSpeakers } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 
-export function generateMetadata(): Promise<Metadata> {
-  return pageMetadata({
-    title: "Speakers",
-    description:
-      "Meet the innovators, scientists, founders, and leaders who have taken the TEDxHarvardSquare stage. Exploring AI, biotech, climate, equity, and human potential.",
-    path: "/speakers",
-  });
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getPageCopy("speakersPage");
+  return pageMetadata({ title: "Speakers", description: copy.seoDescription, path: "/speakers" });
 }
 
 const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
@@ -27,7 +23,12 @@ const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZon
  * portraits' own halftone is the only red in the lineups.
  */
 export default async function SpeakersPage() {
-  const [editions, speakers, everyone] = await Promise.all([getEditions(), getSpeakerArchive(), getSpeakers()]);
+  const [editions, speakers, everyone, copy] = await Promise.all([
+    getEditions(),
+    getSpeakerArchive(),
+    getSpeakers(),
+    getPageCopy("speakersPage"),
+  ]);
 
   // Editions with a lineup, newest first. The archive query already orders
   // speakers by lineup position, so filtering keeps display order.
@@ -60,12 +61,10 @@ export default async function SpeakersPage() {
       <main id="main" className="relative px-6 pt-40 pb-32 md:pt-56">
         <header data-dot-clear className="mb-20 max-w-4xl md:mb-28">
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
-            Speakers
+            {copy.title}
           </SplitReveal>
           <SplitReveal as="p" delay={0.2} onScroll={false} className="mt-8 text-lead text-ink-300">
-            Hear from innovators working at the frontier of AI, biology, creativity,
-            climate, culture, and human connection. These are blueprints for what
-            flourishing could look like in the years ahead.
+            {copy.intro}
           </SplitReveal>
         </header>
 
@@ -91,11 +90,11 @@ export default async function SpeakersPage() {
                 {[upcomingWhen, upcomingVenue].filter(Boolean).join(" · ")}
               </p>
               <p className="text-body text-muted">
-                {upcoming.page?.speakersNote ?? "Lineup to be announced."}
+                {upcoming.page?.speakersNote ?? copy.lineupNote}
               </p>
               <div className="mt-4">
                 <SquareLink href="/flagship" variant="secondary">
-                  About the Flagship
+                  {copy.flagshipLabel}
                 </SquareLink>
               </div>
               </div>
@@ -106,10 +105,10 @@ export default async function SpeakersPage() {
         {archive.length > 0 ? (
           // The dot field fades out above the archive and stays out of it.
           <div data-dot-stop className="relative bg-background">
-            <SpeakerArchive editions={archive} />
+            <SpeakerArchive editions={archive} alsoOnStageHeading={copy.alsoOnStageHeading} />
           </div>
         ) : (
-          <p className="text-body text-muted">The speaker archive is being assembled.</p>
+          <p className="text-body text-muted">{copy.emptyArchive}</p>
         )}
       </main>
       <SiteFooter />

@@ -10,6 +10,7 @@ import { SquareLink } from "@/components/ui/square-link";
  * backdrop.
  */
 export function FlagshipHero({
+  title,
   theme,
   pitch,
   when,
@@ -17,6 +18,8 @@ export function FlagshipHero({
   city,
   action,
 }: {
+  /** The large word along the bottom, "Flagship" unless changed in Studio. */
+  title: string;
   theme: string;
   pitch?: string;
   /** The date as it should read, e.g. "February 20, 2027". */
@@ -44,7 +47,7 @@ export function FlagshipHero({
           split is undone. */}
       <h1 className="mt-auto pt-16 font-medium">
         <SplitReveal as="span" by="lines" onScroll={false} className="block text-mega">
-          {"Flagship"}
+          {title}
         </SplitReveal>
         <span className="sr-only">{": "}</span>
         <SplitReveal as="span" by="lines" delay={0.15} onScroll={false} className="mt-3 block text-statement text-balance md:mt-4">
