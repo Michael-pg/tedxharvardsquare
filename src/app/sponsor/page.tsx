@@ -6,20 +6,16 @@ import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { PartnerWall } from "@/components/sponsor/partner-wall";
 import { SquareLink } from "@/components/ui/square-link";
-import { getHomePage, getMenuImages, getPartners, getSiteSettings, getSponsorPage, type Image as ImageContent } from "@/content";
+import { getHomePage, getMenuImages, getPageCopy, getPartners, getSiteSettings, getSponsorPage, type Image as ImageContent } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 
-export function generateMetadata(): Promise<Metadata> {
-  return pageMetadata({
-    title: "Sponsor",
-    description:
-      "Partner with TEDxHarvardSquare: support an independently organized TEDx event and the community of founders, researchers, creators and leaders around it.",
-    path: "/sponsor",
-  });
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getPageCopy("sponsorPage");
+  return pageMetadata({ title: "Sponsor", description: copy.seoDescription, path: "/sponsor" });
 }
 
 /**
- * Sponsor: the pitch, from Studio → Sponsor page. Also the dedicated page the
+ * Sponsor: the pitch, from Studio → Pages → Sponsor. Also the dedicated page the
  * TEDx licence requires for partner logos, which may not appear on the
  * homepage; logos stay smaller than the event's own (see `PartnerWall`).
  *
@@ -41,9 +37,10 @@ const Photo = ({ image, ratio, sizes }: { image: ImageContent; ratio: string; si
 );
 
 export default async function SponsorPage() {
-  const [site, page, partners, menuImages, home] = await Promise.all([
+  const [site, page, copy, partners, menuImages, home] = await Promise.all([
     getSiteSettings(),
     getSponsorPage(),
+    getPageCopy("sponsorPage"),
     getPartners(),
     getMenuImages(),
     getHomePage(),
@@ -116,10 +113,10 @@ export default async function SponsorPage() {
           <section aria-labelledby="partners-title" className="px-6 pb-24 md:pb-40">
             <div className="mb-10 grid grid-cols-4 gap-x-6 gap-y-6 md:mb-14 md:grid-cols-12">
               <Reveal as="h2" className="col-span-4 self-end text-display font-medium md:col-span-8">
-                <span id="partners-title">Our partners</span>
+                <span id="partners-title">{copy.partnersHeading}</span>
               </Reveal>
               <Reveal as="p" className="col-span-4 max-w-md self-end text-lead text-ink-300 md:col-span-4 md:col-start-9">
-                With thanks to the partners who make each edition possible.
+                {copy.partnersIntro}
               </Reveal>
             </div>
             <Reveal>
@@ -131,10 +128,10 @@ export default async function SponsorPage() {
         {/* The ask. Partners never shape the program; the TEDx licence says so. */}
         <section aria-labelledby="sponsor-ask" className="flex flex-col items-center px-6 py-24 text-center md:py-40">
           <Reveal as="h2" className="max-w-4xl text-display font-medium text-balance wrap-anywhere">
-            <span id="sponsor-ask">{page?.ask ?? `Interested in partnering with ${site.name}?`}</span>
+            <span id="sponsor-ask">{copy.ask}</span>
           </Reveal>
           <Reveal className="mt-12 flex flex-col items-center gap-5">
-            <SquareLink href={mailto}>{page?.ctaLabel ?? "Become a sponsor"}</SquareLink>
+            <SquareLink href={mailto}>{copy.ctaLabel}</SquareLink>
             <a
               href={mailto}
               className="text-body text-ink-300 underline decoration-ink-600 underline-offset-4 transition-colors duration-fast hover:text-foreground hover:decoration-brand"

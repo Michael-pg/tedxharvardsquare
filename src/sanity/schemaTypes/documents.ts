@@ -1,9 +1,9 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { copyField } from "./pages";
 import {
   CalendarDays,
   CircleHelp,
   Handshake,
-  House,
   Megaphone,
   Mic,
   Settings,
@@ -46,10 +46,12 @@ export const siteSettings = defineType({
   title: "Site settings",
   type: "document",
   icon: Settings,
-  // Tabs sort fields by where they appear on the site, so editors can find
-  // "the home page headline" without knowing it is stored as `tagline`.
+  // Tabs sort fields by where they appear on the site. Each page's headings,
+  // intros and buttons are under Pages in the sidebar; this is what every page
+  // shares.
   groups: [
-    { name: "home", title: "Home page", default: true },
+    { name: "general", title: "General", default: true },
+    { name: "footer", title: "Footer" },
     { name: "menu", title: "Menu" },
     { name: "contact", title: "Contact & social" },
     { name: "seo", title: "Search & sharing" },
@@ -57,22 +59,17 @@ export const siteSettings = defineType({
   fields: [
     defineField({
       name: "tagline",
-      title: "Home page headline",
+      title: "Site tagline",
       type: "string",
-      group: ["home", "seo"],
+      group: ["general", "seo"],
       description:
-        "The large line of text in the centre of the home page's first screen. Also appears in the browser tab and in link previews, after the organization name.",
+        "Appears in the browser tab and in link previews, after the organization name. The home page shows it as its headline only when there is no Flagship edition.",
       validation: (r) => r.required(),
     }),
-    defineField({
-      name: "missionStatement",
-      title: "Home page mission statement",
-      type: "text",
-      rows: 4,
-      group: "home",
-      description:
-        "Replaces the headline as visitors scroll through the home page's first screen. Keep it to two or three sentences.",
-      validation: (r) => r.required(),
+    copyField("footerHeading", "Sign-up heading", "The heading at the top of the footer, on every page.", { group: "footer" }),
+    copyField("footerBody", "Sign-up text", "The line under it.", { group: "footer", rows: 2 }),
+    copyField("footerSubscribeLabel", "Subscribe button", "Opens the newsletter sign-up link (Contact & social).", {
+      group: "footer",
     }),
     defineField({
       name: "name",
@@ -159,100 +156,6 @@ export const siteSettings = defineType({
     }),
   ],
   preview: { prepare: () => ({ title: "Site settings" }) },
-});
-
-export const homePage = defineType({
-  name: "homePage",
-  title: "Home page",
-  type: "document",
-  icon: House,
-  description: "The headline and mission statement live under Site settings → Home page.",
-  fields: [
-    defineField({
-      name: "heroImages",
-      title: "Hero images",
-      type: "array",
-      of: [defineArrayMember({ type: "accessibleImage" })],
-      description:
-        "The photographs that fly past as visitors scroll through the home page's first screen, in order. The animation is timed for exactly six, and landscape photos frame best. The headline and mission statement are under Site settings → Home page.",
-      validation: (r) => r.max(6),
-    }),
-    defineField({
-      name: "flagshipPhoto",
-      title: "Flagship photo",
-      type: "accessibleImage",
-      description:
-        "The speaker beside the Flagship section on the home page, layered over a red halftone copy of itself. Pick one speaker, lit, against a dark stage: the black melts into the page. If empty, the second hero image is used.",
-    }),
-    defineField({
-      name: "featuredTalks",
-      title: "Featured talks",
-      type: "array",
-      of: [defineArrayMember({ type: "reference", to: [{ type: "talk" }] })],
-      description:
-        "The talks listed under \"Watch past talks\" on the home page, in order. Each row shows the talk's stage photo (set on the talk itself), so pick talks that have one. If empty, talks with a stage photo and a video are picked automatically.",
-      validation: (r) => r.max(4).unique(),
-    }),
-    defineField({
-      name: "photoLibrary",
-      title: "Photo library",
-      type: "array",
-      of: [defineArrayMember({ type: "accessibleImage" })],
-      description:
-        "Other home-page photography, kept here for upcoming sections. Not shown on the site yet.",
-    }),
-  ],
-  preview: { prepare: () => ({ title: "Home page" }) },
-});
-
-export const sponsorPage = defineType({
-  name: "sponsorPage",
-  title: "Sponsor page",
-  type: "document",
-  icon: Handshake,
-  description: "The pitch on /sponsor. Partner logos come from Partners; the email from Site settings → Contact.",
-  fields: [
-    defineField({
-      name: "headline",
-      type: "string",
-      description: "The large opening line, e.g. \"Ideas worth spreading need people willing to back them.\"",
-      validation: (r) => r.required(),
-    }),
-    defineField({
-      name: "photo",
-      type: "accessibleImage",
-      description: "A wide photo under the headline. If empty, the menu's Sponsor photo is used.",
-    }),
-    defineField({
-      name: "body",
-      title: "Pitch",
-      type: "array",
-      of: [{ type: "text", rows: 4 }],
-      description: "Who the audience is and what partnering offers. One paragraph each; the first is set larger.",
-    }),
-    defineField({
-      name: "photos",
-      title: "Pitch photos",
-      type: "array",
-      of: [defineArrayMember({ type: "accessibleImage" })],
-      description:
-        "Two photos set beside the pitch paragraphs, in colour: the first upright beside the opening paragraph, the second wide beside the rest. The audience and the room work best. Until filled, two of the home page's hero photos stand in.",
-      validation: (r) => r.max(2),
-    }),
-    defineField({
-      name: "ask",
-      title: "Closing question",
-      type: "string",
-      description: 'The heading above the button, e.g. "Interested in partnering with TEDxHarvardSquare?"',
-    }),
-    defineField({
-      name: "ctaLabel",
-      title: "Button label",
-      type: "string",
-      description: 'e.g. "Become a sponsor". The button opens an email to the contact address in Site settings.',
-    }),
-  ],
-  preview: { prepare: () => ({ title: "Sponsor page" }) },
 });
 
 export const edition = defineType({

@@ -4,25 +4,21 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { SquareLink } from "@/components/ui/square-link";
-import { getSiteSettings } from "@/content";
+import { getPageCopy } from "@/content";
 import { TEDX_PROGRAM_URL, TED_PROGRAMS_URL, aboutTed, aboutTedx } from "@/content/tedx";
 import { pageMetadata } from "@/lib/metadata";
 
-export function generateMetadata(): Promise<Metadata> {
-  return pageMetadata({
-    title: "About",
-    description:
-      "TEDxHarvardSquare is an independently organized TEDx event in Cambridge, Massachusetts: an annual Flagship conference and House, our year-round programming.",
-    path: "/about",
-  });
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getPageCopy("aboutPage");
+  return pageMetadata({ title: "About", description: copy.seoDescription, path: "/about" });
 }
 
 /**
- * About: who we are, then the "About TEDx" and "About TED" sections the TEDx
+ * About: who we are (Pages → About in Studio), then the "About TEDx" and "About TED" sections the TEDx
  * licence requires on every event's About page, word for word (`@/content/tedx`).
  */
 export default async function AboutPage() {
-  const site = await getSiteSettings();
+  const copy = await getPageCopy("aboutPage");
 
   return (
     <>
@@ -30,13 +26,13 @@ export default async function AboutPage() {
       <main id="main" className="px-6 pt-40 pb-32 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
-            About
+            {copy.title}
           </SplitReveal>
           <SplitReveal as="p" delay={0.2} onScroll={false} className="mt-8 max-w-3xl text-lead text-ink-300">
-            {site.missionStatement}
+            {copy.intro}
           </SplitReveal>
           <Reveal as="p" delay={0.3} className="mt-6 max-w-3xl text-body text-muted">
-            {`${site.name} runs an annual Flagship conference in Cambridge, Massachusetts, and House, our year-round programming between editions. It is independently organized under license from TED.`}
+            {copy.body}
           </Reveal>
         </header>
 

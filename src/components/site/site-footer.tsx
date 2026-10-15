@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { getSiteSettings } from "@/content";
+import { getPageCopy, getSiteSettings } from "@/content";
 import { footerNav, policyNav, type NavItem } from "@/content/navigation";
 import { TEDX_PROGRAM_URL } from "@/content/tedx";
 import { SquareLink } from "@/components/ui/square-link";
@@ -61,11 +61,11 @@ function Column({ title, links }: { title: string; links: NavItem[] }) {
  * halftone glow — the hero's pixel field returning at the bottom of the page.
  * Buttons are the site's square ones.
  *
- * Everything editable (contact, social, newsletter)
+ * Everything editable (the sign-up copy, contact, social, newsletter)
  * comes from site settings; the page structure comes from `navigation.ts`.
  */
 export async function SiteFooter() {
-  const site = await getSiteSettings();
+  const [site, copy] = await Promise.all([getSiteSettings(), getPageCopy("footer")]);
 
   const follow: NavItem[] = [
     ...site.social,
@@ -83,7 +83,7 @@ export async function SiteFooter() {
   ];
 
   const signUps = [
-    site.newsletterUrl && { label: "Subscribe", href: site.newsletterUrl, primary: true },
+    site.newsletterUrl && { label: copy.footerSubscribeLabel, href: site.newsletterUrl, primary: true },
   ].filter((link): link is { label: string; href: string; primary: boolean } => Boolean(link));
 
   return (
@@ -97,9 +97,9 @@ export async function SiteFooter() {
       {/* Sign-up and links */}
       <div className="relative z-10 grid grid-cols-2 gap-x-8 gap-y-14 px-6 pt-24 md:grid-cols-4 md:pt-40 lg:grid-cols-12">
         <div className="col-span-2 border-t border-rule pt-4 md:col-span-4 lg:col-span-4 lg:pr-12">
-          <h2 className="text-title font-medium">Stay in the room.</h2>
+          <h2 className="text-title font-medium">{copy.footerHeading}</h2>
           <p className="mt-3 max-w-sm text-lead text-balance text-ink-300">
-            First word on Flagship tickets, House events, and new talks.
+            {copy.footerBody}
           </p>
           {signUps.length > 0 && (
             <div className="mt-8 flex flex-wrap gap-2">

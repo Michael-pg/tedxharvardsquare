@@ -17,6 +17,7 @@ export function Venue({
   image,
   day,
   notes,
+  mapsLabel,
   ask,
 }: {
   venue: VenueContent;
@@ -24,6 +25,7 @@ export function Venue({
   /** The date without the year, e.g. "February 20". */
   day?: string;
   notes: string[];
+  mapsLabel: string;
   /** Tickets: set under the address, after a hairline. */
   ask?: ReactNode;
 }) {
@@ -60,7 +62,7 @@ export function Venue({
             </div>
           )}
           <SquareLink href={maps} variant="secondary">
-            Open in Maps
+            {mapsLabel}
           </SquareLink>
           {ask && <div className="mt-4 flex w-full flex-col items-start gap-6 border-t border-ink-500 pt-8">{ask}</div>}
         </Reveal>

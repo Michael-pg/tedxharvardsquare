@@ -224,8 +224,6 @@ export type SponsorPage = {
   body: string[];
   /** Beside the pitch paragraphs. Empty until filled in Studio. */
   photos: Image[];
-  ask?: string;
-  ctaLabel?: string;
 };
 
 export type SiteConfig = {
@@ -251,6 +249,4 @@ export type MenuImageKey = "flagship" | "house" | "speakers" | "sponsor";
 export type MenuImages = { general?: Image } & Partial<Record<MenuImageKey, Image>>;
 
 /** Everything the site-wide chrome needs, as stored in the Studio. */
-export type SiteSettings = SiteConfig & {
-  missionStatement: string;
-};
+export type SiteSettings = SiteConfig;

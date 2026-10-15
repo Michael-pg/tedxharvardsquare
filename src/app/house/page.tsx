@@ -5,16 +5,12 @@ import { SplitReveal } from "@/components/motion/split-reveal";
 import { Reveal } from "@/components/motion/reveal";
 import { HouseEvents } from "@/components/house/house-events";
 import { SquareLink } from "@/components/ui/square-link";
-import { getHouseCalendar, getSiteSettings } from "@/content";
+import { getHouseCalendar, getPageCopy, getSiteSettings } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 
-export function generateMetadata(): Promise<Metadata> {
-  return pageMetadata({
-    title: "House",
-    description:
-      "House is TEDxHarvardSquare's year-round programming in Cambridge: salons, founder dinners, AMAs and workshops between Flagship editions.",
-    path: "/house",
-  });
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = await getPageCopy("housePage");
+  return pageMetadata({ title: "House", description: copy.seoDescription, path: "/house" });
 }
 
 /**
@@ -23,11 +19,15 @@ export function generateMetadata(): Promise<Metadata> {
  * page says so plainly and points to the Luma calendar, where they go up first.
  */
 export default async function HousePage() {
-  const [site, { upcoming, past }] = await Promise.all([getSiteSettings(), getHouseCalendar()]);
+  const [site, { upcoming, past }, copy] = await Promise.all([
+    getSiteSettings(),
+    getHouseCalendar(),
+    getPageCopy("housePage"),
+  ]);
 
   const follow = [
-    site.lumaUrl && { label: upcoming.length > 0 ? "Full calendar on Luma" : "Follow on Luma", href: site.lumaUrl },
-    site.newsletterUrl && { label: "Subscribe", href: site.newsletterUrl },
+    site.lumaUrl && { label: upcoming.length > 0 ? copy.calendarLabel : copy.followLabel, href: site.lumaUrl },
+    site.newsletterUrl && { label: copy.subscribeLabel, href: site.newsletterUrl },
   ].filter((link): link is { label: string; href: string } => Boolean(link));
 
   return (
@@ -36,18 +36,16 @@ export default async function HousePage() {
       <main id="main" className="px-6 pt-40 pb-32 md:pt-56">
         <header className="mb-20 max-w-4xl md:mb-28">
           <SplitReveal as="h1" by="chars" onScroll={false} className="text-display font-medium">
-            House
+            {copy.title}
           </SplitReveal>
           <SplitReveal as="p" delay={0.2} onScroll={false} className="mt-8 max-w-3xl text-lead text-ink-300">
-            Our year-round programming. Salons, founder dinners, AMAs and workshops in Cambridge between
-            Flagship editions, for a growing network of founders, scientists and leaders across Boston&apos;s
-            innovation ecosystem.
+            {copy.intro}
           </SplitReveal>
         </header>
 
         <section aria-label="Upcoming House events" className="max-w-5xl">
           <Reveal as="h2" className="mb-10 text-title font-medium">
-            Upcoming
+            {copy.upcomingHeading}
           </Reveal>
           {upcoming.length > 0 ? (
             <Reveal>
@@ -55,9 +53,9 @@ export default async function HousePage() {
             </Reveal>
           ) : (
             <Reveal className="border-t border-rule pt-10">
-              <p className="text-heading font-medium">More to be announced.</p>
+              <p className="text-heading font-medium">{copy.emptyHeading}</p>
               <p className="mt-3 max-w-xl text-body text-muted">
-                New House events go up on our Luma calendar first. Follow it to hear when the next one opens.
+                {copy.emptyBody}
               </p>
             </Reveal>
           )}
@@ -75,7 +73,7 @@ export default async function HousePage() {
         {past.length > 0 && (
           <section aria-label="Past House events" className="mt-24 max-w-5xl md:mt-40">
             <Reveal as="h2" className="mb-10 text-title font-medium">
-              Past
+              {copy.pastHeading}
             </Reveal>
             <Reveal>
               <HouseEvents events={past} past />
