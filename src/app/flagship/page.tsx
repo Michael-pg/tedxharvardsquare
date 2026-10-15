@@ -106,8 +106,8 @@ export default async function FlagshipPage() {
   const copy = edition?.page;
   const date = edition?.date ? new Date(edition.date) : undefined;
   const venueKnown = edition?.venue && edition.venue.name !== "Venue TBA";
-  // Tickets once they are on sale; until then, the early-access list.
-  const joinHref = edition?.ticketUrl ?? site.earlyAccessUrl ?? site.newsletterUrl;
+  // Tickets once they are on sale; until then, the Substack newsletter.
+  const joinHref = edition?.ticketUrl ?? site.newsletterUrl;
   const joinLabel = edition?.ticketUrl ? "Get tickets" : "Get early access";
   const showVenue = Boolean(edition?.venue && venueKnown);
   const tickets = edition && (

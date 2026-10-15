@@ -21,7 +21,7 @@ export default async function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Policy"
-      updated="October 8, 2026"
+      updated="October 15, 2026"
       intro={
         <p>
           {site.name} is an independently organized TEDx event run by volunteers in
@@ -39,8 +39,8 @@ export default async function PrivacyPage() {
             else you include when you email us or apply to speak, volunteer, or partner.
           </li>
           <li>
-            <strong>Newsletter and early-access sign-ups</strong> — your email address,
-            collected by the service that runs that list (see below).
+            <strong>Newsletter sign-ups</strong> — your email address, collected by
+            the service that runs the newsletter (see below).
           </li>
           <li>
             <strong>Tickets and registrations</strong> — the details you give our
@@ -83,7 +83,7 @@ export default async function PrivacyPage() {
           Some information is handled by third-party services, each under its own
           privacy policy: our site host (Vercel), our content system (Sanity), our analytics (Google
           Analytics), our
-          newsletter (Substack), our early-access list (Mailchimp), and whichever
+          newsletter (Substack), and whichever
           ticketing platform an event uses. Talk videos are embedded from YouTube in
           privacy-enhanced mode, which doesn&apos;t set YouTube cookies until you press
           play.

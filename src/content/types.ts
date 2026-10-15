@@ -236,8 +236,6 @@ export type SiteConfig = {
   locale: string;
   social: Link[];
   newsletterUrl?: string;
-  /** Sign-up list for first word on Flagship tickets. */
-  earlyAccessUrl?: string;
   /** The org's Luma calendar, where House events are listed and RSVPs taken. */
   lumaUrl?: string;
   contactEmail: string;

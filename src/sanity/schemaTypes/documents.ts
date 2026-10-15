@@ -135,14 +135,6 @@ export const siteSettings = defineType({
         'Where people go to subscribe to the newsletter. The footer\'s "Subscribe" button and its Substack link both point here.',
     }),
     defineField({
-      name: "earlyAccessUrl",
-      title: "Early-access list link",
-      type: "url",
-      group: "contact",
-      description:
-        'The sign-up list for first word on the next Flagship\'s tickets. Not shown on the site right now: the home and footer buttons point to the newsletter until tickets are live.',
-    }),
-    defineField({
       name: "lumaUrl",
       title: "Luma calendar link",
       type: "url",

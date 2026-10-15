@@ -61,7 +61,7 @@ function Column({ title, links }: { title: string; links: NavItem[] }) {
  * halftone glow — the hero's pixel field returning at the bottom of the page.
  * Buttons are the site's square ones.
  *
- * Everything editable (contact, social, newsletter, early-access list)
+ * Everything editable (contact, social, newsletter)
  * comes from site settings; the page structure comes from `navigation.ts`.
  */
 export async function SiteFooter() {
