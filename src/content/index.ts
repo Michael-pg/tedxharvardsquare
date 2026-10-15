@@ -404,9 +404,10 @@ export async function getTeam(): Promise<TeamMember[]> {
   );
 }
 
+/** Current partners only; archived ones stay in Studio for the record. */
 export async function getPartners(): Promise<Partner[]> {
   return fetchContent(
-    `*[_type == "partner"] | order(name asc){
+    `*[_type == "partner" && archived != true] | order(name asc){
       "slug": slug.current, name, tier, "logo": ${image("logo")},
       "logoOnDark": ${image("logoOnDark")}, url
     }`,

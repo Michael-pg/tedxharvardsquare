@@ -808,6 +808,19 @@ export const partner = defineType({
       description: "A white or single-colour version. The site is dark, so this is the one shown.",
     }),
     defineField({ name: "url", title: "Website", type: "url" }),
+    defineField({
+      name: "archived",
+      type: "boolean",
+      initialValue: false,
+      description: "A past partner. Kept here for the record but taken off the Sponsor page.",
+    }),
   ],
-  preview: { select: { title: "name", subtitle: "tier", media: "logo" } },
+  preview: {
+    select: { name: "name", tier: "tier", archived: "archived", media: "logo" },
+    prepare: ({ name, tier, archived, media }) => ({
+      title: name,
+      subtitle: [archived && "Archived", tier].filter(Boolean).join(" · "),
+      media,
+    }),
+  },
 });
