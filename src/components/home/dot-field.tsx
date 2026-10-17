@@ -22,7 +22,17 @@ const RED = [
   "rgb(235, 0, 40)",
   "rgb(255, 107, 127)",
 ];
-const GREY = ["rgba(133, 133, 143, 0.22)", "rgba(150, 150, 160, 0.4)", "rgba(190, 190, 198, 0.6)"];
+// The two faintest buckets are for the far strays, so they dim as well as
+// shrink and dissolve into the black rather than stopping at a visible edge.
+const GREY = [
+  "rgba(133, 133, 143, 0.07)",
+  "rgba(133, 133, 143, 0.13)",
+  "rgba(133, 133, 143, 0.22)",
+  "rgba(150, 150, 160, 0.4)",
+  "rgba(190, 190, 198, 0.6)",
+];
+/** Where the strays finish, in units of the mass's radius. */
+const STRAY_END = 2.3;
 
 const smoothstep = (edge0: number, edge1: number, x: number) => {
   const t = Math.min(Math.max((x - edge0) / (edge1 - edge0), 0), 1);
@@ -91,6 +101,7 @@ function buildGrid(width: number, height: number): Grid {
 /** How far the three ripples in `d` can move it, at most. */
 const RIPPLE = 0.07 + 0.045 + 0.05;
 
+const greyBucket = (v: number) => (v < 0.08 ? 0 : v < 0.16 ? 1 : v < 0.33 ? 2 : v < 0.66 ? 3 : 4);
 const redBucket = (v: number) => (v > 0.97 ? RED.length - 1 : Math.min(RED.length - 2, Math.floor(v * (RED.length - 1))));
 
 type Glyph = { el: HTMLElement; width: number; height: number; alpha: Uint8ClampedArray };
@@ -294,7 +305,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
       const sinR = Math.sin(t * 0.6);
       const cosR = Math.cos(t * 0.6);
       // Past this distance no ripple can bring a dot back into the field.
-      const reachLimit = (1.45 + RIPPLE) * radius;
+      const reachLimit = (STRAY_END + RIPPLE) * radius;
       // A pocket only touches dots within 1.3 feathers of its box (the feather
       // plus the texture's ±0.3 wobble); everywhere else it multiplies by
       // exactly 1. So each row only tests the pockets that reach it, and each
@@ -371,8 +382,10 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           // Dots shrink well past where they used to stop, so the mass thins
           // out into the black instead of ending at a rim.
           const body = Math.pow(smoothstep(1.32, 0.32, d), 1.25) * (0.8 + 0.2 * texture);
-          const dust = smoothstep(1.45, 1.0, d);
-          if (body < 0.04 && dust < 0.02) continue;
+          // Strays carry on well past the body, thinning, shrinking and dimming
+          // together until they are gone: no distance at which they stop.
+          const stray = Math.pow(smoothstep(STRAY_END, 1.0, d), 1.6);
+          if (body < 0.02 && stray < 0.012) continue;
 
           // The intro: each dot arrives from a scattered start, the core
           // settling first and order spreading outward to the edge.
@@ -420,7 +433,7 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           // loose grey a dot at a time rather than along a line.
           if (order > 0.15 + 0.7 * h3[i]) {
             const v = Math.min(1, Math.max(body, held * 0.35)) * clear;
-            if (v < 0.04) continue;
+            if (v < 0.02) continue;
             const k = Math.min(1, order * 1.4);
             const x = gx + sx + (h1[i] - 0.5) * CELL * (1 - k);
             const y = gy + sy + (h2[i] - 0.5) * CELL * (1 - k);
@@ -428,7 +441,8 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
           } else {
             // The fraying edge: dots come loose and drift outward, fading.
             const loose = 1 - order;
-            if (h7[i] > 0.42 - loose * 0.2) continue;
+            // Fewer strays the further out, so the density thins as well.
+            if (h7[i] > (0.42 - loose * 0.2) * smoothstep(STRAY_END, 1.2, d)) continue;
             const cycle = (t * (0.05 + h8[i] * 0.07) + h9[i]) % 1;
             const push = cycle * CELL * 7 * loose;
             const ux = c1 * stretch;
@@ -436,9 +450,10 @@ export function DotField({ strength = 1, intro = false }: { strength?: number; i
             const n = Math.hypot(ux, uy) || 1;
             const x = gx + sx + (ux / n) * push + (h1[i] - 0.5) * CELL * 2.4 * loose;
             const y = gy + sy + (uy / n) * push + (h2[i] - 0.5) * CELL * 2.4 * loose;
-            const v = Math.max(body, dust * 0.35) * (1 - cycle * 0.8) * clear * arrive;
-            if (v < 0.05) continue;
-            grey.add(Math.min(GREY.length - 1, Math.floor(v * GREY.length)), x, y, CELL * (0.1 + 0.25 * v));
+            const v = Math.max(body, stray * 0.3) * (1 - cycle * 0.8) * clear * arrive;
+            // Radius runs to zero with v, so this cut is below a pixel.
+            if (v < 0.015) continue;
+            grey.add(greyBucket(v), x, y, CELL * 0.28 * Math.pow(v, 0.6));
           }
         }
       }

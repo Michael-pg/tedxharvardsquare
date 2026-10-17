@@ -88,6 +88,7 @@ export function FooterGlow({
       // which on a phone is far taller than it is wide.
       const reach = Math.min(200, width * 0.14 + 60);
       const t = time;
+      const featherPx = Math.min(height * 0.45, 220);
 
       for (let col = 0; col < cols; col++) {
         const x = col * CELL;
@@ -124,6 +125,9 @@ export function FooterGlow({
           );
 
           if (trail.alive) intensity += trail.sample(px, py, reach) * 0.55;
+          // Every term, trail included, feathers to nothing before the canvas's
+          // top edge, so a short canvas (the menu's) never shows a hard line.
+          intensity *= smoothstep(featherPx * 0.15, featherPx, py);
 
           if (intensity < 0.06) continue;
           intensity = Math.min(intensity, 1);
