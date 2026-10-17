@@ -718,3 +718,33 @@ venue is The Engine, 750 Main St.
 the bottom right, opposite "Get early access" (above it on phones). Home hero:
 the second button is "Explore Flagship". Checked at the pane width and
 1280px: no overflow, and the hero fits the viewport.
+
+### 2026-10-17 — dot edges, About, House, Flagship flow
+
+Owner feedback, built in one pass. None of it seen with real content yet
+(Sanity is unreachable from the cloud sandbox), so check the preview.
+- **Home dot field:** the stray grey dots stopped on a clean arc near the
+  hero headline. Strays now carry on to `STRAY_END` (d = 2.3), thinning,
+  shrinking and fading to nothing; `reachLimit` follows it.
+- **Menu / footer glow:** every term, the pointer trail included, feathers to
+  zero before the canvas top, so the menu's half-height glow has no edge.
+- **About:** feature photo and offset gallery (the home hero photos; owner
+  wants no new Studio photo fields), "What we do" with Flagship and House
+  side by side, and a Team list (names and roles, no portraits) from Team
+  member documents, hidden while empty.
+- **House:** its own field, `HouseField`: many small gatherings, clusters of
+  ordered red that form, hold and dissolve on their own clocks (owner
+  approved the idea). Full-screen hero, photo band, "What House is", Upcoming,
+  Past, a closing follow ask. Photos come from House events, else the home
+  hero photos.
+- **Flagship:** The Day rows now centre the text against the photo (7 / gap /
+  4 columns), with a faint dot patch (`TextDots`) behind each text column;
+  the global field is dimmed to 0.2 there. New after it: a stats band (Studio
+  audience figures, then counts from the archive; hidden under two figures),
+  "From the stage" (featured talks), and "The people in the room" (links to
+  House, Sponsor, newsletter).
+- New copy keys are Claude-drafted, owner to review; re-run
+  `scripts/seed-page-copy.ts` to fill them in Studio. Claims to confirm:
+  Flagship's "conversations between sessions are often the ones that last",
+  House's "Rooms are small, so the people in them get to meet", About's
+  "Volunteers who organize".

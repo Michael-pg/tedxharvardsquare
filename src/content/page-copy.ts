@@ -36,6 +36,21 @@ export const pageCopy = {
     editionsHeading: "Over the years",
     editionsIntro: "Every Flagship so far, and its talks.",
     watchTalksLabel: "Watch the talks",
+    // Claude-drafted 2026-10-17, awaiting owner review.
+    statsEditionsLabel: "Flagship editions so far",
+    statsTalksLabel: "talks given on our stages",
+    statsSpeakersLabel: "speakers on stage",
+    talksHeading: "From the stage",
+    talksIntro: "A few of the talks given at past Flagships. The full archive is on the Speakers page.",
+    connectionsHeading: "The people in the room",
+    connectionsBody:
+      "The stage is one part of the day. The rest is the room: founders, researchers, artists and organizers who came to listen and stayed to talk. The conversations between sessions are often the ones that last.",
+    connectionsHouseTitle: "Keep in touch through House",
+    connectionsHouseBody: "Salons, founder dinners and workshops in Cambridge, between Flagships.",
+    connectionsSponsorTitle: "Partner with us",
+    connectionsSponsorBody: "Support the day and meet the people in the room.",
+    connectionsListTitle: "Hear first",
+    connectionsListBody: "Early access and announcements, by email.",
   },
   housePage: {
     title: "House",
@@ -48,6 +63,12 @@ export const pageCopy = {
     followLabel: "Follow on Luma",
     subscribeLabel: "Subscribe",
     pastHeading: "Past",
+    // Drafted by Claude, awaiting owner review.
+    whatHeading: "The rest of the year, in smaller rooms.",
+    whatBody:
+      "Between each Flagship, House keeps the conversation going with talks, salons and workshops in Cambridge. Rooms are small, so the people in them get to meet.",
+    followHeading: "Hear about the next one first.",
+    followBody: "New events go up on our Luma calendar first. The newsletter follows what happens in between.",
     seoDescription:
       "House is TEDxHarvardSquare's year-round programming in Cambridge: salons, founder dinners, AMAs and workshops between Flagship editions.",
   },
@@ -75,6 +96,17 @@ export const pageCopy = {
     intro:
       "The right idea, heard by the right person, at the right moment, can change the course of a life, a company, or a policy. We exist to create those moments, on stage and in every room we build year-round.",
     body: "TEDxHarvardSquare runs an annual Flagship conference in Cambridge, Massachusetts, and House, our year-round programming between editions. It is independently organized under license from TED.",
+    doHeading: "Two ways to be in the room.",
+    flagshipTitle: "Flagship",
+    flagshipText:
+      "Our annual conference. A day of talks by researchers, founders and artists, and the people who come to hear them.",
+    flagshipLabel: "Explore Flagship",
+    houseTitle: "House",
+    houseText:
+      "Our year-round programming. Smaller gatherings between editions, so the conversation does not wait for February.",
+    houseLabel: "Explore House",
+    teamHeading: "The team",
+    teamIntro: "Volunteers who organize TEDxHarvardSquare, in Cambridge and beyond.",
     seoDescription:
       "TEDxHarvardSquare is an independently organized TEDx event in Cambridge, Massachusetts: an annual Flagship conference and House, our year-round programming.",
   },
