@@ -5,7 +5,7 @@ import { Fragment, useRef, type ReactNode } from "react";
 import { gsap, useGSAP, ScrollTrigger, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { SquareLink } from "@/components/ui/square-link";
-import { TextDots } from "@/components/flagship/text-dots";
+import { PhotoFray } from "@/components/flagship/photo-fray";
 import type { FlagshipPageCopy } from "@/content/types";
 import { cn } from "@/lib/utils";
 
@@ -19,17 +19,17 @@ type Reason = FlagshipPageCopy["reasons"][number];
  * Phones stack photo, then text.
  */
 const ROW = [
-  { photo: "md:col-start-1", text: "md:col-start-9", side: "right" as const },
-  { photo: "md:col-start-6", text: "md:col-start-1", side: "left" as const },
-  { photo: "md:col-start-1", text: "md:col-start-9", side: "right" as const },
+  { photo: "md:col-start-1", text: "md:col-start-9", photoSide: "left" as const, fray: "md:mask-fray-r" },
+  { photo: "md:col-start-6", text: "md:col-start-1", photoSide: "right" as const, fray: "md:mask-fray-l" },
+  { photo: "md:col-start-1", text: "md:col-start-9", photoSide: "left" as const, fray: "md:mask-fray-r" },
 ];
 
 /** A reason's photograph, on its own: the title is set with the text. */
-function ReasonPhoto({ reason, className }: { reason: Reason; className: string }) {
+function ReasonPhoto({ reason, className, fray }: { reason: Reason; className: string; fray: string }) {
   const focus = reason.image?.focus ?? { x: 0.5, y: 0.5 };
   return (
     <figure data-tile="photo" className={cn("col-span-4 md:col-span-7 md:row-start-1", className)}>
-      <div data-frame className="relative aspect-3/2 overflow-hidden bg-ink-900">
+      <div data-frame className={cn("relative aspect-3/2 overflow-hidden bg-ink-900", fray)}>
         {reason.image && (
           <div data-drift className="absolute inset-0">
             <Image
@@ -50,23 +50,20 @@ function ReasonPhoto({ reason, className }: { reason: Reason; className: string 
 
 /**
  * A reason's words: its title and, where there is one, its body, then the
- * fact that goes with it on a hairline. A faint patch of dots sits behind and
- * beside the type.
+ * fact that goes with it on a hairline. Its photo's dots drift toward it
+ * across the gutter (`PhotoFray`).
  */
 function ReasonText({
   reason,
   row,
-  salt,
   children,
 }: {
   reason: Reason;
   row: (typeof ROW)[number];
-  salt: number;
   children?: ReactNode;
 }) {
   return (
     <div data-tile="type" className={cn("relative col-span-4 md:col-span-4 md:row-start-1", row.text)}>
-      <TextDots side={row.side} anchorY={salt % 2 ? 0.25 : 0.7} salt={salt} />
       <div data-dot-clear className="relative flex flex-col gap-5">
         <h3 className="text-title font-medium text-balance">{reason.title}</h3>
         {reason.body && <p className="max-w-md text-lead text-ink-300">{reason.body}</p>}
@@ -195,9 +192,10 @@ export function TheDay({
       {shown.map((reason, i) => {
         const own = (i === shown.length - 1 ? facts.slice(i) : [facts[i]]).filter(Boolean);
         return (
-          <div key={i} className="grid grid-cols-4 items-center gap-x-6 gap-y-8 md:grid-cols-12">
-            <ReasonPhoto reason={reason} className={ROW[i].photo} />
-            <ReasonText reason={reason} row={ROW[i]} salt={i + 1}>
+          <div key={i} className="relative grid grid-cols-4 items-center gap-x-6 gap-y-8 md:grid-cols-12">
+            <PhotoFray image={reason.image} photoSide={ROW[i].photoSide} salt={i + 1} />
+            <ReasonPhoto reason={reason} className={ROW[i].photo} fray={ROW[i].fray} />
+            <ReasonText reason={reason} row={ROW[i]}>
               {own.length > 0 && own.map((fact, f) => <Fragment key={f}>{fact}</Fragment>)}
             </ReasonText>
           </div>

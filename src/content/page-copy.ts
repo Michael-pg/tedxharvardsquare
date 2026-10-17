@@ -37,11 +37,6 @@ export const pageCopy = {
     editionsIntro: "Every Flagship so far, and its talks.",
     watchTalksLabel: "Watch the talks",
     // Claude-drafted 2026-10-17, awaiting owner review.
-    statsEditionsLabel: "Flagship editions so far",
-    statsTalksLabel: "talks given on our stages",
-    statsSpeakersLabel: "speakers on stage",
-    talksHeading: "From the stage",
-    talksIntro: "A few of the talks given at past Flagships. The full archive is on the Speakers page.",
     connectionsHeading: "The people in the room",
     connectionsBody:
       "The stage is one part of the day. The rest is the room: founders, researchers, artists and organizers who came to listen and stayed to talk. The conversations between sessions are often the ones that last.",

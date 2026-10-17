@@ -244,6 +244,15 @@ body {
 }
 
 /* The lockup's two halves: the red "TEDx" above, the "Harvard Square" wordmark below. */
+/* The Day's photos fade out along the edge facing their text, where
+   `PhotoFray` carries them on in halftone. Keep the 66% in step with its STRIP. */
+@utility mask-fray-r {
+  mask-image: linear-gradient(to right, #000 66%, transparent);
+}
+@utility mask-fray-l {
+  mask-image: linear-gradient(to left, #000 66%, transparent);
+}
+
 @utility clip-lockup-mark {
   clip-path: inset(0 0 50% 0);
 }

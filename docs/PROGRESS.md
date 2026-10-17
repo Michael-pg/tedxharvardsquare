@@ -748,3 +748,18 @@ Owner feedback, built in one pass. None of it seen with real content yet
   Flagship's "conversations between sessions are often the ones that last",
   House's "Rooms are small, so the people in them get to meet", About's
   "Volunteers who organize".
+
+### 2026-10-17 — Flagship: leaner middle, the photos fray
+
+Owner: too many sections between The Day and Speakers, and the text-side
+dots were "meh". The stats band and "From the stage" are gone (component and
+copy keys removed); "The people in the room" moved below Over the years, so
+The Day leads straight into Speakers again. `TextDots` is replaced by
+**`PhotoFray`**: each Day photo fades out along the edge facing its text
+(`mask-fray-l/r`) and carries on as a red halftone print of itself, dot size
+from the photo's own light. Arriving, the print comes loose and blows across
+the gutter as grey sand; at mid-screen it pulls back into register (order
+wins), with a little red dust always slipping off the very edge; leaving,
+it loosens again. The pointer combs strays back. Desktop only; phones keep
+the plain photo. Checked on a local mock at 1440px (synthetic stage photo,
+since Sanity is unreachable here); the real photos are worth a look.
