@@ -10,6 +10,9 @@ import { SpeakerNames } from "@/components/flagship/speaker-names";
 import { TopicMarquee } from "@/components/flagship/topic-marquee";
 import { Venue } from "@/components/flagship/venue";
 import { TheDay } from "@/components/flagship/the-day";
+import { StatsBand, type Stat } from "@/components/flagship/stats-band";
+import { Connections, type Connection } from "@/components/flagship/connections";
+import { PastTalks } from "@/components/home/past-talks";
 import { SquareLink } from "@/components/ui/square-link";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -63,6 +66,9 @@ const lastTime = (edition?: PastEdition) => {
     ? { headline: roughly(edition.attendance), line: `in the room${at} ${when}.${soldOut}` }
     : { headline: `Edition ${edition.number}`, line: `sold out${at} ${when}.` };
 };
+
+/** Talks shown under "From the stage". */
+const FEATURED_TALKS = 4;
 
 /** A past edition, written out for "Over the years". */
 const toRow = (edition: PastEdition): PastEditionRow => ({
@@ -137,6 +143,41 @@ export default async function FlagshipPage() {
     </>
   );
 
+  // The figures: the edition's own first (Studio), then counted from the
+  // archive. Anything not known is left out, never estimated.
+  const talkTotal = pastEditions.reduce((sum, e) => sum + e.talkCount, 0);
+  const speakerTotal = pastEditions.reduce((sum, e) => sum + e.speakerNames.length, 0);
+  const lastEdition = pastEditions[0];
+  const stats: Stat[] = [
+    ...(copy?.audienceStats ?? []).filter((stat) => stat.value.trim() && stat.label.trim()),
+    ...(lastEdition?.attendance
+      ? [{ value: roughly(lastEdition.attendance), label: `in the room, Edition ${lastEdition.number}` }]
+      : []),
+    ...(pastEditions.length > 0 ? [{ value: String(pastEditions.length), label: words.statsEditionsLabel }] : []),
+    ...(talkTotal > 0 ? [{ value: String(talkTotal), label: words.statsTalksLabel }] : []),
+    ...(speakerTotal > 0 ? [{ value: String(speakerTotal), label: words.statsSpeakersLabel }] : []),
+  ].slice(0, 4);
+
+  // Talks: the ones picked on the Home page, else those with a stage photo and a video.
+  const talkRank = (speaker: (typeof archive)[number]) =>
+    Number(Boolean(speaker.talk?.still)) * 2 + Number(Boolean(speaker.talk?.videoUrl));
+  const pickedTalks = home.featuredTalkSlugs
+    .map((slug) => archive.find((speaker) => speaker.talk?.slug === slug))
+    .filter((speaker) => speaker?.talk?.title) as typeof archive;
+  const featuredTalks = (
+    pickedTalks.length > 0
+      ? pickedTalks
+      : archive.filter((speaker) => speaker.talk?.title).sort((a, b) => talkRank(b) - talkRank(a))
+  ).slice(0, FEATURED_TALKS);
+
+  const connections: Connection[] = [
+    { title: words.connectionsHouseTitle, body: words.connectionsHouseBody, href: "/house" },
+    { title: words.connectionsSponsorTitle, body: words.connectionsSponsorBody, href: "/sponsor" },
+    ...(site.newsletterUrl
+      ? [{ title: words.connectionsListTitle, body: words.connectionsListBody, href: site.newsletterUrl }]
+      : []),
+  ];
+
   // Past speakers' portraits, printed past recognition, stand in for the lineup.
   const placeholders = archive.flatMap((s) => (s.headshot?.src ? [s.headshot] : [])).slice(0, 4);
   const eventJsonLd = edition && editionJsonLd(site, edition, copy?.heroImage ?? home.flagshipPhoto ?? copy?.reasons[0]?.image);
@@ -161,7 +202,7 @@ export default async function FlagshipPage() {
         {/* The day: the reasons as photos, each with a fact. The hero's dot
             field carries on behind it, quieter, and stops at Speakers. */}
         {copy && copy.reasons.length > 0 && (
-          <section data-dot-dim="0.35" aria-label="The day" className="px-6 pt-16 pb-20 md:pt-24 md:pb-32">
+          <section data-dot-dim="0.2" aria-label="The day" className="px-6 pt-16 pb-20 md:pt-24 md:pb-32">
             <TheDay
               reasons={copy.reasons}
               audience={copy.audience}
@@ -175,9 +216,51 @@ export default async function FlagshipPage() {
           </section>
         )}
 
+        {/* Past the day the page is plain black (the dot field stops here):
+            the figures, a few talks, and the people in the room. */}
+        <div data-dot-stop className="relative bg-background">
+          {stats.length >= 2 && (
+            <section aria-label="Flagship in numbers" className="px-6 pt-24 pb-12 md:pt-40 md:pb-20">
+              <StatsBand stats={stats} />
+            </section>
+          )}
+
+          {featuredTalks.length > 0 && (
+            <section aria-labelledby="talks-title" className="grid grid-cols-4 gap-x-6 gap-y-12 px-6 py-24 md:grid-cols-12 md:py-40">
+              <div className="col-span-4 md:col-span-7 md:row-start-1">
+                <Reveal>
+                  <PastTalks speakers={featuredTalks} />
+                </Reveal>
+              </div>
+              <div className="col-span-4 flex flex-col items-start gap-6 md:col-span-4 md:col-start-9 md:row-start-1 md:self-start">
+                <Reveal as="h2" className="text-display font-medium text-balance">
+                  <span id="talks-title">{words.talksHeading}</span>
+                </Reveal>
+                <Reveal as="p" className="text-lead text-ink-300">
+                  {words.talksIntro}
+                </Reveal>
+                <Reveal className="mt-4">
+                  <SquareLink href="/speakers" variant="secondary">
+                    {words.pastTalksLabel}
+                  </SquareLink>
+                </Reveal>
+              </div>
+            </section>
+          )}
+
+          <section aria-labelledby="connections-title" className="border-t border-rule px-6 py-24 md:py-40">
+            <Connections
+              heading={words.connectionsHeading}
+              body={words.connectionsBody}
+              image={copy?.audienceImage}
+              links={connections}
+            />
+          </section>
+        </div>
+
         {/* The lineup as names, or the shape of one until it is announced. */}
         {edition && (
-          <section data-dot-stop aria-labelledby="speakers-title" className="relative bg-background px-6 py-24 md:py-40">
+          <section data-dot-stop aria-labelledby="speakers-title" className="relative border-t border-rule bg-background px-6 py-24 md:py-40">
             <Reveal as="h2" className="mb-12 flex flex-wrap items-baseline justify-between gap-x-6 text-statement font-medium md:mb-20 md:text-mega">
               <span id="speakers-title">{words.speakersHeading}</span>
               <span className="text-muted">{edition.year}</span>
