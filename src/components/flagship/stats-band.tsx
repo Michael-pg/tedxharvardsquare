@@ -50,7 +50,9 @@ export function StatsBand({ stats }: { stats: Stat[] }) {
               ease: timing.ease.expo,
               delay,
               onUpdate: () => {
-                figure.textContent = Math.round(counter.n).toLocaleString("en-US");
+                // Grouped only if the figure itself is, so the last frame never jumps.
+                const n = Math.round(counter.n);
+                figure.textContent = final.includes(",") ? n.toLocaleString("en-US") : String(n);
               },
               onComplete: () => {
                 figure.textContent = final;

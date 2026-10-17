@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type ReactNode } from "react";
+import { Fragment, useRef, type ReactNode } from "react";
 import { gsap, useGSAP, ScrollTrigger, timing } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { SquareLink } from "@/components/ui/square-link";
@@ -156,61 +156,53 @@ export function TheDay({
     { scope: ref, dependencies: [reducedMotion] },
   );
 
-  const proofAndAction = proof || action;
+  // One fact per reason, in order. With fewer than three reasons the facts
+  // left over join the last one, so the date and the ticket ask never drop out.
+  const facts: ReactNode[] = [
+    when && (
+      <>
+        <p className="text-heading font-medium text-balance">{when}</p>
+        {where.length > 0 && (
+          <p className="-mt-4 flex flex-col text-body text-muted">
+            {where.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </p>
+        )}
+      </>
+    ),
+    audience && <p className="text-body text-ink-200">{audience}</p>,
+    (proof || action) && (
+      <>
+        {proof && (
+          <div className="flex flex-col gap-2">
+            <p className="text-title font-medium">{proof.headline}</p>
+            {proof.line && <p className="max-w-sm text-body text-muted">{proof.line}</p>}
+          </div>
+        )}
+        {action && (
+          <div>
+            <SquareLink href={action.href}>{action.label}</SquareLink>
+          </div>
+        )}
+      </>
+    ),
+  ];
+  const shown = [first, second, third].filter((reason): reason is Reason => Boolean(reason));
 
   return (
     <div ref={ref} className="flex flex-col gap-y-20 overflow-x-clip md:gap-y-32">
-      {first && (
-        <div className="grid grid-cols-4 items-center gap-x-6 gap-y-8 md:grid-cols-12">
-          <ReasonPhoto reason={first} className={ROW[0].photo} />
-          <ReasonText reason={first} row={ROW[0]} salt={1}>
-            {when && (
-              <>
-                <p className="text-heading font-medium text-balance">{when}</p>
-                {where.length > 0 && (
-                  <p className="-mt-4 flex flex-col text-body text-muted">
-                    {where.map((line) => (
-                      <span key={line}>{line}</span>
-                    ))}
-                  </p>
-                )}
-              </>
-            )}
-          </ReasonText>
-        </div>
-      )}
-
-      {second && (
-        <div className="grid grid-cols-4 items-center gap-x-6 gap-y-8 md:grid-cols-12">
-          <ReasonPhoto reason={second} className={ROW[1].photo} />
-          <ReasonText reason={second} row={ROW[1]} salt={2}>
-            {audience && <p className="text-body text-ink-200">{audience}</p>}
-          </ReasonText>
-        </div>
-      )}
-
-      {third && (
-        <div className="grid grid-cols-4 items-center gap-x-6 gap-y-8 md:grid-cols-12">
-          <ReasonPhoto reason={third} className={ROW[2].photo} />
-          <ReasonText reason={third} row={ROW[2]} salt={3}>
-            {proofAndAction && (
-              <>
-                {proof && (
-                  <div className="flex flex-col gap-2">
-                    <p className="text-title font-medium">{proof.headline}</p>
-                    {proof.line && <p className="max-w-sm text-body text-muted">{proof.line}</p>}
-                  </div>
-                )}
-                {action && (
-                  <div>
-                    <SquareLink href={action.href}>{action.label}</SquareLink>
-                  </div>
-                )}
-              </>
-            )}
-          </ReasonText>
-        </div>
-      )}
+      {shown.map((reason, i) => {
+        const own = (i === shown.length - 1 ? facts.slice(i) : [facts[i]]).filter(Boolean);
+        return (
+          <div key={i} className="grid grid-cols-4 items-center gap-x-6 gap-y-8 md:grid-cols-12">
+            <ReasonPhoto reason={reason} className={ROW[i].photo} />
+            <ReasonText reason={reason} row={ROW[i]} salt={i + 1}>
+              {own.length > 0 && own.map((fact, f) => <Fragment key={f}>{fact}</Fragment>)}
+            </ReasonText>
+          </div>
+        );
+      })}
     </div>
   );
 }

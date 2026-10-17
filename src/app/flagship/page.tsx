@@ -146,13 +146,10 @@ export default async function FlagshipPage() {
   // The figures: the edition's own first (Studio), then counted from the
   // archive. Anything not known is left out, never estimated.
   const talkTotal = pastEditions.reduce((sum, e) => sum + e.talkCount, 0);
-  const speakerTotal = pastEditions.reduce((sum, e) => sum + e.speakerNames.length, 0);
-  const lastEdition = pastEditions[0];
+  // People, not appearances: a speaker back for a second edition counts once.
+  const speakerTotal = new Set(pastEditions.flatMap((e) => e.speakerNames)).size;
   const stats: Stat[] = [
     ...(copy?.audienceStats ?? []).filter((stat) => stat.value.trim() && stat.label.trim()),
-    ...(lastEdition?.attendance
-      ? [{ value: roughly(lastEdition.attendance), label: `in the room, Edition ${lastEdition.number}` }]
-      : []),
     ...(pastEditions.length > 0 ? [{ value: String(pastEditions.length), label: words.statsEditionsLabel }] : []),
     ...(talkTotal > 0 ? [{ value: String(talkTotal), label: words.statsTalksLabel }] : []),
     ...(speakerTotal > 0 ? [{ value: String(speakerTotal), label: words.statsSpeakersLabel }] : []),
@@ -200,7 +197,7 @@ export default async function FlagshipPage() {
         />
 
         {/* The day: the reasons as photos, each with a fact. The hero's dot
-            field carries on behind it, quieter, and stops at Speakers. */}
+            field carries on behind it, quieter, and stops at the figures. */}
         {copy && copy.reasons.length > 0 && (
           <section data-dot-dim="0.2" aria-label="The day" className="px-6 pt-16 pb-20 md:pt-24 md:pb-32">
             <TheDay
